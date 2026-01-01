@@ -1,11 +1,22 @@
-import { Car, Bike } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
+import { Button } from "@/components/ui/button";
+import { Car, Bike, History, LogOut, User } from "lucide-react";
 
 const Header = () => {
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/");
+  };
+
   return (
     <header className="fixed top-0 left-0 right-0 z-50 glass-card border-b border-border/30">
       <div className="container mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
+          <Link to="/" className="flex items-center gap-3">
             <div className="relative">
               <div className="absolute inset-0 bg-primary/20 blur-xl rounded-full" />
               <div className="relative flex items-center gap-1 p-2 rounded-xl bg-primary/10">
@@ -20,19 +31,34 @@ const Header = () => {
               </h1>
               <p className="text-xs text-muted-foreground">AI pirkimo patarėjas</p>
             </div>
-          </div>
+          </Link>
           
-          <nav className="hidden md:flex items-center gap-6">
-            <a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-              Kaip veikia
-            </a>
-            <a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-              Kainodara
-            </a>
-            <a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-              DUK
-            </a>
-          </nav>
+          <div className="flex items-center gap-4">
+            {user ? (
+              <>
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  onClick={() => navigate("/history")}
+                  className="hidden sm:flex"
+                >
+                  <History className="w-4 h-4 mr-2" />
+                  Istorija
+                </Button>
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <User className="w-4 h-4" />
+                  <span className="hidden sm:inline">{user.email}</span>
+                </div>
+                <Button variant="ghost" size="sm" onClick={handleSignOut}>
+                  <LogOut className="w-4 h-4" />
+                </Button>
+              </>
+            ) : (
+              <Button variant="hero" size="sm" onClick={() => navigate("/auth")}>
+                Prisijungti
+              </Button>
+            )}
+          </div>
         </div>
       </div>
     </header>

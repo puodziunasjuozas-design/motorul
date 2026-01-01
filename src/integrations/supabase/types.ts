@@ -14,7 +14,114 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      analysis_history: {
+        Row: {
+          created_at: string
+          current_price: number | null
+          description: string | null
+          estimated_resale_value: number | null
+          id: string
+          image_urls: Json | null
+          is_profitable: boolean | null
+          listing_url: string | null
+          market_average: number | null
+          positives: Json | null
+          potential_profit: number | null
+          price_rating: string | null
+          recommendation: string | null
+          repair_items: Json | null
+          repair_total_cost: number | null
+          user_id: string
+          vehicle_fuel_type: string | null
+          vehicle_make: string
+          vehicle_mileage: string | null
+          vehicle_model: string
+          vehicle_transmission: string | null
+          vehicle_year: number | null
+          videos: Json | null
+          warnings: Json | null
+        }
+        Insert: {
+          created_at?: string
+          current_price?: number | null
+          description?: string | null
+          estimated_resale_value?: number | null
+          id?: string
+          image_urls?: Json | null
+          is_profitable?: boolean | null
+          listing_url?: string | null
+          market_average?: number | null
+          positives?: Json | null
+          potential_profit?: number | null
+          price_rating?: string | null
+          recommendation?: string | null
+          repair_items?: Json | null
+          repair_total_cost?: number | null
+          user_id: string
+          vehicle_fuel_type?: string | null
+          vehicle_make: string
+          vehicle_mileage?: string | null
+          vehicle_model: string
+          vehicle_transmission?: string | null
+          vehicle_year?: number | null
+          videos?: Json | null
+          warnings?: Json | null
+        }
+        Update: {
+          created_at?: string
+          current_price?: number | null
+          description?: string | null
+          estimated_resale_value?: number | null
+          id?: string
+          image_urls?: Json | null
+          is_profitable?: boolean | null
+          listing_url?: string | null
+          market_average?: number | null
+          positives?: Json | null
+          potential_profit?: number | null
+          price_rating?: string | null
+          recommendation?: string | null
+          repair_items?: Json | null
+          repair_total_cost?: number | null
+          user_id?: string
+          vehicle_fuel_type?: string | null
+          vehicle_make?: string
+          vehicle_mileage?: string | null
+          vehicle_model?: string
+          vehicle_transmission?: string | null
+          vehicle_year?: number | null
+          videos?: Json | null
+          warnings?: Json | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          display_name: string | null
+          email: string | null
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          display_name?: string | null
+          email?: string | null
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          display_name?: string | null
+          email?: string | null
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

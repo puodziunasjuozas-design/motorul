@@ -1,1 +1,7 @@
 project_id = "wnifcjujnfyjbncvzvmn"
+
+[functions.analyze-vehicle]
+verify_jwt = false
+
+[functions.search-youtube]
+verify_jwt = false
