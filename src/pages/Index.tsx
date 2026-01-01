@@ -6,7 +6,8 @@ import {
   Play, 
   Calculator,
   Sparkles,
-  ArrowRight 
+  ArrowRight,
+  Save
 } from "lucide-react";
 import Header from "@/components/Header";
 import UploadZone from "@/components/UploadZone";
@@ -15,6 +16,8 @@ import AnalysisResult, { AnalysisData } from "@/components/AnalysisResult";
 import FeatureCard from "@/components/FeatureCard";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 
 const Index = () => {
   const [images, setImages] = useState<File[]>([]);
@@ -23,6 +26,16 @@ const Index = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisResult, setAnalysisResult] = useState<AnalysisData | null>(null);
   const { toast } = useToast();
+  const { user } = useAuth();
+
+  const fileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = error => reject(error);
+    });
+  };
 
   const handleAnalyze = async () => {
     if (images.length === 0 && !description) {
@@ -35,80 +48,102 @@ const Index = () => {
     }
 
     setIsAnalyzing(true);
+    setAnalysisResult(null);
 
-    // Simulate AI analysis (replace with real API call)
-    await new Promise(resolve => setTimeout(resolve, 3000));
+    try {
+      // Convert images to base64
+      const imageBase64List = await Promise.all(
+        images.slice(0, 5).map(file => fileToBase64(file))
+      );
 
-    // Mock result for demonstration
-    const mockResult: AnalysisData = {
-      vehicleInfo: {
-        make: "BMW",
-        model: "320d",
-        year: 2018,
-        mileage: "150,000 km",
-        fuelType: "Dyzelinas",
-        transmission: "Automatinė",
-      },
-      marketAnalysis: {
-        currentPrice: 18500,
-        marketAverage: 19200,
-        priceRating: "good",
-        estimatedResaleValue: 16000,
-        resaleTimeframe: "per 1 metus",
-      },
-      repairEstimate: {
-        totalCost: 2800,
-        items: [
-          { name: "Paskirstymo diržas + vandens pompa", cost: 800, urgency: "high" },
-          { name: "Stabdžių kaladėlės (galinės)", cost: 150, urgency: "medium" },
-          { name: "Alyvos keitimas", cost: 120, urgency: "high" },
-          { name: "EGR vožtuvo valymas", cost: 250, urgency: "medium" },
-          { name: "Turbinos patikra", cost: 100, urgency: "low" },
-          { name: "Kiti smulkūs darbai", cost: 1380, urgency: "low" },
-        ],
-      },
-      profitability: {
-        isProfitable: true,
-        potentialProfit: 2700,
-        recommendation: "Automobilis parduodamas žemiau rinkos kainos. Po remonto galėsite parduoti už ~€19,000-20,000. Rekomenduojame derėtis iki €17,000.",
-      },
-      videos: [
-        {
-          title: "BMW N47 paskirstymo diržo keitimas",
-          url: "https://youtube.com",
-          thumbnail: "https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=400&h=225&fit=crop",
-        },
-        {
-          title: "Stabdžių kaladėlių keitimas BMW F30",
-          url: "https://youtube.com",
-          thumbnail: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=225&fit=crop",
-        },
-        {
-          title: "EGR vožtuvo valymas dyzeliniams varikliams",
-          url: "https://youtube.com",
-          thumbnail: "https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?w=400&h=225&fit=crop",
-        },
-      ],
-      warnings: [
-        "N47 variklis turi žinomą paskirstymo diržo problemą - būtina keisti",
-        "150,000 km rida reikalauja didelės techninės apžiūros",
-        "Patikrinkite swirl flaps būklę",
-      ],
-      positives: [
-        "Kaina žemiau rinkos vidurkio",
-        "Automatinė pavarų dėžė ZF - patikima",
-        "Populiarus modelis - lengva parduoti",
-        "Dyzelinis variklis - ekonomiškas",
-      ],
-    };
+      // Call AI analysis
+      const { data: analysisData, error: analysisError } = await supabase.functions.invoke('analyze-vehicle', {
+        body: { 
+          description, 
+          listingUrl,
+          imageBase64List 
+        }
+      });
 
-    setAnalysisResult(mockResult);
-    setIsAnalyzing(false);
+      if (analysisError) {
+        throw new Error(analysisError.message);
+      }
 
-    toast({
-      title: "Analizė baigta!",
-      description: "Peržiūrėkite rezultatus žemiau",
+      if (analysisData.error) {
+        throw new Error(analysisData.error);
+      }
+
+      // Fetch YouTube videos
+      const { data: videosData } = await supabase.functions.invoke('search-youtube', {
+        body: {
+          searchQueries: analysisData.youtubeSearchQueries || [],
+          vehicleMake: analysisData.vehicleInfo?.make,
+          vehicleModel: analysisData.vehicleInfo?.model
+        }
+      });
+
+      const result: AnalysisData = {
+        vehicleInfo: analysisData.vehicleInfo,
+        marketAnalysis: analysisData.marketAnalysis,
+        repairEstimate: analysisData.repairEstimate,
+        profitability: analysisData.profitability,
+        warnings: analysisData.warnings || [],
+        positives: analysisData.positives || [],
+        videos: videosData?.videos || []
+      };
+
+      setAnalysisResult(result);
+
+      // Save to history if logged in
+      if (user) {
+        await saveToHistory(result);
+      }
+
+      toast({
+        title: "Analizė baigta!",
+        description: user ? "Rezultatai išsaugoti į istoriją" : "Prisijunkite, kad išsaugotumėte rezultatus",
+      });
+
+    } catch (error) {
+      console.error("Analysis error:", error);
+      toast({
+        title: "Klaida",
+        description: error instanceof Error ? error.message : "Nepavyko atlikti analizės",
+        variant: "destructive",
+      });
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
+
+  const saveToHistory = async (result: AnalysisData) => {
+    const { error } = await supabase.from("analysis_history").insert({
+      user_id: user!.id,
+      vehicle_make: result.vehicleInfo.make,
+      vehicle_model: result.vehicleInfo.model,
+      vehicle_year: result.vehicleInfo.year,
+      vehicle_mileage: result.vehicleInfo.mileage,
+      vehicle_fuel_type: result.vehicleInfo.fuelType,
+      vehicle_transmission: result.vehicleInfo.transmission,
+      listing_url: listingUrl || null,
+      description: description || null,
+      current_price: result.marketAnalysis.currentPrice,
+      market_average: result.marketAnalysis.marketAverage,
+      price_rating: result.marketAnalysis.priceRating,
+      estimated_resale_value: result.marketAnalysis.estimatedResaleValue,
+      repair_total_cost: result.repairEstimate.totalCost,
+      repair_items: result.repairEstimate.items,
+      is_profitable: result.profitability.isProfitable,
+      potential_profit: result.profitability.potentialProfit,
+      recommendation: result.profitability.recommendation,
+      warnings: result.warnings,
+      positives: result.positives,
+      videos: result.videos
     });
+
+    if (error) {
+      console.error("Error saving to history:", error);
+    }
   };
 
   const features = [
@@ -168,6 +203,13 @@ const Index = () => {
               Įkelkite skelbimo nuotraukas ir aprašymą – AI išanalizuos rinkos kainą, 
               apskaičiuos remonto kaštus ir parodys ar apsimoka pirkti.
             </p>
+
+            {!user && (
+              <p className="text-sm text-muted-foreground mb-4">
+                <Save className="w-4 h-4 inline mr-1" />
+                Prisijunkite, kad išsaugotumėte analizių istoriją
+              </p>
+            )}
           </div>
 
           {/* Features Grid */}
@@ -222,7 +264,7 @@ const Index = () => {
                 {isAnalyzing ? (
                   <>
                     <div className="w-5 h-5 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
-                    Analizuojama...
+                    Analizuojama su AI...
                   </>
                 ) : (
                   <>
