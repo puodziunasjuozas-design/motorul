@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Camera, TrendingUp, Wrench, Play, Calculator, Sparkles, ArrowRight, Save } from "lucide-react";
+import { Camera, TrendingUp, Wrench, Play, Calculator, ArrowRight, Save } from "lucide-react";
 import Header from "@/components/Header";
 import UploadZone from "@/components/UploadZone";
 import DescriptionInput from "@/components/DescriptionInput";
@@ -167,21 +167,15 @@ const Index = () => {
         
         <div className="container mx-auto px-6 relative">
           <div className="max-w-3xl mx-auto text-center mb-16">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-sm mb-6 animate-fade-in">
-              <Sparkles className="w-4 h-4 text-primary" />
-              <span>AI paremta transporto priemonių analizė</span>
-            </div>
             
-            <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight animate-slide-up">
-              Išmanusis <span className="gradient-text text-red-800">auto pirkimo</span> patarėjas
+            
+            <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight animate-slide-up">AUTO / MOTO
+analizė ir patarimai<span className="gradient-text text-red-800">auto pirkimo</span> patarėjas
             </h1>
             
             <p className="text-lg text-muted-foreground mb-8 animate-slide-up" style={{
             animationDelay: "100ms"
-          }}>
-              Įkelkite skelbimo nuotraukas ir aprašymą – AI išanalizuos rinkos kainą, 
-              apskaičiuos remonto kaštus ir parodys ar apsimoka pirkti.
-            </p>
+          }}>Įkelkite skelbimo nuotraukas ir aprašymą – išanalizuosime rinkos kainą, apskaičiuosime remonto kaštus ir parodysime ar apsimoka pirkti. Nusipirkus surasime detalių remontui, taisymo vaizdo medžiagos</p>
 
             {!user && <p className="text-sm text-muted-foreground mb-4">
                 <Save className="w-4 h-4 inline mr-1" />
