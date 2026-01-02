@@ -173,7 +173,7 @@ const Index = () => {
             </div>
             
             <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight animate-slide-up">
-              Išmanusis <span className="gradient-text">auto pirkimo</span> patarėjas
+              Išmanusis <span className="gradient-text text-red-800">auto pirkimo</span> patarėjas
             </h1>
             
             <p className="text-lg text-muted-foreground mb-8 animate-slide-up" style={{
