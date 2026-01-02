@@ -16,8 +16,8 @@ const FeatureCard = ({
   }}>
       <div className="relative mb-4">
         <div className="absolute inset-0 bg-primary/20 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
-        <div className="relative w-12 h-12 transition-colors flex-row flex items-center justify-center rounded shadow-none opacity-100 border-solid border-0 text-primary-foreground bg-[#c20505]">
-          <Icon className="w-6 h-6 text-primary" />
+        <div className="relative w-12 h-12 transition-colors flex-row flex items-center justify-center rounded shadow-none opacity-100 border-solid border-0 text-primary-foreground bg-red-800">
+          <Icon className="bg-red-800 w-[30px] h-[30px] text-black" />
         </div>
       </div>
       <h3 className="mb-2 text-2xl font-extrabold text-center">{title}</h3>
