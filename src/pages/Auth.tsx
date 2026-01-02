@@ -1,19 +1,16 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, forwardRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { Car, Bike, Mail, Lock, ArrowLeft } from "lucide-react";
 import { z } from "zod";
 
-const authSchema = z.object({
-  email: z.string().email("Neteisingas el. pašto formatas"),
-  password: z.string().min(6, "Slaptažodis turi būti bent 6 simbolių"),
-});
-
-const Auth = () => {
+const Auth = forwardRef<HTMLDivElement>((_, ref) => {
+  const { t } = useLanguage();
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -23,6 +20,11 @@ const Auth = () => {
   const { signUp, signIn, user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  const authSchema = z.object({
+    email: z.string().email(t("invalidEmail")),
+    password: z.string().min(6, t("passwordMin")),
+  });
 
   useEffect(() => {
     if (user) {
@@ -61,21 +63,21 @@ const Auth = () => {
         if (error) {
           if (error.message.includes("Invalid login credentials")) {
             toast({
-              title: "Klaida",
-              description: "Neteisingas el. paštas arba slaptažodis",
+              title: t("error"),
+              description: t("wrongCredentials"),
               variant: "destructive",
             });
           } else {
             toast({
-              title: "Klaida",
+              title: t("error"),
               description: error.message,
               variant: "destructive",
             });
           }
         } else {
           toast({
-            title: "Sėkmingai prisijungėte!",
-            description: "Sveiki sugrįžę",
+            title: t("successLogin"),
+            description: t("welcomeBack"),
           });
           navigate("/");
         }
@@ -84,21 +86,21 @@ const Auth = () => {
         if (error) {
           if (error.message.includes("already registered")) {
             toast({
-              title: "Klaida",
-              description: "Šis el. paštas jau užregistruotas",
+              title: t("error"),
+              description: t("emailExists"),
               variant: "destructive",
             });
           } else {
             toast({
-              title: "Klaida",
+              title: t("error"),
               description: error.message,
               variant: "destructive",
             });
           }
         } else {
           toast({
-            title: "Paskyra sukurta!",
-            description: "Galite pradėti naudotis",
+            title: t("accountCreated"),
+            description: t("startUsing"),
           });
           navigate("/");
         }
@@ -109,8 +111,7 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-6">
-      {/* Background glow */}
+    <div ref={ref} className="min-h-screen bg-background flex items-center justify-center p-6">
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-primary/5 blur-[120px] rounded-full" />
       
       <div className="w-full max-w-md relative">
@@ -120,11 +121,10 @@ const Auth = () => {
           className="mb-6"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
-          Grįžti
+          {t("goBack")}
         </Button>
 
         <Card className="glass-card p-8">
-          {/* Logo */}
           <div className="flex items-center justify-center gap-3 mb-8">
             <div className="relative">
               <div className="absolute inset-0 bg-primary/20 blur-xl rounded-full" />
@@ -135,27 +135,27 @@ const Auth = () => {
             </div>
             <div>
               <h1 className="text-2xl font-bold tracking-tight">
-                <span className="gradient-text">Auto</span>
-                <span className="text-foreground">Analizė</span>
+                <span className="gradient-text">{t("title").split("A")[0]}A</span>
+                <span className="text-foreground">{t("title").slice(t("title").indexOf("A") + 1)}</span>
               </h1>
             </div>
           </div>
 
           <h2 className="text-xl font-semibold text-center mb-6">
-            {isLogin ? "Prisijungti" : "Registracija"}
+            {isLogin ? t("signIn") : t("signUp")}
           </h2>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <label className="flex items-center gap-2 text-sm font-medium">
                 <Mail className="w-4 h-4 text-primary" />
-                El. paštas
+                {t("email")}
               </label>
               <Input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="jusu@pastas.lt"
+                placeholder={t("emailPlaceholder")}
                 className={`bg-card border-border focus:border-primary ${errors.email ? 'border-destructive' : ''}`}
               />
               {errors.email && (
@@ -166,7 +166,7 @@ const Auth = () => {
             <div className="space-y-2">
               <label className="flex items-center gap-2 text-sm font-medium">
                 <Lock className="w-4 h-4 text-primary" />
-                Slaptažodis
+                {t("password")}
               </label>
               <Input
                 type="password"
@@ -190,9 +190,9 @@ const Auth = () => {
               {isLoading ? (
                 <div className="w-5 h-5 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
               ) : isLogin ? (
-                "Prisijungti"
+                t("signIn")
               ) : (
-                "Registruotis"
+                t("signUp")
               )}
             </Button>
           </form>
@@ -204,9 +204,9 @@ const Auth = () => {
               className="text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
               {isLogin ? (
-                <>Neturite paskyros? <span className="text-primary">Registruotis</span></>
+                <>{t("noAccount")} <span className="text-primary">{t("signUp")}</span></>
               ) : (
-                <>Jau turite paskyrą? <span className="text-primary">Prisijungti</span></>
+                <>{t("hasAccount")} <span className="text-primary">{t("signIn")}</span></>
               )}
             </button>
           </div>
@@ -214,6 +214,8 @@ const Auth = () => {
       </div>
     </div>
   );
-};
+});
+
+Auth.displayName = "Auth";
 
 export default Auth;

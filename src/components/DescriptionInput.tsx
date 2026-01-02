@@ -1,39 +1,56 @@
 import { Textarea } from "@/components/ui/textarea";
 import { Link2, FileText } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { useLanguage } from "@/contexts/LanguageContext";
+
 interface DescriptionInputProps {
   description: string;
   onDescriptionChange: (value: string) => void;
   listingUrl: string;
   onListingUrlChange: (value: string) => void;
 }
+
 const DescriptionInput = ({
   description,
   onDescriptionChange,
   listingUrl,
   onListingUrlChange
 }: DescriptionInputProps) => {
-  return <div className="space-y-4">
+  const { t } = useLanguage();
+
+  return (
+    <div className="space-y-4">
       <div className="space-y-2">
         <label className="flex items-center gap-2 text-sm font-medium">
           <Link2 className="w-4 h-4 text-red-800" />
-          Skelbimo nuoroda (nebūtina)
+          {t("listingUrl")}
         </label>
-        <Input value={listingUrl} onChange={e => onListingUrlChange(e.target.value)} placeholder="https://autoplius.lt/..." className="bg-card border-border focus:border-primary" />
+        <Input
+          value={listingUrl}
+          onChange={e => onListingUrlChange(e.target.value)}
+          placeholder={t("listingUrlPlaceholder")}
+          className="bg-card border-border focus:border-primary"
+        />
       </div>
       
       <div className="space-y-2">
         <label className="flex items-center gap-2 text-sm font-medium">
           <FileText className="w-4 h-4 text-primary" />
-          Aprašymas iš skelbimo
+          {t("description")}
         </label>
-        <Textarea value={description} onChange={e => onDescriptionChange(e.target.value)} placeholder="Įklijuokite skelbimo aprašymą čia...
-
-Pvz.: BMW 320d, 2018 m., 150 000 km, dyzelinas, automatinė pavarų dėžė, pilna serviso istorija..." rows={6} className="bg-card border-border focus:border-primary resize-none" />
+        <Textarea
+          value={description}
+          onChange={e => onDescriptionChange(e.target.value)}
+          placeholder={t("descriptionPlaceholder")}
+          rows={6}
+          className="bg-card border-border focus:border-primary resize-none"
+        />
         <p className="text-xs text-muted-foreground">
-          Kuo daugiau informacijos pateiksite, tuo tikslesnė bus analizė
+          {t("moreInfoBetterAnalysis")}
         </p>
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default DescriptionInput;
