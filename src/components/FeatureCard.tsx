@@ -15,7 +15,7 @@ const FeatureCard = ({
     animationDelay: `${delay}ms`
   }} className="glass-card p-6 transition-all duration-300 group animate-slide-up border-red-800">
       <div className="relative mb-4">
-        <div className="absolute inset-0 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity bg-red-800" />
+        <div className="absolute inset-0 blur-xl opacity-0 group-hover:opacity-100 transition-opacity rounded-none shadow-none bg-inherit" />
         <div className="relative w-12 h-12 transition-colors flex-row flex items-center justify-center rounded shadow-none opacity-100 border-solid border-0 text-primary-foreground bg-red-800">
           <Icon className="bg-red-800 w-[30px] h-[30px] text-black" />
         </div>
