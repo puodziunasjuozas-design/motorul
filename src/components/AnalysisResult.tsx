@@ -10,8 +10,8 @@ import {
   Play,
   ExternalLink
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export interface AnalysisData {
   vehicleInfo: {
@@ -56,6 +56,8 @@ interface AnalysisResultProps {
 }
 
 const AnalysisResult = ({ data }: AnalysisResultProps) => {
+  const { t } = useLanguage();
+
   const getPriceColor = (rating: string) => {
     switch (rating) {
       case "good": return "stat-positive";
@@ -66,9 +68,9 @@ const AnalysisResult = ({ data }: AnalysisResultProps) => {
 
   const getPriceLabel = (rating: string) => {
     switch (rating) {
-      case "good": return "Gera kaina";
-      case "overpriced": return "Per brangu";
-      default: return "Vidutinė kaina";
+      case "good": return t("goodPrice");
+      case "overpriced": return t("overpriced");
+      default: return t("averagePrice");
     }
   };
 
@@ -86,27 +88,27 @@ const AnalysisResult = ({ data }: AnalysisResultProps) => {
       <Card className="glass-card p-6">
         <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
           <Target className="w-5 h-5 text-primary" />
-          Transporto priemonė
+          {t("vehicle")}
         </h3>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           <div>
-            <p className="text-sm text-muted-foreground">Markė / Modelis</p>
+            <p className="text-sm text-muted-foreground">{t("makeModel")}</p>
             <p className="font-medium">{data.vehicleInfo.make} {data.vehicleInfo.model}</p>
           </div>
           <div>
-            <p className="text-sm text-muted-foreground">Metai</p>
+            <p className="text-sm text-muted-foreground">{t("year")}</p>
             <p className="font-medium">{data.vehicleInfo.year}</p>
           </div>
           <div>
-            <p className="text-sm text-muted-foreground">Rida</p>
+            <p className="text-sm text-muted-foreground">{t("mileage")}</p>
             <p className="font-medium">{data.vehicleInfo.mileage}</p>
           </div>
           <div>
-            <p className="text-sm text-muted-foreground">Kuras</p>
+            <p className="text-sm text-muted-foreground">{t("fuel")}</p>
             <p className="font-medium">{data.vehicleInfo.fuelType}</p>
           </div>
           <div>
-            <p className="text-sm text-muted-foreground">Pavarų dėžė</p>
+            <p className="text-sm text-muted-foreground">{t("transmission")}</p>
             <p className="font-medium">{data.vehicleInfo.transmission}</p>
           </div>
         </div>
@@ -116,11 +118,11 @@ const AnalysisResult = ({ data }: AnalysisResultProps) => {
       <Card className="glass-card p-6">
         <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
           <DollarSign className="w-5 h-5 text-primary" />
-          Rinkos analizė
+          {t("marketAnalysis")}
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="text-center p-4 rounded-xl bg-secondary/30">
-            <p className="text-sm text-muted-foreground mb-1">Prašoma kaina</p>
+            <p className="text-sm text-muted-foreground mb-1">{t("currentPrice")}</p>
             <p className={`text-2xl font-bold ${getPriceColor(data.marketAnalysis.priceRating)}`}>
               €{data.marketAnalysis.currentPrice.toLocaleString()}
             </p>
@@ -135,16 +137,16 @@ const AnalysisResult = ({ data }: AnalysisResultProps) => {
             </span>
           </div>
           <div className="text-center p-4 rounded-xl bg-secondary/30">
-            <p className="text-sm text-muted-foreground mb-1">Rinkos vidurkis</p>
+            <p className="text-sm text-muted-foreground mb-1">{t("marketAverage")}</p>
             <p className="text-2xl font-bold text-foreground">
               €{data.marketAnalysis.marketAverage.toLocaleString()}
             </p>
             <span className="text-xs text-muted-foreground">
-              panašių automobilių
+              {t("similarVehicles")}
             </span>
           </div>
           <div className="text-center p-4 rounded-xl bg-secondary/30">
-            <p className="text-sm text-muted-foreground mb-1">Perpardavimo vertė</p>
+            <p className="text-sm text-muted-foreground mb-1">{t("resaleValue")}</p>
             <p className="text-2xl font-bold text-foreground">
               €{data.marketAnalysis.estimatedResaleValue.toLocaleString()}
             </p>
@@ -160,7 +162,7 @@ const AnalysisResult = ({ data }: AnalysisResultProps) => {
       <Card className="glass-card p-6">
         <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
           <Wrench className="w-5 h-5 text-primary" />
-          Remonto sąmata
+          {t("repairEstimate")}
         </h3>
         <div className="space-y-3">
           {data.repairEstimate.items.map((item, index) => (
@@ -179,7 +181,7 @@ const AnalysisResult = ({ data }: AnalysisResultProps) => {
             </div>
           ))}
           <div className="flex items-center justify-between p-4 rounded-lg bg-primary/10 border border-primary/30 mt-4">
-            <span className="font-semibold">Viso remonto kaina:</span>
+            <span className="font-semibold">{t("totalRepairCost")}:</span>
             <span className="text-xl font-bold text-primary">
               €{data.repairEstimate.totalCost.toLocaleString()}
             </span>
@@ -203,7 +205,7 @@ const AnalysisResult = ({ data }: AnalysisResultProps) => {
           </div>
           <div className="flex-1">
             <h3 className="text-lg font-semibold mb-1">
-              {data.profitability.isProfitable ? "Apsimoka pirkti!" : "Nerekomenduojama pirkti"}
+              {data.profitability.isProfitable ? t("worthBuying") : t("notRecommended")}
             </h3>
             <p className={`text-2xl font-bold mb-2 ${
               data.profitability.isProfitable ? "stat-positive" : "stat-negative"
@@ -221,7 +223,7 @@ const AnalysisResult = ({ data }: AnalysisResultProps) => {
           <Card className="glass-card p-6 border-destructive/30">
             <h3 className="text-lg font-semibold mb-3 flex items-center gap-2 text-destructive">
               <AlertTriangle className="w-5 h-5" />
-              Perspėjimai
+              {t("warnings")}
             </h3>
             <ul className="space-y-2">
               {data.warnings.map((warning, index) => (
@@ -238,7 +240,7 @@ const AnalysisResult = ({ data }: AnalysisResultProps) => {
           <Card className="glass-card p-6 border-primary/30">
             <h3 className="text-lg font-semibold mb-3 flex items-center gap-2 text-primary">
               <CheckCircle2 className="w-5 h-5" />
-              Privalumai
+              {t("positives")}
             </h3>
             <ul className="space-y-2">
               {data.positives.map((positive, index) => (
@@ -257,7 +259,7 @@ const AnalysisResult = ({ data }: AnalysisResultProps) => {
         <Card className="glass-card p-6">
           <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
             <Play className="w-5 h-5 text-primary" />
-            Video instrukcijos remontui
+            {t("youtubeVideos")}
           </h3>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {data.videos.map((video, index) => (

@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import Header from "@/components/Header";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { ArrowLeft, Trash2, TrendingUp, TrendingDown, Calendar, Car } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -25,6 +26,7 @@ const History = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { t, language } = useLanguage();
 
   useEffect(() => {
     if (!user) {
@@ -44,8 +46,8 @@ const History = () => {
     if (error) {
       console.error("Error fetching analyses:", error);
       toast({
-        title: "Klaida",
-        description: "Nepavyko užkrauti istorijos",
+        title: t("error"),
+        description: t("failedToLoad"),
         variant: "destructive",
       });
     } else {
@@ -62,21 +64,31 @@ const History = () => {
 
     if (error) {
       toast({
-        title: "Klaida",
-        description: "Nepavyko ištrinti",
+        title: t("error"),
+        description: t("failedToDelete"),
         variant: "destructive",
       });
     } else {
       setAnalyses(analyses.filter(a => a.id !== id));
       toast({
-        title: "Ištrinta",
-        description: "Analizė pašalinta iš istorijos",
+        title: t("deleted"),
+        description: t("analysisRemoved"),
       });
     }
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("lt-LT", {
+    const localeMap: Record<string, string> = {
+      lt: "lt-LT",
+      en: "en-US",
+      ru: "ru-RU",
+      es: "es-ES",
+      fr: "fr-FR",
+      pl: "pl-PL",
+      de: "de-DE",
+    };
+    
+    return new Date(dateString).toLocaleDateString(localeMap[language] || "en-US", {
       year: "numeric",
       month: "long",
       day: "numeric",
@@ -97,10 +109,10 @@ const History = () => {
             className="mb-6"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Grįžti
+            {t("goBack")}
           </Button>
 
-          <h1 className="text-3xl font-bold mb-8">Analizių istorija</h1>
+          <h1 className="text-3xl font-bold mb-8">{t("analysisHistory")}</h1>
 
           {loading ? (
             <div className="flex items-center justify-center py-20">
@@ -109,12 +121,12 @@ const History = () => {
           ) : analyses.length === 0 ? (
             <Card className="glass-card p-12 text-center">
               <Car className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-              <h2 className="text-xl font-semibold mb-2">Nėra išsaugotų analizių</h2>
+              <h2 className="text-xl font-semibold mb-2">{t("noSavedAnalyses")}</h2>
               <p className="text-muted-foreground mb-6">
-                Atlikite pirmą analizę ir ji bus išsaugota čia
+                {t("doFirstAnalysis")}
               </p>
               <Button variant="hero" onClick={() => navigate("/")}>
-                Pradėti analizę
+                {t("startAnalysis")}
               </Button>
             </Card>
           ) : (
@@ -148,13 +160,13 @@ const History = () => {
                       <div className="flex items-center gap-6 mt-4">
                         {analysis.current_price && (
                           <div>
-                            <p className="text-xs text-muted-foreground">Kaina</p>
+                            <p className="text-xs text-muted-foreground">{t("price")}</p>
                             <p className="font-mono font-medium">€{analysis.current_price.toLocaleString()}</p>
                           </div>
                         )}
                         {analysis.potential_profit !== null && (
                           <div>
-                            <p className="text-xs text-muted-foreground">Potencialus pelnas</p>
+                            <p className="text-xs text-muted-foreground">{t("potentialProfit")}</p>
                             <p className={`font-mono font-medium ${
                               analysis.is_profitable ? "stat-positive" : "stat-negative"
                             }`}>
