@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Camera, TrendingUp, Wrench, Play, Calculator, ArrowRight, Save } from "lucide-react";
+import { Camera, TrendingUp, Wrench, Play, Calculator, ArrowRight, Save, Sparkles } from "lucide-react";
 import Header from "@/components/Header";
 import UploadZone from "@/components/UploadZone";
 import DescriptionInput from "@/components/DescriptionInput";
