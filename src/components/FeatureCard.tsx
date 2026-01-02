@@ -11,9 +11,9 @@ const FeatureCard = ({
   description,
   delay = 0
 }: FeatureCardProps) => {
-  return <div className="glass-card p-6 hover:border-primary/30 transition-all duration-300 group animate-slide-up" style={{
+  return <div style={{
     animationDelay: `${delay}ms`
-  }}>
+  }} className="glass-card p-6 transition-all duration-300 group animate-slide-up border-red-800">
       <div className="relative mb-4">
         <div className="absolute inset-0 bg-primary/20 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
         <div className="relative w-12 h-12 transition-colors flex-row flex items-center justify-center rounded shadow-none opacity-100 border-solid border-0 text-primary-foreground bg-red-800">
