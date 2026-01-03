@@ -1,4 +1,4 @@
-import { TrendingUp, TrendingDown, AlertTriangle, CheckCircle2, Wrench, DollarSign, Clock, Play, ExternalLink } from "lucide-react";
+import { TrendingUp, TrendingDown, AlertTriangle, CheckCircle2, Wrench, DollarSign, Target, Clock, Play, ExternalLink } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { useLanguage } from "@/contexts/LanguageContext";
 export interface AnalysisData {
@@ -81,29 +81,29 @@ const AnalysisResult = ({
       {/* Vehicle Info */}
       <Card className="glass-card p-6">
         <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-          
+          <Target className="w-5 h-5 text-primary" />
           {t("vehicle")}
         </h3>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           <div>
             <p className="text-sm text-muted-foreground">{t("makeModel")}</p>
-            <p className="text-2xl font-semibold">{data.vehicleInfo.make} {data.vehicleInfo.model}</p>
+            <p className="font-medium">{data.vehicleInfo.make} {data.vehicleInfo.model}</p>
           </div>
           <div>
             <p className="text-sm text-muted-foreground">{t("year")}</p>
-            <p className="text-2xl font-semibold">{data.vehicleInfo.year}</p>
+            <p className="font-medium">{data.vehicleInfo.year}</p>
           </div>
           <div>
             <p className="text-sm text-muted-foreground">{t("mileage")}</p>
-            <p className="text-2xl font-semibold">{data.vehicleInfo.mileage}</p>
+            <p className="font-medium">{data.vehicleInfo.mileage}</p>
           </div>
           <div>
             <p className="text-sm text-muted-foreground">{t("fuel")}</p>
-            <p className="text-2xl font-semibold">{data.vehicleInfo.fuelType}</p>
+            <p className="font-medium">{data.vehicleInfo.fuelType}</p>
           </div>
           <div>
             <p className="text-sm text-muted-foreground">{t("transmission")}</p>
-            <p className="text-2xl font-semibold">{data.vehicleInfo.transmission}</p>
+            <p className="font-medium">{data.vehicleInfo.transmission}</p>
           </div>
         </div>
       </Card>
@@ -148,7 +148,7 @@ const AnalysisResult = ({
 
       {/* Repair Estimate */}
       <Card className="glass-card p-6">
-        <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+        <h3 className="text-lg font-semibold mb-4 items-center text-black border-red-800 bg-red-800 flex flex-row gap-[8px]">
           <Wrench className="w-5 h-5 text-primary" />
           {t("repairEstimate")}
         </h3>
