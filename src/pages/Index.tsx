@@ -10,17 +10,21 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
-
 const Index = () => {
   const [images, setImages] = useState<File[]>([]);
   const [description, setDescription] = useState("");
   const [listingUrl, setListingUrl] = useState("");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisResult, setAnalysisResult] = useState<AnalysisData | null>(null);
-  const { toast } = useToast();
-  const { user } = useAuth();
-  const { t } = useLanguage();
-
+  const {
+    toast
+  } = useToast();
+  const {
+    user
+  } = useAuth();
+  const {
+    t
+  } = useLanguage();
   const fileToBase64 = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -29,7 +33,6 @@ const Index = () => {
       reader.onerror = error => reject(error);
     });
   };
-
   const handleAnalyze = async () => {
     if (images.length === 0 && !description) {
       toast({
@@ -43,8 +46,10 @@ const Index = () => {
     setAnalysisResult(null);
     try {
       const imageBase64List = await Promise.all(images.slice(0, 5).map(file => fileToBase64(file)));
-
-      const { data: analysisData, error: analysisError } = await supabase.functions.invoke('analyze-vehicle', {
+      const {
+        data: analysisData,
+        error: analysisError
+      } = await supabase.functions.invoke('analyze-vehicle', {
         body: {
           description,
           listingUrl,
@@ -57,15 +62,15 @@ const Index = () => {
       if (analysisData.error) {
         throw new Error(analysisData.error);
       }
-
-      const { data: videosData } = await supabase.functions.invoke('search-youtube', {
+      const {
+        data: videosData
+      } = await supabase.functions.invoke('search-youtube', {
         body: {
           searchQueries: analysisData.youtubeSearchQueries || [],
           vehicleMake: analysisData.vehicleInfo?.make,
           vehicleModel: analysisData.vehicleInfo?.model
         }
       });
-
       const result: AnalysisData = {
         vehicleInfo: analysisData.vehicleInfo,
         marketAnalysis: analysisData.marketAnalysis,
@@ -76,7 +81,6 @@ const Index = () => {
         videos: videosData?.videos || []
       };
       setAnalysisResult(result);
-
       if (user) {
         await saveToHistory(result);
       }
@@ -95,9 +99,10 @@ const Index = () => {
       setIsAnalyzing(false);
     }
   };
-
   const saveToHistory = async (result: AnalysisData) => {
-    const { error } = await supabase.from("analysis_history").insert({
+    const {
+      error
+    } = await supabase.from("analysis_history").insert({
       user_id: user!.id,
       vehicle_make: result.vehicleInfo.make,
       vehicle_model: result.vehicleInfo.model,
@@ -124,42 +129,32 @@ const Index = () => {
       console.error("Error saving to history:", error);
     }
   };
-
-  const features = [
-    {
-      icon: Camera,
-      titleKey: "photoAnalysis",
-      descriptionKey: "photoAnalysisDesc"
-    },
-    {
-      icon: TrendingUp,
-      titleKey: "marketAnalysisTitle",
-      descriptionKey: "marketAnalysisDesc"
-    },
-    {
-      icon: Calculator,
-      titleKey: "profitCalculator",
-      descriptionKey: "profitCalculatorDesc"
-    },
-    {
-      icon: Wrench,
-      titleKey: "repairEstimateTitle",
-      descriptionKey: "repairEstimateDesc"
-    },
-    {
-      icon: Play,
-      titleKey: "videoInstructions",
-      descriptionKey: "videoInstructionsDesc"
-    },
-    {
-      icon: Sparkles,
-      titleKey: "aiRecommendations",
-      descriptionKey: "aiRecommendationsDesc"
-    }
-  ];
-
-  return (
-    <div className="min-h-screen bg-background">
+  const features = [{
+    icon: Camera,
+    titleKey: "photoAnalysis",
+    descriptionKey: "photoAnalysisDesc"
+  }, {
+    icon: TrendingUp,
+    titleKey: "marketAnalysisTitle",
+    descriptionKey: "marketAnalysisDesc"
+  }, {
+    icon: Calculator,
+    titleKey: "profitCalculator",
+    descriptionKey: "profitCalculatorDesc"
+  }, {
+    icon: Wrench,
+    titleKey: "repairEstimateTitle",
+    descriptionKey: "repairEstimateDesc"
+  }, {
+    icon: Play,
+    titleKey: "videoInstructions",
+    descriptionKey: "videoInstructionsDesc"
+  }, {
+    icon: Sparkles,
+    titleKey: "aiRecommendations",
+    descriptionKey: "aiRecommendationsDesc"
+  }];
+  return <div className="min-h-screen bg-background">
       <Header />
       
       {/* Hero Section */}
@@ -172,29 +167,21 @@ const Index = () => {
               <span className="text-red-600 font-extrabold">{t("heroHighlight")}</span> {t("heroTitle")}
             </h1>
             
-            <p className="text-lg text-muted-foreground mb-8 animate-slide-up" style={{ animationDelay: "100ms" }}>
+            <p className="text-lg text-muted-foreground mb-8 animate-slide-up" style={{
+            animationDelay: "100ms"
+          }}>
               {t("heroSubtitle")}
             </p>
 
-            {!user && (
-              <p className="text-sm text-muted-foreground mb-4">
-                <Save className="w-4 h-4 inline mr-1" />
+            {!user && <p className="text-sm text-muted-foreground mb-4">
+                <Save className="w-4 h-4 inline mr-1 text-red-800" />
                 {t("loginToSaveHistory")}
-              </p>
-            )}
+              </p>}
           </div>
 
           {/* Features Grid */}
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-4xl mx-auto mb-16">
-            {features.map((feature, index) => (
-              <FeatureCard
-                key={feature.titleKey}
-                icon={feature.icon}
-                title={t(feature.titleKey)}
-                description={t(feature.descriptionKey)}
-                delay={index * 100}
-              />
-            ))}
+            {features.map((feature, index) => <FeatureCard key={feature.titleKey} icon={feature.icon} title={t(feature.titleKey)} description={t(feature.descriptionKey)} delay={index * 100} />)}
           </div>
         </div>
       </section>
@@ -212,41 +199,24 @@ const Index = () => {
               <UploadZone images={images} onImagesChange={setImages} isAnalyzing={isAnalyzing} />
               
               <div className="border-t border-border pt-8">
-                <DescriptionInput
-                  description={description}
-                  onDescriptionChange={setDescription}
-                  listingUrl={listingUrl}
-                  onListingUrlChange={setListingUrl}
-                />
+                <DescriptionInput description={description} onDescriptionChange={setDescription} listingUrl={listingUrl} onListingUrlChange={setListingUrl} />
               </div>
 
-              <Button
-                variant="hero"
-                size="xl"
-                className="w-full"
-                onClick={handleAnalyze}
-                disabled={isAnalyzing || (images.length === 0 && !description)}
-              >
-                {isAnalyzing ? (
-                  <>
+              <Button variant="hero" size="xl" className="w-full" onClick={handleAnalyze} disabled={isAnalyzing || images.length === 0 && !description}>
+                {isAnalyzing ? <>
                     <div className="w-5 h-5 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
                     {t("analyzing")}
-                  </>
-                ) : (
-                  <>
+                  </> : <>
                     {t("analyzeWithAI")}
                     <ArrowRight className="w-5 h-5" />
-                  </>
-                )}
+                  </>}
               </Button>
             </div>
 
-            {analysisResult && (
-              <div className="mt-12">
+            {analysisResult && <div className="mt-12">
                 <h2 className="text-2xl font-bold mb-6 text-center">{t("analysisResults")}</h2>
                 <AnalysisResult data={analysisResult} />
-              </div>
-            )}
+              </div>}
           </div>
         </div>
       </section>
@@ -257,8 +227,6 @@ const Index = () => {
           <p>© 2026 {t("title")}</p>
         </div>
       </footer>
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
