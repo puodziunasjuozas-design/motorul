@@ -169,7 +169,7 @@ const Index = () => {
         <div className="container mx-auto px-6 relative">
           <div className="max-w-3xl mx-auto text-center mb-16">
             <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight animate-slide-up">
-              {t("heroTitle")} <span className="gradient-text text-red-800">{t("heroHighlight")}</span> patarėjas
+              <span className="text-red-600 font-extrabold">{t("heroHighlight")}</span> {t("heroTitle")}
             </h1>
             
             <p className="text-lg text-muted-foreground mb-8 animate-slide-up" style={{ animationDelay: "100ms" }}>
