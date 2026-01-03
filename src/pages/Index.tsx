@@ -192,7 +192,7 @@ const Index = () => {
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-12">
               <h2 className="text-3xl font-bold mb-4">{t("startAnalysis")}</h2>
-              <p className="text-muted-foreground">{t("startAnalysisDesc")}</p>
+              <p className="text-muted-foreground text-center">{t("startAnalysisDesc")}</p>
             </div>
 
             <div className="glass-card p-8 space-y-8">
