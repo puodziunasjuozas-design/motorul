@@ -75,7 +75,7 @@ const translations: Record<Language, Record<string, string>> = {
     passwordMin: "Slaptažodis turi būti bent 6 simbolių",
     heroTitle: "analizė ir taisymo patarimai",
     heroHighlight: "AUTO / MOTO",
-    heroSubtitle: "Įkelkite skelbimo nuotraukas ir aprašymą – išanalizuosime rinkos kainą, apskaičiuosime remonto kaštus ir parodysime ar apsimoka pirkti.",
+    heroSubtitle: "Įkelkite skelbimo nuotraukas ir aprašymą – išanalizuosime rinkos kainą, apskaičiuosime remonto kaštus ir parodysime ar apsimoka pirkti. Nusiprikus surasime dalių ir remonto vaizdo medžiagos",
     loginToSaveHistory: "Prisijunkite, kad išsaugotumėte analizių istoriją",
     photoAnalysis: "Nuotraukų analizė",
     photoAnalysisDesc: "AI atpažįsta automobilį, defektus ir bendrą būklę iš nuotraukų",
