@@ -5,6 +5,7 @@ import UploadZone from "@/components/UploadZone";
 import DescriptionInput from "@/components/DescriptionInput";
 import AnalysisResult, { AnalysisData } from "@/components/AnalysisResult";
 import FeatureCard from "@/components/FeatureCard";
+import ScrollingCar from "@/components/ScrollingCar";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
@@ -185,6 +186,9 @@ const Index = () => {
           </div>
         </div>
       </section>
+
+      {/* Scrolling Car Animation */}
+      <ScrollingCar />
 
       {/* Analysis Section */}
       <section className="py-20 bg-card/30">
