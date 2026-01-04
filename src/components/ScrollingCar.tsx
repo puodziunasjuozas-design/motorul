@@ -3,15 +3,26 @@ import carGif from "@/assets/car-rotating.gif";
 
 const ScrollingCar = () => {
   const [isScrolling, setIsScrolling] = useState(false);
+  const [scrollDirection, setScrollDirection] = useState<"down" | "up">("down");
   const [gifKey, setGifKey] = useState(0);
   const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const lastScrollY = useRef(0);
 
   useEffect(() => {
     const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      
+      // Detect scroll direction
+      if (currentScrollY > lastScrollY.current) {
+        setScrollDirection("down");
+      } else if (currentScrollY < lastScrollY.current) {
+        setScrollDirection("up");
+      }
+      lastScrollY.current = currentScrollY;
+
       // Start playing when scrolling
       if (!isScrolling) {
         setIsScrolling(true);
-        // Force GIF to restart by changing key
         setGifKey(prev => prev + 1);
       }
 
@@ -41,29 +52,24 @@ const ScrollingCar = () => {
       <div className="container mx-auto px-6">
         <div className="flex justify-center items-center min-h-[200px]">
           <div className="relative">
-            {isScrolling ? (
-              <img
-                key={gifKey}
-                src={carGif}
-                alt="Rotating car"
-                className="w-64 h-auto md:w-80 lg:w-96 object-contain drop-shadow-[0_0_30px_rgba(255,255,255,0.3)]"
-              />
-            ) : (
-              <img
-                src={carGif}
-                alt="Car"
-                className="w-64 h-auto md:w-80 lg:w-96 object-contain drop-shadow-[0_0_30px_rgba(255,255,255,0.3)]"
-                style={{ 
-                  // Pause the GIF by using animation-play-state workaround
-                  animationPlayState: "paused"
-                }}
-              />
-            )}
+            <img
+              key={isScrolling ? gifKey : "static"}
+              src={carGif}
+              alt="Rotating car"
+              className="w-64 h-auto md:w-80 lg:w-96 object-contain transition-transform duration-100"
+              style={{ 
+                transform: scrollDirection === "up" ? "scaleX(-1)" : "scaleX(1)"
+              }}
+            />
+            {/* Blur overlay to hide watermark at bottom */}
+            <div 
+              className="absolute bottom-0 left-0 right-0 h-12 pointer-events-none"
+              style={{
+                background: "linear-gradient(to top, black 0%, black 40%, transparent 100%)"
+              }}
+            />
           </div>
         </div>
-        
-        {/* Decorative glow under car */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 w-48 h-8 bg-white/10 blur-xl rounded-full" />
       </div>
     </section>
   );
