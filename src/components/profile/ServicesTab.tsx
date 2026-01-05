@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Search, MessageCircle, Package, Zap, MessageSquare } from "lucide-react";
+import { Search, Package, Zap, MessageSquare } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -176,7 +176,7 @@ const ServicesTab = () => {
                       <span>{pkg.credits} {t("analyses")}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <MessageCircle className="w-4 h-4 text-primary" />
+                      <MessageSquare className="w-4 h-4 text-primary" />
                       <span>{pkg.messages} {t("messages")}</span>
                     </div>
                   </div>
