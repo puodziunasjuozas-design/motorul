@@ -131,8 +131,8 @@ const ServicesTab = () => {
           {services.map(service => <Card key={service.id} className="bg-zinc-900 border-primary/20 hover:border-primary/40 transition-colors">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between text-black bg-background border-transparent">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 rounded-lg bg-primary/10">
+                  <div className="flex items-center gap-3 bg-transparent">
+                    <div className="p-2 rounded-lg bg-transparent border-primary border-solid">
                       <service.icon className="w-5 h-5 text-primary" />
                     </div>
                     <div>
