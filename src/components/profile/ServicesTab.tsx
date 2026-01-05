@@ -132,8 +132,8 @@ const ServicesTab = () => {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between text-black bg-background border-transparent">
                   <div className="flex items-center gap-3 bg-transparent">
-                    <div className="p-2 rounded-lg bg-transparent border-primary border-solid border">
-                      <service.icon className="w-5 h-5 text-primary" />
+                    <div className="p-2 rounded-lg border-primary border-solid border bg-primary">
+                      <service.icon className="text-black h-[27px] w-[27px] border-solid" />
                     </div>
                     <div>
                       <h4 className="font-medium text-foreground">{service.name}</h4>
