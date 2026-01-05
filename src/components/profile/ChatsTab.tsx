@@ -2,12 +2,11 @@ import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { MessageCircle, Plus, Trash2, Calendar } from "lucide-react";
+import { MessageCircle, Plus, Trash2, Calendar, MessageSquare } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-
 interface ChatConversation {
   id: string;
   title: string | null;
@@ -16,28 +15,28 @@ interface ChatConversation {
   created_at: string;
   updated_at: string;
 }
-
 const ChatsTab = () => {
-  const { t } = useLanguage();
-  const { user } = useAuth();
+  const {
+    t
+  } = useLanguage();
+  const {
+    user
+  } = useAuth();
   const [conversations, setConversations] = useState<ChatConversation[]>([]);
   const [loading, setLoading] = useState(true);
-
   useEffect(() => {
     if (user) {
       fetchConversations();
     }
   }, [user]);
-
   const fetchConversations = async () => {
     if (!user) return;
-    
-    const { data, error } = await supabase
-      .from("chat_conversations")
-      .select("*")
-      .eq("user_id", user.id)
-      .order("updated_at", { ascending: false });
-
+    const {
+      data,
+      error
+    } = await supabase.from("chat_conversations").select("*").eq("user_id", user.id).order("updated_at", {
+      ascending: false
+    });
     if (error) {
       console.error("Error fetching conversations:", error);
       toast.error(t("errorFetchingChats"));
@@ -46,21 +45,17 @@ const ChatsTab = () => {
     }
     setLoading(false);
   };
-
   const handleNewChat = async () => {
     if (!user) return;
-    
-    const { data, error } = await supabase
-      .from("chat_conversations")
-      .insert({
-        user_id: user.id,
-        title: t("newConversation"),
-        is_active: true,
-        messages_count: 0,
-      })
-      .select()
-      .single();
-
+    const {
+      data,
+      error
+    } = await supabase.from("chat_conversations").insert({
+      user_id: user.id,
+      title: t("newConversation"),
+      is_active: true,
+      messages_count: 0
+    }).select().single();
     if (error) {
       toast.error(t("errorCreatingChat"));
     } else {
@@ -68,13 +63,10 @@ const ChatsTab = () => {
       toast.success(t("chatCreated"));
     }
   };
-
   const handleDelete = async (id: string) => {
-    const { error } = await supabase
-      .from("chat_conversations")
-      .delete()
-      .eq("id", id);
-
+    const {
+      error
+    } = await supabase.from("chat_conversations").delete().eq("id", id);
     if (error) {
       toast.error(t("errorDeletingChat"));
     } else {
@@ -82,43 +74,26 @@ const ChatsTab = () => {
       toast.success(t("chatDeleted"));
     }
   };
-
   const handleOpenChat = (id: string) => {
     toast.info(t("chatFeatureComingSoon"));
   };
-
   if (loading) {
-    return (
-      <div className="flex items-center justify-center py-12">
+    return <div className="flex items-center justify-center py-12">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-      </div>
-    );
+      </div>;
   }
-
-  return (
-    <div className="space-y-4">
-      <Button 
-        onClick={handleNewChat}
-        className="w-full bg-primary hover:bg-primary/90"
-      >
+  return <div className="space-y-4">
+      <Button onClick={handleNewChat} className="w-full bg-primary hover:bg-primary/90">
         <Plus className="w-4 h-4 mr-2" />
         {t("newChat")}
       </Button>
 
-      {conversations.length === 0 ? (
-        <div className="text-center py-12">
-          <MessageCircle className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+      {conversations.length === 0 ? <div className="text-center py-12">
+          <MessageSquare className="w-12 h-12 mx-auto mb-4 text-red-800" />
           <h3 className="text-lg font-medium text-foreground mb-2">{t("noChats")}</h3>
           <p className="text-muted-foreground">{t("noChatsDesc")}</p>
-        </div>
-      ) : (
-        <div className="space-y-3">
-          {conversations.map((chat) => (
-            <Card 
-              key={chat.id} 
-              className="bg-zinc-900 border-primary/20 hover:border-primary/40 transition-colors cursor-pointer"
-              onClick={() => handleOpenChat(chat.id)}
-            >
+        </div> : <div className="space-y-3">
+          {conversations.map(chat => <Card key={chat.id} className="bg-zinc-900 border-primary/20 hover:border-primary/40 transition-colors cursor-pointer" onClick={() => handleOpenChat(chat.id)}>
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
@@ -143,25 +118,16 @@ const ChatsTab = () => {
                       </div>
                     </div>
                   </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleDelete(chat.id);
-                    }}
-                    className="text-destructive hover:text-destructive"
-                  >
+                  <Button variant="ghost" size="sm" onClick={e => {
+              e.stopPropagation();
+              handleDelete(chat.id);
+            }} className="text-destructive hover:text-destructive">
                     <Trash2 className="w-4 h-4" />
                   </Button>
                 </div>
               </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
-    </div>
-  );
+            </Card>)}
+        </div>}
+    </div>;
 };
-
 export default ChatsTab;
