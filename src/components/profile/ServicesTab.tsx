@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Search, MessageCircle, Package, Zap } from "lucide-react";
+import { Search, MessageCircle, Package, Zap, MessageSquare } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -115,7 +115,7 @@ const ServicesTab = () => {
               </span>
             </div>
             <div className="flex items-center gap-2">
-              <MessageCircle className="w-5 h-5 text-primary" />
+              <MessageSquare className="w-5 h-5 text-primary" />
               <span className="text-foreground">
                 <strong>{loading ? "..." : credits?.chat_messages ?? 0}</strong> {t("messages")}
               </span>
