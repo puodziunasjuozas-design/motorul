@@ -107,7 +107,7 @@ const ServicesTab = () => {
           <CardTitle className="text-lg text-foreground">{t("yourBalance")}</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex gap-6">
+          <div className="flex gap-6 bg-black">
             <div className="flex items-center gap-2">
               <Search className="w-5 h-5 text-primary" />
               <span className="text-foreground">
