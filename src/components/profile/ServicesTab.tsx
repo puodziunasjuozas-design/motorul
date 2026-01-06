@@ -158,7 +158,7 @@ const ServicesTab = () => {
         <div className="grid gap-3 md:grid-cols-2">
           {packages.map(pkg => <Card key={pkg.id} className={`bg-zinc-900 border-primary/20 hover:border-primary/40 transition-colors ${pkg.popular ? "ring-2 ring-primary" : ""}`}>
               <CardHeader className="pb-2">
-                <div className="flex items-center justify-between bg-background">
+                <div className="flex items-center justify-between">
                   <CardTitle className="text-lg text-foreground">{pkg.name}</CardTitle>
                   {pkg.popular && <Badge className="bg-primary text-primary-foreground">
                       {t("popular")}
@@ -181,7 +181,7 @@ const ServicesTab = () => {
                     </div>
                   </div>
                   <div className="text-right">
-                    <span className="font-bold text-primary text-4xl">{pkg.price} EUR</span>
+                    <span className="text-2xl font-bold text-primary">{pkg.price} EUR</span>
                     <Button size="sm" onClick={() => handlePurchase(pkg.name)} className="mt-2 w-full bg-primary hover:bg-primary/90">
                       {t("buy")}
                     </Button>

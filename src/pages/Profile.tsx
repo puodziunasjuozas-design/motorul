@@ -39,7 +39,7 @@ const Profile = () => {
       <Header />
       
       <div className="container mx-auto px-6 pt-28 pb-20">
-        <h1 className="text-3xl font-bold text-white mb-8 text-center">{t("profile")}</h1>
+        <h1 className="text-white mb-8 text-center text-8xl font-extrabold">{t("profile")}</h1>
         
         {/* Large navigation buttons */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
@@ -52,7 +52,7 @@ const Profile = () => {
                   transition-all duration-200
                   ${activeTab === tab.id ? "bg-primary/20 border-primary" : "hover:bg-zinc-900"}
                 `}>
-                <Icon className="bg-transparent text-red-800 w-[28px] h-[28px]" />
+                <Icon className="w-6 h-6 text-red-800" />
                 {tab.label}
               </button>;
         })}
@@ -62,7 +62,7 @@ const Profile = () => {
         
 
         {/* Tab content */}
-        <div className="bg-zinc-900 border border-primary/30 rounded-lg p-6">
+        <div className="border border-primary/30 rounded-lg p-6 bg-background">
           {activeTab === "purchases" && <ServicesTab />}
           {activeTab === "analyses" && <AnalysesTab />}
           {activeTab === "consultations" && <ChatsTab />}
