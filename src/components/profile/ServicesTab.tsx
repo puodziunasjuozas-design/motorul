@@ -102,7 +102,7 @@ const ServicesTab = () => {
   }];
   return <div className="space-y-6">
       {/* Current Balance */}
-      <Card className="bg-zinc-900 border-primary/30">
+      <Card className="bg-black border-primary/30">
         <CardHeader className="pb-3">
           <CardTitle className="text-lg text-foreground">{t("yourBalance")}</CardTitle>
         </CardHeader>
@@ -110,13 +110,13 @@ const ServicesTab = () => {
           <div className="flex gap-6 bg-black">
             <div className="flex items-center gap-2">
               <Search className="w-5 h-5 text-primary" />
-              <span className="text-foreground font-bold text-4xl">
+              <span className="text-foreground">
                 <strong>{loading ? "..." : credits?.analysis_credits ?? 0}</strong> {t("analyses")}
               </span>
             </div>
             <div className="flex items-center gap-2">
               <MessageSquare className="w-5 h-5 text-primary" />
-              <span className="text-foreground text-4xl font-semibold">
+              <span className="text-foreground">
                 <strong>{loading ? "..." : credits?.chat_messages ?? 0}</strong> {t("messages")}
               </span>
             </div>
@@ -128,7 +128,7 @@ const ServicesTab = () => {
       <div>
         <h3 className="text-lg font-semibold text-foreground mb-3">{t("services")}</h3>
         <div className="grid gap-3">
-          {services.map(service => <Card key={service.id} className="bg-zinc-900 border-primary/20 hover:border-primary/40 transition-colors">
+          {services.map(service => <Card key={service.id} className="bg-black border-primary/20 hover:border-primary/40 transition-colors">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between text-black bg-background border-transparent">
                   <div className="flex items-center gap-3 bg-transparent">
@@ -156,9 +156,9 @@ const ServicesTab = () => {
       <div>
         <h3 className="text-lg font-semibold text-foreground mb-3 bg-background">{t("packages")}</h3>
         <div className="grid gap-3 md:grid-cols-2">
-          {packages.map(pkg => <Card key={pkg.id} className={`bg-zinc-900 border-primary/20 hover:border-primary/40 transition-colors ${pkg.popular ? "ring-2 ring-primary" : ""}`}>
+          {packages.map(pkg => <Card key={pkg.id} className={`bg-black border-primary/20 hover:border-primary/40 transition-colors ${pkg.popular ? "ring-2 ring-primary" : ""}`}>
               <CardHeader className="pb-2">
-                <div className="flex items-center justify-between bg-background">
+                <div className="flex items-center justify-between">
                   <CardTitle className="text-lg text-foreground">{pkg.name}</CardTitle>
                   {pkg.popular && <Badge className="bg-primary text-primary-foreground">
                       {t("popular")}
@@ -181,7 +181,7 @@ const ServicesTab = () => {
                     </div>
                   </div>
                   <div className="text-right">
-                    <span className="font-bold text-primary text-4xl">{pkg.price} EUR</span>
+                    <span className="text-2xl font-bold text-primary">{pkg.price} EUR</span>
                     <Button size="sm" onClick={() => handlePurchase(pkg.name)} className="mt-2 w-full bg-primary hover:bg-primary/90">
                       {t("buy")}
                     </Button>
