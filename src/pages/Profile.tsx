@@ -6,7 +6,7 @@ import Header from "@/components/Header";
 import ServicesTab from "@/components/profile/ServicesTab";
 import AnalysesTab from "@/components/profile/AnalysesTab";
 import ChatsTab from "@/components/profile/ChatsTab";
-import { ShoppingBag, BarChart3, MessageCircle } from "lucide-react";
+import { ShoppingBag, BarChart3, MessageSquare } from "lucide-react";
 
 type TabType = "purchases" | "analyses" | "consultations";
 
@@ -25,7 +25,7 @@ const Profile = () => {
   const tabs = [
     { id: "purchases" as TabType, label: t("myPurchases"), icon: ShoppingBag },
     { id: "analyses" as TabType, label: t("analyses"), icon: BarChart3 },
-    { id: "consultations" as TabType, label: t("technicalConsultations"), icon: MessageCircle },
+    { id: "consultations" as TabType, label: t("technicalConsultations"), icon: MessageSquare },
   ];
 
   return (
@@ -59,7 +59,7 @@ const Profile = () => {
         </div>
 
         {/* Pricing section */}
-        <div className="bg-zinc-900 border border-primary/30 rounded-lg p-6 mb-8">
+        <div className="bg-black border border-primary/30 rounded-lg p-6 mb-8">
           <h2 className="text-xl font-bold text-white mb-4">{t("priceList")}</h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -100,7 +100,7 @@ const Profile = () => {
         </div>
 
         {/* Tab content */}
-        <div className="bg-zinc-900 border border-primary/30 rounded-lg p-6">
+        <div className="bg-black border border-primary/30 rounded-lg p-6">
           {activeTab === "purchases" && <ServicesTab />}
           {activeTab === "analyses" && <AnalysesTab />}
           {activeTab === "consultations" && <ChatsTab />}
