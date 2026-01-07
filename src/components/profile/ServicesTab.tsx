@@ -141,7 +141,7 @@ const ServicesTab = () => {
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className="text-xl font-bold text-primary">{service.price} EUR</span>
+                    <span className="font-bold text-primary text-3xl">{service.price} EUR</span>
                     <Button size="sm" onClick={() => handlePurchase(service.name)} className="bg-primary hover:bg-primary/90">
                       {t("buy")}
                     </Button>
@@ -181,7 +181,7 @@ const ServicesTab = () => {
                     </div>
                   </div>
                   <div className="text-right">
-                    <span className="text-2xl font-bold text-primary">{pkg.price} EUR</span>
+                    <span className="font-bold text-primary text-4xl">{pkg.price} EUR</span>
                     <Button size="sm" onClick={() => handlePurchase(pkg.name)} className="mt-2 w-full bg-primary hover:bg-primary/90">
                       {t("buy")}
                     </Button>
