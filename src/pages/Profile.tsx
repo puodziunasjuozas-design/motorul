@@ -52,7 +52,7 @@ const Profile = () => {
                   transition-all duration-200
                   ${activeTab === tab.id ? "bg-primary/20 border-primary" : "hover:bg-zinc-900"}
                 `}>
-                <Icon className="w-6 h-6 text-red-800" />
+                <Icon className="text-red-800 h-[34px] w-[34px]" />
                 {tab.label}
               </button>;
         })}
