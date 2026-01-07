@@ -109,14 +109,14 @@ const ServicesTab = () => {
         <CardContent>
           <div className="flex gap-6 bg-black">
             <div className="flex items-center gap-2">
-              <Search className="w-5 h-5 text-primary" />
-              <span className="text-foreground">
+              <Search className="text-primary h-[28px] w-[28px]" />
+              <span className="text-foreground font-semibold text-4xl">
                 <strong>{loading ? "..." : credits?.analysis_credits ?? 0}</strong> {t("analyses")}
               </span>
             </div>
             <div className="flex items-center gap-2">
-              <MessageSquare className="w-5 h-5 text-primary" />
-              <span className="text-foreground">
+              <MessageSquare className="text-primary w-[28px] h-[28px]" />
+              <span className="text-foreground text-4xl font-semibold">
                 <strong>{loading ? "..." : credits?.chat_messages ?? 0}</strong> {t("messages")}
               </span>
             </div>
@@ -126,7 +126,7 @@ const ServicesTab = () => {
 
       {/* Services */}
       <div>
-        <h3 className="text-lg font-semibold text-foreground mb-3">{t("services")}</h3>
+        <h3 className="text-foreground mb-3 font-extrabold text-center text-7xl">{t("services")}</h3>
         <div className="grid gap-3">
           {services.map(service => <Card key={service.id} className="bg-black border-primary/20 hover:border-primary/40 transition-colors">
               <CardContent className="p-4">
@@ -136,7 +136,7 @@ const ServicesTab = () => {
                       <service.icon className="text-black h-[27px] w-[27px] border-solid" />
                     </div>
                     <div>
-                      <h4 className="font-medium text-foreground">{service.name}</h4>
+                      <h4 className="text-foreground text-3xl font-semibold">{service.name}</h4>
                       <p className="text-sm text-muted-foreground">{service.description}</p>
                     </div>
                   </div>
@@ -173,11 +173,11 @@ const ServicesTab = () => {
                   <div className="space-y-1 text-sm text-muted-foreground">
                     <div className="flex items-center gap-2">
                       <Search className="w-4 h-4 text-primary" />
-                      <span>{pkg.credits} {t("analyses")}</span>
+                      <span className="text-2xl font-semibold">{pkg.credits} {t("analyses")}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <MessageSquare className="w-4 h-4 text-primary" />
-                      <span>{pkg.messages} {t("messages")}</span>
+                      <span className="text-2xl font-semibold">{pkg.messages} {t("messages")}</span>
                     </div>
                   </div>
                   <div className="text-right">
