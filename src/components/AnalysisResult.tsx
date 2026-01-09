@@ -86,23 +86,23 @@ const AnalysisResult = ({
         </h3>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           <div>
-            <p className="text-sm text-muted-foreground">{t("makeModel")}</p>
+            <p className="text-muted-foreground text-lg">{t("makeModel")}</p>
             <p className="text-3xl font-semibold">{data.vehicleInfo.make} {data.vehicleInfo.model}</p>
           </div>
           <div>
-            <p className="text-sm text-muted-foreground">{t("year")}</p>
+            <p className="text-muted-foreground text-lg">{t("year")}</p>
             <p className="text-3xl font-semibold">{data.vehicleInfo.year}</p>
           </div>
           <div>
-            <p className="text-sm text-muted-foreground">{t("mileage")}</p>
+            <p className="text-muted-foreground text-lg">{t("mileage")}</p>
             <p className="text-3xl font-semibold">{data.vehicleInfo.mileage}</p>
           </div>
           <div>
-            <p className="text-sm text-muted-foreground">{t("fuel")}</p>
+            <p className="text-muted-foreground text-lg">{t("fuel")}</p>
             <p className="text-3xl font-semibold">{data.vehicleInfo.fuelType}</p>
           </div>
           <div>
-            <p className="text-sm text-muted-foreground">{t("transmission")}</p>
+            <p className="text-muted-foreground text-lg">{t("transmission")}</p>
             <p className="text-3xl font-semibold">{data.vehicleInfo.transmission}</p>
           </div>
         </div>
@@ -116,7 +116,7 @@ const AnalysisResult = ({
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="text-center p-4 rounded-xl bg-secondary/30">
-            <p className="text-sm text-muted-foreground mb-1">{t("currentPrice")}</p>
+            <p className="text-muted-foreground mb-1 text-lg">{t("currentPrice")}</p>
             <p className={`text-2xl font-bold ${getPriceColor(data.marketAnalysis.priceRating)}`}>
               €{data.marketAnalysis.currentPrice.toLocaleString()}
             </p>
@@ -125,21 +125,21 @@ const AnalysisResult = ({
             </span>
           </div>
           <div className="text-center p-4 rounded-xl bg-secondary/30">
-            <p className="text-sm text-muted-foreground mb-1">{t("marketAverage")}</p>
+            <p className="text-muted-foreground mb-1 text-lg">{t("marketAverage")}</p>
             <p className="text-2xl font-bold text-foreground">
               €{data.marketAnalysis.marketAverage.toLocaleString()}
             </p>
-            <span className="text-xs text-muted-foreground">
+            <span className="text-muted-foreground text-sm">
               {t("similarVehicles")}
             </span>
           </div>
           <div className="text-center p-4 rounded-xl bg-secondary/30">
-            <p className="text-sm text-muted-foreground mb-1">{t("resaleValue")}</p>
+            <p className="text-muted-foreground mb-1 text-lg">{t("resaleValue")}</p>
             <p className="text-2xl font-bold text-foreground">
               €{data.marketAnalysis.estimatedResaleValue.toLocaleString()}
             </p>
-            <span className="text-xs text-muted-foreground flex items-center justify-center gap-1">
-              <Clock className="w-3 h-3" />
+            <span className="text-muted-foreground flex items-center justify-center gap-1 text-sm">
+              <Clock className="w-3 h-3 text-red-800" />
               {data.marketAnalysis.resaleTimeframe}
             </span>
           </div>
