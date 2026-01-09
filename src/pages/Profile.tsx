@@ -6,7 +6,7 @@ import Header from "@/components/Header";
 import ServicesTab from "@/components/profile/ServicesTab";
 import AnalysesTab from "@/components/profile/AnalysesTab";
 import ChatsTab from "@/components/profile/ChatsTab";
-import { ShoppingBag, BarChart3, MessageCircle } from "lucide-react";
+import { ShoppingBag, BarChart3, MessageSquare } from "lucide-react";
 type TabType = "purchases" | "analyses" | "consultations";
 const Profile = () => {
   const [activeTab, setActiveTab] = useState<TabType>("purchases");
@@ -33,7 +33,7 @@ const Profile = () => {
   }, {
     id: "consultations" as TabType,
     label: t("technicalConsultations"),
-    icon: MessageCircle
+    icon: MessageSquare
   }];
   return <div className="min-h-screen bg-zinc-950">
       <Header />
