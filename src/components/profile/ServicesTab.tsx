@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Search, Package, Zap, MessageSquare, MessageCircle } from "lucide-react";
+import { Search, Package, Zap, MessageSquare } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -66,7 +66,7 @@ const ServicesTab = () => {
     messages: 0
   }, {
     id: "consultation",
-    icon: MessageCircle,
+    icon: MessageSquare,
     name: t("techConsultation"),
     description: t("techConsultationDesc"),
     price: 6,
