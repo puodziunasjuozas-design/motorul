@@ -7,12 +7,13 @@ import { cs } from "@/locales/cs";
 import { da } from "@/locales/da";
 import { et } from "@/locales/et";
 import { el } from "@/locales/el";
+import { ru } from "@/locales/ru";
 import { es, it, hr, lv, pl, nl, pt, fr, ro, sk, sl, fi, sv, hu, de } from "@/locales/eu-languages";
 
 export type Language = 
   | "lt" | "en" | "ga" | "bg" | "cs" | "da" | "et" | "el" 
   | "es" | "it" | "hr" | "lv" | "pl" | "nl" | "pt" | "fr" 
-  | "ro" | "sk" | "sl" | "fi" | "sv" | "hu" | "de";
+  | "ro" | "sk" | "sl" | "fi" | "sv" | "hu" | "de" | "ru";
 
 interface LanguageContextType {
   language: Language;
@@ -21,7 +22,7 @@ interface LanguageContextType {
 }
 
 const translations: Record<Language, Record<string, string>> = {
-  lt, en, ga, bg, cs, da, et, el, es, it, hr, lv, pl, nl, pt, fr, ro, sk, sl, fi, sv, hu, de
+  lt, en, ga, bg, cs, da, et, el, es, it, hr, lv, pl, nl, pt, fr, ro, sk, sl, fi, sv, hu, de, ru
 };
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
