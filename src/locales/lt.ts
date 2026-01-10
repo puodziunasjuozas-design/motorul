@@ -76,7 +76,7 @@ export const lt = {
   repairEstimateDesc: "Tikslus remonto kaštų įvertinimas pagal defektus",
   videoInstructions: "Video instrukcijos",
   videoInstructionsDesc: "Suraskite kaip pataisyti konkrečias detales",
-  aiRecommendations: "AI rekomendacijos",
+  aiRecommendations: "Rekomendacijos",
   aiRecommendationsDesc: "Išmanios patarimai prieš perkant automobilį",
   vehicle: "Transporto priemonė",
   makeModel: "Markė / Modelis",
