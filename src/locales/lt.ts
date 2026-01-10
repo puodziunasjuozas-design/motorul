@@ -16,7 +16,7 @@ export const lt = {
   analyzing: "Analizuojama su AI...",
   analyzeWithAI: "Analizuoti su AI",
   startAnalysis: "Pradėkite analizę",
-  startAnalysisDesc: "Įkelkite nuotraukas ir/arba aprašymą iš skelbimo",
+  startAnalysisDesc: "Įkelkite nuotraukas, aprašymą ir/arba skelbimo nuorodą",
   analysisResults: "Analizės rezultatai",
   marketAnalysis: "Rinkos analizė",
   currentPrice: "Prašoma kaina",
