@@ -67,7 +67,7 @@ export const lt = {
   heroSubtitle: "Įkelkite skelbimo nuotraukas ir aprašymą – išanalizuosime rinkos kainą, apskaičiuosime remonto kaštus ir parodysime ar apsimoka pirkti. Nusiprikus surasime dalių ir remonto vaizdo medžiagos",
   loginToSaveHistory: "Prisijunkite, kad išsaugotumėte analizių istoriją",
   photoAnalysis: "Nuotraukų analizė",
-  photoAnalysisDesc: "AI atpažįsta automobilį, defektus ir bendrą būklę iš nuotraukų",
+  photoAnalysisDesc: "Atpažinsime automobilį, defektus ir bendrą būklę iš nuotraukų, aprašymo ir/arba skelbimo nuorodos",
   marketAnalysisTitle: "Rinkos analizė",
   marketAnalysisDesc: "Realaus laiko kainų palyginimas su panašiais skelbimais",
   profitCalculator: "Pelno skaičiuoklė",
