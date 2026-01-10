@@ -90,8 +90,8 @@ const ChatsTab = () => {
 
       {conversations.length === 0 ? <div className="text-center py-12">
           <MessageSquare className="w-12 h-12 mx-auto mb-4 text-red-800" />
-          <h3 className="text-lg font-medium text-foreground mb-2">{t("noChats")}</h3>
-          <p className="text-muted-foreground">{t("noChatsDesc")}</p>
+          <h3 className="text-foreground mb-2 text-3xl font-semibold">{t("noChats")}</h3>
+          
         </div> : <div className="space-y-3">
           {conversations.map(chat => <Card key={chat.id} className="bg-zinc-900 border-primary/20 hover:border-primary/40 transition-colors cursor-pointer" onClick={() => handleOpenChat(chat.id)}>
               <CardContent className="p-4">
