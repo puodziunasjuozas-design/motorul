@@ -25,6 +25,7 @@ const languages: { code: Language; name: string; flag: string }[] = [
   { code: "pl", name: "Polski", flag: "🇵🇱" },
   { code: "pt", name: "Português", flag: "🇵🇹" },
   { code: "ro", name: "Română", flag: "🇷🇴" },
+  { code: "ru", name: "Русский", flag: "🇷🇺" },
   { code: "sk", name: "Slovenčina", flag: "🇸🇰" },
   { code: "sl", name: "Slovenščina", flag: "🇸🇮" },
   { code: "sv", name: "Svenska", flag: "🇸🇪" },
