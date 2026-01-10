@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Camera, TrendingUp, Wrench, Play, Calculator, ArrowRight, Save, Sparkles } from "lucide-react";
+import { Camera, TrendingUp, Wrench, Play, Calculator, ArrowRight, Save, ThumbsUp } from "lucide-react";
 import Header from "@/components/Header";
 import UploadZone from "@/components/UploadZone";
 import DescriptionInput from "@/components/DescriptionInput";
@@ -151,7 +151,7 @@ const Index = () => {
     titleKey: "videoInstructions",
     descriptionKey: "videoInstructionsDesc"
   }, {
-    icon: Sparkles,
+    icon: ThumbsUp,
     titleKey: "aiRecommendations",
     descriptionKey: "aiRecommendationsDesc"
   }];
