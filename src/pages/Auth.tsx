@@ -8,39 +8,51 @@ import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Car, Bike, Mail, Lock, ArrowLeft } from "lucide-react";
 import { z } from "zod";
-
 const Auth = forwardRef<HTMLDivElement>((_, ref) => {
-  const { t } = useLanguage();
+  const {
+    t
+  } = useLanguage();
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
-  
-  const { signUp, signIn, user } = useAuth();
+  const [errors, setErrors] = useState<{
+    email?: string;
+    password?: string;
+  }>({});
+  const {
+    signUp,
+    signIn,
+    user
+  } = useAuth();
   const navigate = useNavigate();
-  const { toast } = useToast();
-
+  const {
+    toast
+  } = useToast();
   const authSchema = z.object({
     email: z.string().email(t("invalidEmail")),
-    password: z.string().min(6, t("passwordMin")),
+    password: z.string().min(6, t("passwordMin"))
   });
-
   useEffect(() => {
     if (user) {
       navigate("/");
     }
   }, [user, navigate]);
-
   const validateForm = () => {
     try {
-      authSchema.parse({ email, password });
+      authSchema.parse({
+        email,
+        password
+      });
       setErrors({});
       return true;
     } catch (error) {
       if (error instanceof z.ZodError) {
-        const fieldErrors: { email?: string; password?: string } = {};
-        error.errors.forEach((err) => {
+        const fieldErrors: {
+          email?: string;
+          password?: string;
+        } = {};
+        error.errors.forEach(err => {
           if (err.path[0] === "email") fieldErrors.email = err.message;
           if (err.path[0] === "password") fieldErrors.password = err.message;
         });
@@ -49,58 +61,58 @@ const Auth = forwardRef<HTMLDivElement>((_, ref) => {
       return false;
     }
   };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
     if (!validateForm()) return;
-    
     setIsLoading(true);
-
     try {
       if (isLogin) {
-        const { error } = await signIn(email, password);
+        const {
+          error
+        } = await signIn(email, password);
         if (error) {
           if (error.message.includes("Invalid login credentials")) {
             toast({
               title: t("error"),
               description: t("wrongCredentials"),
-              variant: "destructive",
+              variant: "destructive"
             });
           } else {
             toast({
               title: t("error"),
               description: error.message,
-              variant: "destructive",
+              variant: "destructive"
             });
           }
         } else {
           toast({
             title: t("successLogin"),
-            description: t("welcomeBack"),
+            description: t("welcomeBack")
           });
           navigate("/");
         }
       } else {
-        const { error } = await signUp(email, password);
+        const {
+          error
+        } = await signUp(email, password);
         if (error) {
           if (error.message.includes("already registered")) {
             toast({
               title: t("error"),
               description: t("emailExists"),
-              variant: "destructive",
+              variant: "destructive"
             });
           } else {
             toast({
               title: t("error"),
               description: error.message,
-              variant: "destructive",
+              variant: "destructive"
             });
           }
         } else {
           toast({
             title: t("accountCreated"),
-            description: t("startUsing"),
+            description: t("startUsing")
           });
           navigate("/");
         }
@@ -109,17 +121,11 @@ const Auth = forwardRef<HTMLDivElement>((_, ref) => {
       setIsLoading(false);
     }
   };
-
-  return (
-    <div ref={ref} className="min-h-screen bg-background flex items-center justify-center p-6">
+  return <div ref={ref} className="min-h-screen bg-background flex items-center justify-center p-6">
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-primary/5 blur-[120px] rounded-full" />
       
       <div className="w-full max-w-md relative">
-        <Button
-          variant="ghost"
-          onClick={() => navigate("/")}
-          className="mb-6"
-        >
+        <Button variant="ghost" onClick={() => navigate("/")} className="mb-6">
           <ArrowLeft className="w-4 h-4 mr-2" />
           {t("goBack")}
         </Button>
@@ -141,7 +147,7 @@ const Auth = forwardRef<HTMLDivElement>((_, ref) => {
             </div>
           </div>
 
-          <h2 className="text-xl font-semibold text-center mb-6">
+          <h2 className="text-center mb-6 text-3xl font-bold">
             {isLogin ? t("signIn") : t("signUp")}
           </h2>
 
@@ -151,16 +157,8 @@ const Auth = forwardRef<HTMLDivElement>((_, ref) => {
                 <Mail className="w-4 h-4 text-primary" />
                 {t("email")}
               </label>
-              <Input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder={t("emailPlaceholder")}
-                className={`bg-card border-border focus:border-primary ${errors.email ? 'border-destructive' : ''}`}
-              />
-              {errors.email && (
-                <p className="text-xs text-destructive">{errors.email}</p>
-              )}
+              <Input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder={t("emailPlaceholder")} className={`bg-card border-border focus:border-primary ${errors.email ? 'border-destructive' : ''}`} />
+              {errors.email && <p className="text-xs text-destructive">{errors.email}</p>}
             </div>
 
             <div className="space-y-2">
@@ -168,54 +166,23 @@ const Auth = forwardRef<HTMLDivElement>((_, ref) => {
                 <Lock className="w-4 h-4 text-primary" />
                 {t("password")}
               </label>
-              <Input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                className={`bg-card border-border focus:border-primary ${errors.password ? 'border-destructive' : ''}`}
-              />
-              {errors.password && (
-                <p className="text-xs text-destructive">{errors.password}</p>
-              )}
+              <Input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••••" className={`bg-card border-border focus:border-primary ${errors.password ? 'border-destructive' : ''}`} />
+              {errors.password && <p className="text-xs text-destructive">{errors.password}</p>}
             </div>
 
-            <Button
-              type="submit"
-              variant="hero"
-              size="lg"
-              className="w-full"
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <div className="w-5 h-5 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
-              ) : isLogin ? (
-                t("signIn")
-              ) : (
-                t("signUp")
-              )}
+            <Button type="submit" variant="hero" size="lg" className="w-full" disabled={isLoading}>
+              {isLoading ? <div className="w-5 h-5 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" /> : isLogin ? t("signIn") : t("signUp")}
             </Button>
           </form>
 
           <div className="mt-6 text-center">
-            <button
-              type="button"
-              onClick={() => setIsLogin(!isLogin)}
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-            >
-              {isLogin ? (
-                <>{t("noAccount")} <span className="text-primary">{t("signUp")}</span></>
-              ) : (
-                <>{t("hasAccount")} <span className="text-primary">{t("signIn")}</span></>
-              )}
+            <button type="button" onClick={() => setIsLogin(!isLogin)} className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+              {isLogin ? <>{t("noAccount")} <span className="text-primary">{t("signUp")}</span></> : <>{t("hasAccount")} <span className="text-primary">{t("signIn")}</span></>}
             </button>
           </div>
         </Card>
       </div>
-    </div>
-  );
+    </div>;
 });
-
 Auth.displayName = "Auth";
-
 export default Auth;
