@@ -77,7 +77,7 @@ export const lt = {
   videoInstructions: "Video instrukcijos",
   videoInstructionsDesc: "Surasime vaizdo medžiagos, kaip pataisyti konkrečias detales",
   aiRecommendations: "Rekomendacijos",
-  aiRecommendationsDesc: "Išmanios patarimai prieš perkant automobilį",
+  aiRecommendationsDesc: "Išmanūs patarimai prieš perkant ir nusipirkus automobilį",
   vehicle: "Transporto priemonė",
   makeModel: "Markė / Modelis",
   year: "Metai",
