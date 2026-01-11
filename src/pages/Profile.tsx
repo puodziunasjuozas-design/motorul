@@ -7,6 +7,7 @@ import ServicesTab from "@/components/profile/ServicesTab";
 import AnalysesTab from "@/components/profile/AnalysesTab";
 import ChatsTab from "@/components/profile/ChatsTab";
 import { ShoppingBag, BarChart3, MessageSquare } from "lucide-react";
+import profileCarGif from "@/assets/profile-car.gif";
 type TabType = "purchases" | "analyses" | "consultations";
 const Profile = () => {
   const [activeTab, setActiveTab] = useState<TabType>("purchases");
@@ -58,8 +59,14 @@ const Profile = () => {
         })}
         </div>
 
-        {/* Pricing section */}
-        
+        {/* Car GIF */}
+        <div className="flex justify-center mb-8">
+          <img 
+            src={profileCarGif} 
+            alt="Car animation" 
+            className="w-48 h-auto object-contain"
+          />
+        </div>
 
         {/* Tab content */}
         <div className="border border-primary/30 rounded-lg p-6 bg-background">
