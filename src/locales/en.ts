@@ -102,7 +102,7 @@ export const en = {
   singleAnalysis: "1 listing market analysis",
   singleAnalysisDesc: "One detailed vehicle analysis",
   techConsultation: "Technical consultation",
-  techConsultationDesc: "40 messages with AI about auto/moto questions",
+  techConsultationDesc: "30 message consultation about AUTO/MOTO questions",
   extraMessages: "Extra messages",
   extraMessagesDesc: "+20 messages to existing consultation",
   packages: "Packages",

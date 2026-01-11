@@ -102,7 +102,7 @@ export const lt = {
   singleAnalysis: "1 skelbimo rinkos analizė",
   singleAnalysisDesc: "Viena išsami transporto priemonės analizė",
   techConsultation: "Techninė konsultacija",
-  techConsultationDesc: "40 žinučių su AI apie auto/moto klausimus",
+  techConsultationDesc: "30 žinučių koncultacija apie AUTO/MOTO klausimus",
   extraMessages: "Papildomos žinutės",
   extraMessagesDesc: "+20 žinučių prie esamos konsultacijos",
   packages: "Paketai",
