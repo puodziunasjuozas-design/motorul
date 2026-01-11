@@ -64,7 +64,7 @@ const Profile = () => {
           <img 
             src={profileCarGif} 
             alt="Car animation" 
-            className="w-48 h-auto object-contain"
+            className="w-72 md:w-96 h-auto object-contain"
           />
         </div>
 
