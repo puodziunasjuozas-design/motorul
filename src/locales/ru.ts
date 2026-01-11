@@ -102,7 +102,7 @@ export const ru = {
   singleAnalysis: "1 анализ рынка",
   singleAnalysisDesc: "Один детальный анализ автомобиля",
   techConsultation: "Техническая консультация",
-  techConsultationDesc: "40 сообщений с ИИ по вопросам авто/мото",
+  techConsultationDesc: "30 сообщений консультация по вопросам АВТО/МОТО",
   extraMessages: "Дополнительные сообщения",
   extraMessagesDesc: "+20 сообщений к существующей консультации",
   packages: "Пакеты",

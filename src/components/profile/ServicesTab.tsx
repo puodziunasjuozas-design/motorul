@@ -71,7 +71,7 @@ const ServicesTab = () => {
     description: t("techConsultationDesc"),
     price: 6,
     credits: 0,
-    messages: 40
+    messages: 30
   }, {
     id: "extra_messages",
     icon: Zap,
