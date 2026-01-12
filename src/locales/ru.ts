@@ -14,7 +14,7 @@ export const ru = {
   listingUrlPlaceholder: "https://example.com/...",
   moreInfoBetterAnalysis: "Чем больше информации вы предоставите, тем точнее будет анализ",
   analyzing: "Анализ с помощью ИИ...",
-  analyzeWithAI: "Анализировать с ИИ",
+  analyzeWithAI: "АНАЛИЗИРОВАТЬ",
   startAnalysis: "Начать анализ",
   startAnalysisDesc: "Загрузите фото и/или описание объявления",
   analysisResults: "Результаты анализа",

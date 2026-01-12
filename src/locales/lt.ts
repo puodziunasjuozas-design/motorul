@@ -14,7 +14,7 @@ export const lt = {
   listingUrlPlaceholder: "https://autoplius.lt/...",
   moreInfoBetterAnalysis: "Kuo daugiau informacijos pateiksite, tuo tikslesnė bus analizė",
   analyzing: "Analizuojama su AI...",
-  analyzeWithAI: "Analizuoti su AI",
+  analyzeWithAI: "ANALIZUOTI",
   startAnalysis: "Pradėkite analizę",
   startAnalysisDesc: "Įkelkite nuotraukas, aprašymą ir/arba skelbimo nuorodą",
   analysisResults: "Analizės rezultatai",
