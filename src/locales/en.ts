@@ -14,7 +14,7 @@ export const en = {
   listingUrlPlaceholder: "https://example.com/...",
   moreInfoBetterAnalysis: "The more information you provide, the more accurate the analysis will be",
   analyzing: "Analyzing with AI...",
-  analyzeWithAI: "Analyze with AI",
+  analyzeWithAI: "ANALYZE",
   startAnalysis: "Start analysis",
   startAnalysisDesc: "Upload images and/or description from listing",
   analysisResults: "Analysis results",
