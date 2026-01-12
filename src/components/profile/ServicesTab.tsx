@@ -100,23 +100,23 @@ const ServicesTab = () => {
     messages: 80,
     popular: true
   }];
-  return <div className="space-y-6">
+  return <div className="space-y-4 sm:space-y-6">
       {/* Current Balance */}
       <Card className="bg-black border-primary/30">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-lg text-foreground">{t("yourBalance")}</CardTitle>
+        <CardHeader className="pb-2 sm:pb-3">
+          <CardTitle className="text-base sm:text-lg text-foreground">{t("yourBalance")}</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex gap-6 bg-black">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-6 bg-black">
             <div className="flex items-center gap-2">
-              <Search className="text-primary h-[28px] w-[28px]" />
-              <span className="text-foreground font-semibold text-4xl">
+              <Search className="text-primary h-5 w-5 sm:h-[28px] sm:w-[28px] flex-shrink-0" />
+              <span className="text-foreground font-semibold text-xl sm:text-2xl md:text-4xl">
                 <strong>{loading ? "..." : credits?.analysis_credits ?? 0}</strong> {t("analyses")}
               </span>
             </div>
             <div className="flex items-center gap-2">
-              <MessageSquare className="text-primary w-[28px] h-[28px]" />
-              <span className="text-foreground text-4xl font-semibold">
+              <MessageSquare className="text-primary h-5 w-5 sm:h-[28px] sm:w-[28px] flex-shrink-0" />
+              <span className="text-foreground text-xl sm:text-2xl md:text-4xl font-semibold">
                 <strong>{loading ? "..." : credits?.chat_messages ?? 0}</strong> {t("messages")}
               </span>
             </div>
@@ -126,22 +126,22 @@ const ServicesTab = () => {
 
       {/* Services */}
       <div>
-        <h3 className="text-foreground mb-3 font-extrabold text-center text-7xl">{t("services")}</h3>
+        <h3 className="text-foreground mb-3 font-extrabold text-center text-3xl sm:text-5xl md:text-7xl">{t("services")}</h3>
         <div className="grid gap-3">
           {services.map(service => <Card key={service.id} className="bg-black border-primary/20 hover:border-primary/40 transition-colors">
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between text-black bg-background border-transparent">
-                  <div className="flex items-center gap-3 bg-transparent">
-                    <div className="p-2 rounded-lg border-primary border-solid border bg-primary">
-                      <service.icon className="text-black h-[27px] w-[27px] border-solid" />
+              <CardContent className="p-3 sm:p-4">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-black bg-background border-transparent">
+                  <div className="flex items-center gap-2 sm:gap-3 bg-transparent">
+                    <div className="p-2 rounded-lg border-primary border-solid border bg-primary flex-shrink-0">
+                      <service.icon className="text-black h-5 w-5 sm:h-[27px] sm:w-[27px] border-solid" />
                     </div>
-                    <div>
-                      <h4 className="text-foreground text-3xl font-semibold">{service.name}</h4>
-                      <p className="text-sm text-muted-foreground">{service.description}</p>
+                    <div className="min-w-0">
+                      <h4 className="text-foreground text-lg sm:text-2xl md:text-3xl font-semibold truncate">{service.name}</h4>
+                      <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2">{service.description}</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <span className="font-bold text-primary text-3xl">{service.price} EUR</span>
+                  <div className="flex items-center justify-between sm:justify-end gap-3 flex-shrink-0">
+                    <span className="font-bold text-primary text-xl sm:text-2xl md:text-3xl whitespace-nowrap">{service.price} EUR</span>
                     <Button size="sm" onClick={() => handlePurchase(service.name)} className="bg-primary hover:bg-primary/90">
                       {t("buy")}
                     </Button>
@@ -154,35 +154,35 @@ const ServicesTab = () => {
 
       {/* Packages */}
       <div>
-        <h3 className="text-lg font-semibold text-foreground mb-3 bg-background">{t("packages")}</h3>
-        <div className="grid gap-3 md:grid-cols-2">
+        <h3 className="text-base sm:text-lg font-semibold text-foreground mb-3 bg-background">{t("packages")}</h3>
+        <div className="grid gap-3 sm:grid-cols-2">
           {packages.map(pkg => <Card key={pkg.id} className={`bg-black border-primary/20 hover:border-primary/40 transition-colors ${pkg.popular ? "ring-2 ring-primary" : ""}`}>
-              <CardHeader className="pb-2">
+              <CardHeader className="pb-2 p-3 sm:p-6">
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-lg text-foreground">{pkg.name}</CardTitle>
-                  {pkg.popular && <Badge className="bg-primary text-primary-foreground">
+                  <CardTitle className="text-base sm:text-lg text-foreground">{pkg.name}</CardTitle>
+                  {pkg.popular && <Badge className="bg-primary text-primary-foreground text-xs">
                       {t("popular")}
                     </Badge>}
                 </div>
-                <CardDescription className="text-muted-foreground">
+                <CardDescription className="text-muted-foreground text-xs sm:text-sm">
                   {pkg.description}
                 </CardDescription>
               </CardHeader>
-              <CardContent>
-                <div className="flex items-center justify-between bg-background">
+              <CardContent className="p-3 sm:p-6 pt-0">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-background">
                   <div className="space-y-1 text-sm text-muted-foreground">
                     <div className="flex items-center gap-2">
-                      <Search className="w-4 h-4 text-primary" />
-                      <span className="text-2xl font-semibold">{pkg.credits} {t("analyses")}</span>
+                      <Search className="w-4 h-4 text-primary flex-shrink-0" />
+                      <span className="text-lg sm:text-xl md:text-2xl font-semibold">{pkg.credits} {t("analyses")}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <MessageSquare className="w-4 h-4 text-primary" />
-                      <span className="text-2xl font-semibold">{pkg.messages} {t("messages")}</span>
+                      <MessageSquare className="w-4 h-4 text-primary flex-shrink-0" />
+                      <span className="text-lg sm:text-xl md:text-2xl font-semibold">{pkg.messages} {t("messages")}</span>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <span className="font-bold text-primary text-4xl">{pkg.price} EUR</span>
-                    <Button size="sm" onClick={() => handlePurchase(pkg.name)} className="mt-2 w-full bg-primary hover:bg-primary/90">
+                  <div className="flex sm:flex-col items-center sm:items-end justify-between sm:text-right gap-2">
+                    <span className="font-bold text-primary text-2xl sm:text-3xl md:text-4xl whitespace-nowrap">{pkg.price} EUR</span>
+                    <Button size="sm" onClick={() => handlePurchase(pkg.name)} className="bg-primary hover:bg-primary/90">
                       {t("buy")}
                     </Button>
                   </div>

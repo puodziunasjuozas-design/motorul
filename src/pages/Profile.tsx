@@ -42,11 +42,11 @@ const Profile = () => {
     <div className="min-h-screen bg-zinc-950">
       <Header />
       
-      <div className="container mx-auto px-6 pt-28 pb-20">
-        <h1 className="text-white mb-8 text-center text-8xl font-extrabold">{t("profile")}</h1>
+      <div className="container mx-auto px-4 sm:px-6 pt-24 sm:pt-28 pb-12 sm:pb-20">
+        <h1 className="text-white mb-6 sm:mb-8 text-center text-4xl sm:text-6xl md:text-8xl font-extrabold">{t("profile")}</h1>
         
         {/* Large navigation buttons */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-4 mb-6 sm:mb-8">
           {tabs.map(tab => {
             const Icon = tab.icon;
             return (
@@ -54,26 +54,26 @@ const Profile = () => {
                 key={tab.id}
                 onClick={() => handleTabChange(tab.id)}
                 className={`
-                  flex items-center justify-center gap-3 p-6 
+                  flex items-center justify-center gap-2 sm:gap-3 p-4 sm:p-6 
                   bg-black border border-primary rounded-lg
-                  text-white text-lg font-medium
+                  text-white text-sm sm:text-lg font-medium
                   transition-all duration-200
                   ${activeTab === tab.id ? "bg-primary/20 border-primary" : "hover:bg-zinc-900"}
                 `}
               >
-                <Icon className="text-red-800 h-[34px] w-[34px]" />
-                {tab.label}
+                <Icon className="text-red-800 h-5 w-5 sm:h-[34px] sm:w-[34px] flex-shrink-0" />
+                <span className="truncate">{tab.label}</span>
               </button>
             );
           })}
         </div>
 
         {/* Car GIF - changes based on active tab */}
-        <div className="flex justify-center mb-8">
+        <div className="flex justify-center mb-6 sm:mb-8">
           <img 
             src={activeTab === "purchases" ? purchasesCarGif : activeTab === "analyses" ? analysesCarGif : consultationsCarGif} 
             alt="Car animation" 
-            className="w-72 md:w-96 h-auto object-contain"
+            className="w-48 sm:w-72 md:w-96 h-auto object-contain"
           />
         </div>
 
@@ -93,7 +93,7 @@ const Profile = () => {
         )}
 
         {/* Tab content */}
-        <div className="border border-primary/30 rounded-lg p-6 bg-background">
+        <div className="border border-primary/30 rounded-lg p-4 sm:p-6 bg-background">
           {activeTab === "purchases" && <ServicesTab />}
           {activeTab === "analyses" && (
             <AnalysesTab 

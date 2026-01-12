@@ -21,22 +21,22 @@ const Index = () => {
       <Header />
       
       {/* Hero Section */}
-      <section className="relative pt-32 pb-20 overflow-hidden">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-primary/5 blur-[120px] rounded-full" />
+      <section className="relative pt-24 sm:pt-32 pb-12 sm:pb-20 overflow-hidden">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[400px] sm:w-[800px] h-[300px] sm:h-[600px] bg-primary/5 blur-[120px] rounded-full" />
         
-        <div className="container mx-auto px-6 relative">
-          <div className="max-w-3xl mx-auto text-center mb-16">
-            <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight animate-slide-up">
+        <div className="container mx-auto px-4 sm:px-6 relative">
+          <div className="max-w-3xl mx-auto text-center mb-8 sm:mb-16">
+            <h1 className="text-2xl sm:text-4xl md:text-6xl font-bold mb-4 sm:mb-6 leading-tight animate-slide-up">
               <span className="text-red-600 font-extrabold">{t("heroHighlight")}</span> {t("heroTitle")}
             </h1>
             
-            <p className="text-lg text-muted-foreground mb-8 animate-slide-up" style={{ animationDelay: "100ms" }}>
+            <p className="text-sm sm:text-lg text-muted-foreground mb-6 sm:mb-8 animate-slide-up px-2" style={{ animationDelay: "100ms" }}>
               {t("heroSubtitle")}
             </p>
           </div>
 
           {/* Features Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-4xl mx-auto mb-16">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-2 sm:gap-4 max-w-4xl mx-auto mb-8 sm:mb-16">
             {features.map((feature, index) => (
               <FeatureCard 
                 key={feature.titleKey} 

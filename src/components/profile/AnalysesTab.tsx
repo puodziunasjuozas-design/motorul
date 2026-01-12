@@ -112,36 +112,36 @@ const AnalysesTab = ({ showAnalysisTool = false, onAnalysisToolClose }: Analyses
     <div className="space-y-3">
       {analyses.map(analysis => (
         <Card key={analysis.id} className="bg-zinc-900 border-primary/20 hover:border-primary/40 transition-colors">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div className="p-2 rounded-lg bg-primary/10">
-                  <Car className="w-5 h-5 text-primary" />
+          <CardContent className="p-3 sm:p-4">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+              <div className="flex items-start sm:items-center gap-3 sm:gap-4 min-w-0">
+                <div className="p-2 rounded-lg bg-primary/10 flex-shrink-0">
+                  <Car className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
                 </div>
-                <div>
-                  <h4 className="font-medium text-foreground">
+                <div className="min-w-0">
+                  <h4 className="font-medium text-foreground text-sm sm:text-base truncate">
                     {analysis.vehicle_make} {analysis.vehicle_model}
                     {analysis.vehicle_year && ` (${analysis.vehicle_year})`}
                   </h4>
-                  <div className="flex items-center gap-3 mt-1">
-                    <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                      <Calendar className="w-3 h-3" />
+                  <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-1">
+                    <div className="flex items-center gap-1 text-xs sm:text-sm text-muted-foreground">
+                      <Calendar className="w-3 h-3 flex-shrink-0" />
                       {new Date(analysis.created_at).toLocaleDateString()}
                     </div>
                     {analysis.current_price && (
-                      <span className="text-sm text-primary font-medium">
+                      <span className="text-xs sm:text-sm text-primary font-medium">
                         {analysis.current_price.toLocaleString()} €
                       </span>
                     )}
                     {analysis.price_rating && (
-                      <Badge className={getPriceRatingColor(analysis.price_rating)}>
+                      <Badge className={`${getPriceRatingColor(analysis.price_rating)} text-xs`}>
                         {analysis.price_rating}
                       </Badge>
                     )}
                   </div>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 self-end sm:self-auto flex-shrink-0">
                 {analysis.listing_url && (
                   <Button variant="ghost" size="sm" onClick={() => window.open(analysis.listing_url!, "_blank")}>
                     <ExternalLink className="w-4 h-4" />
