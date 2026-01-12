@@ -17,6 +17,7 @@ export const en = {
   analyzeWithAI: "ANALYZE",
   startAnalysis: "Start analysis",
   startAnalysisDesc: "Upload images and/or description from listing",
+  startNewAnalysis: "START ANALYSIS",
   analysisResults: "Analysis results",
   marketAnalysis: "Market Analysis",
   currentPrice: "Asking price",

@@ -17,6 +17,7 @@ export const ru = {
   analyzeWithAI: "АНАЛИЗИРОВАТЬ",
   startAnalysis: "Начать анализ",
   startAnalysisDesc: "Загрузите фото и/или описание объявления",
+  startNewAnalysis: "НАЧАТЬ АНАЛИЗ",
   analysisResults: "Результаты анализа",
   marketAnalysis: "Анализ рынка",
   currentPrice: "Запрашиваемая цена",
