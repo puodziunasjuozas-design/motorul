@@ -154,7 +154,7 @@ const ServicesTab = () => {
 
       {/* Packages */}
       <div>
-        <h3 className="text-base sm:text-lg font-semibold text-foreground mb-3 bg-background">{t("packages")}</h3>
+        <h3 className="text-base text-foreground mb-3 bg-background font-extrabold sm:text-3xl">{t("packages")}</h3>
         <div className="grid gap-3 sm:grid-cols-2">
           {packages.map(pkg => <Card key={pkg.id} className={`bg-black border-primary/20 hover:border-primary/40 transition-colors ${pkg.popular ? "ring-2 ring-primary" : ""}`}>
               <CardHeader className="pb-2 p-3 sm:p-6">
