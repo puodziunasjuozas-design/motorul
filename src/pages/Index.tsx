@@ -1,4 +1,5 @@
 import { Camera, TrendingUp, Wrench, Play, Calculator, ThumbsUp } from "lucide-react";
+import { Link } from "react-router-dom";
 import Header from "@/components/Header";
 import FeatureCard from "@/components/FeatureCard";
 import ScrollingCar from "@/components/ScrollingCar";
@@ -55,8 +56,22 @@ const Index = () => {
 
       {/* Footer */}
       <footer className="py-8 border-t border-border">
-        <div className="container mx-auto px-6 text-center text-sm text-muted-foreground">
-          <p>© 2026 {t("title")}</p>
+        <div className="container mx-auto px-4 sm:px-6">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 mb-4">
+            <Link 
+              to="/about" 
+              className="text-sm sm:text-base text-muted-foreground hover:text-foreground transition-colors"
+            >
+              {t("aboutUs")}
+            </Link>
+            <Link 
+              to="/business" 
+              className="text-sm sm:text-base text-muted-foreground hover:text-foreground transition-colors"
+            >
+              {t("forBusiness")}
+            </Link>
+          </div>
+          <p className="text-center text-sm text-muted-foreground">© 2026 {t("title")}</p>
         </div>
       </footer>
     </div>
