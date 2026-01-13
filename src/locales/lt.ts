@@ -107,7 +107,7 @@ export const lt = {
   extraMessages: "Papildomos žinutės",
   extraMessagesDesc: "+20 žinučių prie esamos konsultacijos",
   packages: "Paketai",
-  starterPackDesc: "4 analizės + 1 konsultacija (40 žinučių)",
+  starterPackDesc: "4 analizės + 1 konsultacija (30 žinučių)",
   proPackDesc: "10 analizių + 2 konsultacijos (80 žinučių)",
   popular: "Populiarus",
   buy: "Pirkti",
