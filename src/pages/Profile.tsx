@@ -8,6 +8,7 @@ import AnalysesTab from "@/components/profile/AnalysesTab";
 import ChatsTab from "@/components/profile/ChatsTab";
 import { Button } from "@/components/ui/button";
 import { ShoppingBag, BarChart3, MessageSquare, ArrowRight } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 import purchasesCarGif from "@/assets/purchases-car.gif";
 import analysesCarGif from "@/assets/analyses-car.gif";
 import consultationsCarGif from "@/assets/consultations-car.gif";
@@ -17,6 +18,7 @@ type TabType = "purchases" | "analyses" | "consultations";
 const Profile = () => {
   const [activeTab, setActiveTab] = useState<TabType>("purchases");
   const [showAnalysisTool, setShowAnalysisTool] = useState(false);
+  const [analysisCredits, setAnalysisCredits] = useState<number>(0);
   const { user } = useAuth();
   const navigate = useNavigate();
   const { t } = useLanguage();
@@ -26,6 +28,21 @@ const Profile = () => {
       navigate("/auth");
     }
   }, [user, navigate]);
+
+  useEffect(() => {
+    const fetchCredits = async () => {
+      if (!user) return;
+      const { data } = await supabase
+        .from("user_credits")
+        .select("analysis_credits")
+        .eq("user_id", user.id)
+        .single();
+      
+      setAnalysisCredits(data?.analysis_credits || 0);
+    };
+    
+    fetchCredits();
+  }, [user]);
 
   const tabs = [
     { id: "purchases" as TabType, label: t("myPurchases"), icon: ShoppingBag },
@@ -77,8 +94,8 @@ const Profile = () => {
           />
         </div>
 
-        {/* Start Analysis Button - only show in analyses tab when tool is not open */}
-        {activeTab === "analyses" && !showAnalysisTool && (
+        {/* Start Analysis Button - only show in analyses tab when tool is not open AND user has credits */}
+        {activeTab === "analyses" && !showAnalysisTool && analysisCredits > 0 && (
           <div className="flex justify-center mb-8">
             <Button 
               variant="hero" 
