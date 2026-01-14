@@ -7,6 +7,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+
 interface ChatConversation {
   id: string;
   title: string | null;
@@ -15,20 +16,31 @@ interface ChatConversation {
   created_at: string;
   updated_at: string;
 }
+
 const ChatsTab = () => {
-  const {
-    t
-  } = useLanguage();
-  const {
-    user
-  } = useAuth();
+  const { t } = useLanguage();
+  const { user } = useAuth();
   const [conversations, setConversations] = useState<ChatConversation[]>([]);
   const [loading, setLoading] = useState(true);
+  const [chatCredits, setChatCredits] = useState<number>(0);
+
   useEffect(() => {
     if (user) {
       fetchConversations();
+      fetchCredits();
     }
   }, [user]);
+
+  const fetchCredits = async () => {
+    if (!user) return;
+    const { data } = await supabase
+      .from("user_credits")
+      .select("chat_messages")
+      .eq("user_id", user.id)
+      .maybeSingle();
+    
+    setChatCredits(data?.chat_messages || 0);
+  };
   const fetchConversations = async () => {
     if (!user) return;
     const {
@@ -83,10 +95,12 @@ const ChatsTab = () => {
       </div>;
   }
   return <div className="space-y-4">
-      <Button onClick={handleNewChat} className="w-full bg-primary hover:bg-primary/90">
-        <Plus className="w-4 h-4 mr-2" />
-        {t("newChat")}
-      </Button>
+      {chatCredits > 0 && (
+        <Button onClick={handleNewChat} className="w-full bg-primary hover:bg-primary/90">
+          <Plus className="w-4 h-4 mr-2" />
+          {t("newChat")}
+        </Button>
+      )}
 
       {conversations.length === 0 ? <div className="text-center py-12">
           <MessageSquare className="w-12 h-12 mx-auto mb-4 text-red-800" />
