@@ -1,4 +1,4 @@
-import { TrendingUp, TrendingDown, AlertTriangle, CheckCircle2, Wrench, DollarSign, Target, Clock, Play, ExternalLink } from "lucide-react";
+import { TrendingUp, TrendingDown, AlertTriangle, CheckCircle2, Wrench, DollarSign, Target, Clock } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { useLanguage } from "@/contexts/LanguageContext";
 export interface AnalysisData {
@@ -216,27 +216,6 @@ const AnalysisResult = ({
           </Card>}
       </div>
 
-      {/* Video Tutorials */}
-      {data.videos.length > 0 && <Card className="glass-card p-6">
-          <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-            <Play className="w-5 h-5 text-primary" />
-            {t("youtubeVideos")}
-          </h3>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {data.videos.map((video, index) => <a key={index} href={video.url} target="_blank" rel="noopener noreferrer" className="group relative aspect-video rounded-lg overflow-hidden bg-secondary">
-                <img src={video.thumbnail} alt={video.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-                <div className="absolute inset-0 bg-background/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                  <Play className="w-12 h-12 text-primary" />
-                </div>
-                <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-background to-transparent">
-                  <p className="text-sm font-medium line-clamp-2 flex items-center gap-1">
-                    {video.title}
-                    <ExternalLink className="w-3 h-3 flex-shrink-0" />
-                  </p>
-                </div>
-              </a>)}
-          </div>
-        </Card>}
     </div>;
 };
 export default AnalysisResult;
