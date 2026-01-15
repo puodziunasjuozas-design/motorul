@@ -2,21 +2,34 @@ import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Trash2, ExternalLink, Car, Calendar, ArrowRight } from "lucide-react";
+import { Trash2, ExternalLink, Car, Calendar } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import AnalysisTool from "./AnalysisTool";
+import AnalysisResult from "@/components/AnalysisResult";
 
 interface Analysis {
   id: string;
   vehicle_make: string;
   vehicle_model: string;
   vehicle_year: number | null;
+  vehicle_mileage: string | null;
+  vehicle_fuel_type: string | null;
+  vehicle_transmission: string | null;
   current_price: number | null;
+  market_average: number | null;
+  estimated_resale_value: number | null;
   price_rating: string | null;
   is_profitable: boolean | null;
+  potential_profit: number | null;
+  recommendation: string | null;
+  repair_total_cost: number | null;
+  repair_items: unknown;
+  warnings: unknown;
+  positives: unknown;
+  videos: unknown;
   created_at: string;
   listing_url: string | null;
 }
@@ -31,6 +44,7 @@ const AnalysesTab = ({ showAnalysisTool = false, onAnalysisToolClose }: Analyses
   const { user } = useAuth();
   const [analyses, setAnalyses] = useState<Analysis[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedAnalysis, setSelectedAnalysis] = useState<Analysis | null>(null);
 
   useEffect(() => {
     if (user) {
@@ -42,7 +56,7 @@ const AnalysesTab = ({ showAnalysisTool = false, onAnalysisToolClose }: Analyses
     if (!user) return;
     const { data, error } = await supabase
       .from("analysis_history")
-      .select("id, vehicle_make, vehicle_model, vehicle_year, current_price, price_rating, is_profitable, created_at, listing_url")
+      .select("*")
       .eq("user_id", user.id)
       .order("created_at", { ascending: false });
 
@@ -86,6 +100,59 @@ const AnalysesTab = ({ showAnalysisTool = false, onAnalysisToolClose }: Analyses
     onAnalysisToolClose?.();
   };
 
+  const convertToAnalysisData = (analysis: Analysis) => {
+    const repairItems = Array.isArray(analysis.repair_items) ? analysis.repair_items : [];
+    const videos = Array.isArray(analysis.videos) ? analysis.videos : [];
+    const warnings = Array.isArray(analysis.warnings) ? analysis.warnings : [];
+    const positives = Array.isArray(analysis.positives) ? analysis.positives : [];
+    
+    return {
+      vehicleInfo: {
+        make: analysis.vehicle_make,
+        model: analysis.vehicle_model,
+        year: analysis.vehicle_year || 0,
+        mileage: analysis.vehicle_mileage || "N/A",
+        fuelType: analysis.vehicle_fuel_type || "N/A",
+        transmission: analysis.vehicle_transmission || "N/A",
+      },
+      marketAnalysis: {
+        currentPrice: analysis.current_price || 0,
+        marketAverage: analysis.market_average || 0,
+        priceRating: (analysis.price_rating?.toLowerCase() === "good" || analysis.price_rating?.toLowerCase() === "gera" ? "good" : 
+                      analysis.price_rating?.toLowerCase() === "overpriced" || analysis.price_rating?.toLowerCase() === "aukšta" ? "overpriced" : "average") as "good" | "average" | "overpriced",
+        estimatedResaleValue: analysis.estimated_resale_value || 0,
+        resaleTimeframe: "6-12 mėn.",
+      },
+      repairEstimate: {
+        totalCost: analysis.repair_total_cost || 0,
+        items: repairItems as Array<{ name: string; cost: number; urgency: "high" | "medium" | "low" }>,
+      },
+      profitability: {
+        isProfitable: analysis.is_profitable || false,
+        potentialProfit: analysis.potential_profit || 0,
+        recommendation: analysis.recommendation || "",
+      },
+      videos: videos as Array<{ title: string; url: string; thumbnail: string }>,
+      warnings: warnings as string[],
+      positives: positives as string[],
+    };
+  };
+
+  if (selectedAnalysis) {
+    return (
+      <div className="space-y-4">
+        <Button 
+          variant="outline" 
+          onClick={() => setSelectedAnalysis(null)}
+          className="mb-4"
+        >
+          ← {t("back")}
+        </Button>
+        <AnalysisResult data={convertToAnalysisData(selectedAnalysis)} />
+      </div>
+    );
+  }
+
   if (showAnalysisTool) {
     return <AnalysisTool onClose={handleToolClose} />;
   }
@@ -111,7 +178,11 @@ const AnalysesTab = ({ showAnalysisTool = false, onAnalysisToolClose }: Analyses
   return (
     <div className="space-y-3">
       {analyses.map(analysis => (
-        <Card key={analysis.id} className="bg-zinc-900 border-primary/20 hover:border-primary/40 transition-colors">
+        <Card 
+          key={analysis.id} 
+          className="bg-zinc-900 border-primary/20 hover:border-primary/40 transition-colors cursor-pointer"
+          onClick={() => setSelectedAnalysis(analysis)}
+        >
           <CardContent className="p-3 sm:p-4">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
               <div className="flex items-start sm:items-center gap-3 sm:gap-4 min-w-0">
@@ -143,14 +214,24 @@ const AnalysesTab = ({ showAnalysisTool = false, onAnalysisToolClose }: Analyses
               </div>
               <div className="flex items-center gap-2 self-end sm:self-auto flex-shrink-0">
                 {analysis.listing_url && (
-                  <Button variant="ghost" size="sm" onClick={() => window.open(analysis.listing_url!, "_blank")}>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      window.open(analysis.listing_url!, "_blank");
+                    }}
+                  >
                     <ExternalLink className="w-4 h-4" />
                   </Button>
                 )}
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  onClick={() => handleDelete(analysis.id)} 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDelete(analysis.id);
+                  }} 
                   className="text-destructive hover:text-destructive"
                 >
                   <Trash2 className="w-4 h-4" />
