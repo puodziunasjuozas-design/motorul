@@ -118,7 +118,7 @@ const AnalysisResult = ({
           <div className="text-center p-4 rounded-xl bg-secondary/30">
             <p className="text-muted-foreground mb-1 text-lg">{t("currentPrice")}</p>
             <p className={`text-2xl font-bold ${getPriceColor(data.marketAnalysis.priceRating)}`}>
-              €{data.marketAnalysis.currentPrice.toLocaleString()}
+              €{(data.marketAnalysis.currentPrice ?? 0).toLocaleString()}
             </p>
             <span className={`text-xs px-2 py-1 rounded-full ${data.marketAnalysis.priceRating === "good" ? "bg-primary/20 text-primary" : data.marketAnalysis.priceRating === "overpriced" ? "bg-destructive/20 text-destructive" : "bg-warning/20 text-warning"}`}>
               {getPriceLabel(data.marketAnalysis.priceRating)}
@@ -127,7 +127,7 @@ const AnalysisResult = ({
           <div className="text-center p-4 rounded-xl bg-secondary/30">
             <p className="text-muted-foreground mb-1 text-lg">{t("marketAverage")}</p>
             <p className="text-2xl font-bold text-foreground">
-              €{data.marketAnalysis.marketAverage.toLocaleString()}
+              €{(data.marketAnalysis.marketAverage ?? 0).toLocaleString()}
             </p>
             <span className="text-muted-foreground text-sm">
               {t("similarVehicles")}
@@ -136,7 +136,7 @@ const AnalysisResult = ({
           <div className="text-center p-4 rounded-xl bg-secondary/30">
             <p className="text-muted-foreground mb-1 text-lg">{t("resaleValue")}</p>
             <p className="text-2xl font-bold text-foreground">
-              €{data.marketAnalysis.estimatedResaleValue.toLocaleString()}
+              €{(data.marketAnalysis.estimatedResaleValue ?? 0).toLocaleString()}
             </p>
             <span className="text-muted-foreground flex items-center justify-center gap-1 text-sm">
               <Clock className="w-3 h-3 text-red-800" />
@@ -163,7 +163,7 @@ const AnalysisResult = ({
           <div className="flex items-center justify-between p-4 rounded-lg bg-primary/10 border border-primary/30 mt-4">
             <span className="font-semibold">{t("totalRepairCost")}:</span>
             <span className="text-xl font-bold text-primary">
-              €{data.repairEstimate.totalCost.toLocaleString()}
+              €{(data.repairEstimate.totalCost ?? 0).toLocaleString()}
             </span>
           </div>
         </div>
@@ -180,7 +180,7 @@ const AnalysisResult = ({
               {data.profitability.isProfitable ? t("worthBuying") : t("notRecommended")}
             </h3>
             <p className={`text-2xl font-bold mb-2 ${data.profitability.isProfitable ? "stat-positive" : "stat-negative"}`}>
-              {data.profitability.isProfitable ? "+" : ""}€{data.profitability.potentialProfit.toLocaleString()}
+              {data.profitability.isProfitable ? "+" : ""}€{(data.profitability.potentialProfit ?? 0).toLocaleString()}
             </p>
             <p className="text-muted-foreground">{data.profitability.recommendation}</p>
           </div>
