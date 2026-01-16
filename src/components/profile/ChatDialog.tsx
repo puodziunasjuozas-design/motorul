@@ -79,7 +79,7 @@ const ChatDialog = ({ open, onOpenChange, conversationId, conversationTitle }: C
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px] h-[80vh] flex flex-col bg-zinc-950 border-primary/30">
+      <DialogContent className="w-screen h-screen max-w-none max-h-none m-0 rounded-none flex flex-col bg-zinc-950 border-none">
         <DialogHeader>
           <DialogTitle className="text-foreground flex items-center gap-2">
             <Bot className="w-5 h-5 text-primary" />
