@@ -19,6 +19,7 @@ const Profile = () => {
   const [activeTab, setActiveTab] = useState<TabType>("purchases");
   const [showAnalysisTool, setShowAnalysisTool] = useState(false);
   const [analysisCredits, setAnalysisCredits] = useState<number>(0);
+  const [chatCredits, setChatCredits] = useState<number>(0);
   const { user } = useAuth();
   const navigate = useNavigate();
   const { t } = useLanguage();
@@ -29,18 +30,19 @@ const Profile = () => {
     }
   }, [user, navigate]);
 
-  useEffect(() => {
-    const fetchCredits = async () => {
-      if (!user) return;
-      const { data } = await supabase
-        .from("user_credits")
-        .select("analysis_credits")
-        .eq("user_id", user.id)
-        .single();
-      
-      setAnalysisCredits(data?.analysis_credits || 0);
-    };
+  const fetchCredits = async () => {
+    if (!user) return;
+    const { data } = await supabase
+      .from("user_credits")
+      .select("analysis_credits, chat_messages")
+      .eq("user_id", user.id)
+      .single();
     
+    setAnalysisCredits(data?.analysis_credits || 0);
+    setChatCredits(data?.chat_messages || 0);
+  };
+
+  useEffect(() => {
     fetchCredits();
   }, [user]);
 
@@ -115,10 +117,11 @@ const Profile = () => {
           {activeTab === "analyses" && (
             <AnalysesTab 
               showAnalysisTool={showAnalysisTool} 
-              onAnalysisToolClose={() => setShowAnalysisTool(false)} 
+              onAnalysisToolClose={() => setShowAnalysisTool(false)}
+              onCreditsUsed={fetchCredits}
             />
           )}
-          {activeTab === "consultations" && <ChatsTab />}
+          {activeTab === "consultations" && <ChatsTab onCreditsUsed={fetchCredits} />}
         </div>
       </div>
     </div>

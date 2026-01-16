@@ -11,9 +11,10 @@ import { supabase } from "@/integrations/supabase/client";
 
 interface AnalysisToolProps {
   onClose: () => void;
+  onCreditsUsed?: () => void;
 }
 
-const AnalysisTool = ({ onClose }: AnalysisToolProps) => {
+const AnalysisTool = ({ onClose, onCreditsUsed }: AnalysisToolProps) => {
   const [images, setImages] = useState<File[]>([]);
   const [description, setDescription] = useState("");
   const [listingUrl, setListingUrl] = useState("");
@@ -22,6 +23,26 @@ const AnalysisTool = ({ onClose }: AnalysisToolProps) => {
   const { toast } = useToast();
   const { user } = useAuth();
   const { t } = useLanguage();
+
+  const decreaseCredits = async () => {
+    if (!user) return;
+    
+    // Get current credits
+    const { data: currentCredits } = await supabase
+      .from("user_credits")
+      .select("analysis_credits")
+      .eq("user_id", user.id)
+      .single();
+    
+    if (currentCredits && currentCredits.analysis_credits > 0) {
+      await supabase
+        .from("user_credits")
+        .update({ analysis_credits: currentCredits.analysis_credits - 1 })
+        .eq("user_id", user.id);
+      
+      onCreditsUsed?.();
+    }
+  };
 
   const fileToBase64 = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
@@ -82,6 +103,7 @@ const AnalysisTool = ({ onClose }: AnalysisToolProps) => {
       setAnalysisResult(result);
       if (user) {
         await saveToHistory(result);
+        await decreaseCredits();
       }
       toast({
         title: t("analysisDone"),

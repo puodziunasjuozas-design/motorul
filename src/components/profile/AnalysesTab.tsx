@@ -37,9 +37,10 @@ interface Analysis {
 interface AnalysesTabProps {
   showAnalysisTool?: boolean;
   onAnalysisToolClose?: () => void;
+  onCreditsUsed?: () => void;
 }
 
-const AnalysesTab = ({ showAnalysisTool = false, onAnalysisToolClose }: AnalysesTabProps) => {
+const AnalysesTab = ({ showAnalysisTool = false, onAnalysisToolClose, onCreditsUsed }: AnalysesTabProps) => {
   const { t } = useLanguage();
   const { user } = useAuth();
   const [analyses, setAnalyses] = useState<Analysis[]>([]);
@@ -154,7 +155,7 @@ const AnalysesTab = ({ showAnalysisTool = false, onAnalysisToolClose }: Analyses
   }
 
   if (showAnalysisTool) {
-    return <AnalysisTool onClose={handleToolClose} />;
+    return <AnalysisTool onClose={handleToolClose} onCreditsUsed={onCreditsUsed} />;
   }
 
   if (loading) {
