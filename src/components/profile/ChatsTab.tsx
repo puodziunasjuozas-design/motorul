@@ -7,6 +7,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import ChatDialog from "./ChatDialog";
 
 interface ChatConversation {
   id: string;
@@ -23,6 +24,8 @@ const ChatsTab = () => {
   const [conversations, setConversations] = useState<ChatConversation[]>([]);
   const [loading, setLoading] = useState(true);
   const [chatCredits, setChatCredits] = useState<number>(0);
+  const [chatDialogOpen, setChatDialogOpen] = useState(false);
+  const [activeConversation, setActiveConversation] = useState<ChatConversation | null>(null);
 
   useEffect(() => {
     if (user) {
@@ -72,7 +75,9 @@ const ChatsTab = () => {
       toast.error(t("errorCreatingChat"));
     } else {
       setConversations([data, ...conversations]);
-      toast.success(t("chatCreated"));
+      // Open chat dialog with new conversation
+      setActiveConversation(data);
+      setChatDialogOpen(true);
     }
   };
   const handleDelete = async (id: string) => {
@@ -86,8 +91,9 @@ const ChatsTab = () => {
       toast.success(t("chatDeleted"));
     }
   };
-  const handleOpenChat = (id: string) => {
-    toast.info(t("chatFeatureComingSoon"));
+  const handleOpenChat = (conversation: ChatConversation) => {
+    setActiveConversation(conversation);
+    setChatDialogOpen(true);
   };
   if (loading) {
     return <div className="flex items-center justify-center py-12">
@@ -107,7 +113,7 @@ const ChatsTab = () => {
           <h3 className="text-foreground mb-2 text-3xl font-semibold">{t("noChats")}</h3>
           
         </div> : <div className="space-y-3">
-          {conversations.map(chat => <Card key={chat.id} className="bg-zinc-900 border-primary/20 hover:border-primary/40 transition-colors cursor-pointer" onClick={() => handleOpenChat(chat.id)}>
+          {conversations.map(chat => <Card key={chat.id} className="bg-zinc-900 border-primary/20 hover:border-primary/40 transition-colors cursor-pointer" onClick={() => handleOpenChat(chat)}>
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
@@ -141,6 +147,14 @@ const ChatsTab = () => {
                 </div>
               </CardContent>
             </Card>)}
+          
+          {/* Chat Dialog */}
+          <ChatDialog
+            open={chatDialogOpen}
+            onOpenChange={setChatDialogOpen}
+            conversationId={activeConversation?.id || ""}
+            conversationTitle={activeConversation?.title || t("technicalConsultation")}
+          />
         </div>}
     </div>;
 };
