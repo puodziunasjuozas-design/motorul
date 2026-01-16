@@ -18,7 +18,11 @@ interface ChatConversation {
   updated_at: string;
 }
 
-const ChatsTab = () => {
+interface ChatsTabProps {
+  onCreditsUsed?: () => void;
+}
+
+const ChatsTab = ({ onCreditsUsed }: ChatsTabProps) => {
   const { t } = useLanguage();
   const { user } = useAuth();
   const [conversations, setConversations] = useState<ChatConversation[]>([]);
@@ -154,6 +158,10 @@ const ChatsTab = () => {
             onOpenChange={setChatDialogOpen}
             conversationId={activeConversation?.id || ""}
             conversationTitle={activeConversation?.title || t("technicalConsultation")}
+            onCreditsUsed={() => {
+              fetchCredits();
+              onCreditsUsed?.();
+            }}
           />
         </div>}
     </div>;
