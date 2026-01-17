@@ -100,6 +100,7 @@ export const lt = {
   yourBalance: "Jūsų balansas",
   analyses: "analizės",
   messages: "žinutės",
+  consultationsRemaining: "konsultacijos",
   singleAnalysis: "1 skelbimo rinkos analizė",
   singleAnalysisDesc: "Viena išsami transporto priemonės analizė",
   techConsultation: "Techninė konsultacija",
