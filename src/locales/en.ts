@@ -179,4 +179,7 @@ export const en = {
   testimonial3: "Video instructions helped me fix the brakes myself. Service would have charged €300, I only spent €50 on parts.",
   testimonial3Author: "Giedrius R.",
   testimonial3Role: "Klaipeda",
+  transferToConsultation: "Transfer to consultation",
+  analysisContextMessage: "I have questions about this analysis:",
+  noConsultationCredits: "You don't have consultation credits",
 };

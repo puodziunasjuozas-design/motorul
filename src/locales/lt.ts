@@ -179,4 +179,7 @@ export const lt = {
   testimonial3: "Video instrukcijos padėjo pačiam sutvarkyti stabdžius. Servisas būtų paprašęs 300€, o aš išleidau tik 50€ dalims.",
   testimonial3Author: "Giedrius R.",
   testimonial3Role: "Klaipėda",
+  transferToConsultation: "Perkelti į konsultaciją",
+  analysisContextMessage: "Turiu klausimų apie šią analizę:",
+  noConsultationCredits: "Neturite konsultacijų kreditų",
 };

@@ -1,5 +1,6 @@
-import { TrendingUp, TrendingDown, AlertTriangle, CheckCircle2, Wrench, DollarSign, Target, Clock } from "lucide-react";
+import { TrendingUp, TrendingDown, AlertTriangle, CheckCircle2, Wrench, DollarSign, Target, Clock, MessageCircle } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 export interface AnalysisData {
   vehicleInfo: {
@@ -40,9 +41,11 @@ export interface AnalysisData {
 }
 interface AnalysisResultProps {
   data: AnalysisData;
+  onTransferToConsultation?: (data: AnalysisData) => void;
 }
 const AnalysisResult = ({
-  data
+  data,
+  onTransferToConsultation
 }: AnalysisResultProps) => {
   const {
     t
@@ -78,6 +81,17 @@ const AnalysisResult = ({
     }
   };
   return <div className="space-y-6 animate-slide-up">
+      {/* Transfer to Consultation Button */}
+      {onTransferToConsultation && (
+        <Button 
+          onClick={() => onTransferToConsultation(data)}
+          className="w-full bg-primary hover:bg-primary/90"
+        >
+          <MessageCircle className="w-4 h-4 mr-2" />
+          {t("transferToConsultation")}
+        </Button>
+      )}
+
       {/* Vehicle Info */}
       <Card className="glass-card p-6">
         <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
