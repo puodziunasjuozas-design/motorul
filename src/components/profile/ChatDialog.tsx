@@ -33,41 +33,8 @@ const ChatDialog = ({
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [hasCredits, setHasCredits] = useState(true);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  const checkCredits = async () => {
-    if (!user) return;
-    const { data } = await supabase
-      .from("user_credits")
-      .select("chat_messages")
-      .eq("user_id", user.id)
-      .single();
-    
-    setHasCredits((data?.chat_messages || 0) > 0);
-  };
-
-  const decreaseCredits = async () => {
-    if (!user) return false;
-    
-    const { data: currentCredits } = await supabase
-      .from("user_credits")
-      .select("chat_messages")
-      .eq("user_id", user.id)
-      .single();
-    
-    if (currentCredits && currentCredits.chat_messages > 0) {
-      await supabase
-        .from("user_credits")
-        .update({ chat_messages: currentCredits.chat_messages - 1 })
-        .eq("user_id", user.id);
-      
-      onCreditsUsed?.();
-      setHasCredits(currentCredits.chat_messages > 1);
-      return true;
-    }
-    return false;
-  };
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
@@ -75,7 +42,6 @@ const ChatDialog = ({
   }, [messages]);
   useEffect(() => {
     if (open) {
-      checkCredits();
       // Add welcome message when dialog opens
       setMessages([{
         id: "welcome",
@@ -87,17 +53,6 @@ const ChatDialog = ({
 
   const handleSend = async () => {
     if (!input.trim() || isLoading) return;
-    
-    if (!hasCredits) {
-      toast.error(t("noCredits") || "Neturite žinučių kreditų");
-      return;
-    }
-
-    const creditUsed = await decreaseCredits();
-    if (!creditUsed) {
-      toast.error(t("noCredits") || "Neturite žinučių kreditų");
-      return;
-    }
 
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -169,8 +124,8 @@ const ChatDialog = ({
         </ScrollArea>
 
         <div className="flex gap-2 pt-4 border-t border-primary/20">
-          <Input value={input} onChange={e => setInput(e.target.value)} onKeyPress={handleKeyPress} placeholder={!hasCredits ? (t("noCreditsPlaceholder") || "Neturite žinučių kreditų...") : (t("typeMessage") || "Įveskite žinutę...")} className="flex-1 bg-zinc-900 border-primary/30 focus:border-primary" disabled={isLoading || !hasCredits} />
-          <Button onClick={handleSend} disabled={!input.trim() || isLoading || !hasCredits} className="bg-primary hover:bg-primary/90">
+          <Input value={input} onChange={e => setInput(e.target.value)} onKeyPress={handleKeyPress} placeholder={t("typeMessage") || "Įveskite žinutę..."} className="flex-1 bg-zinc-900 border-primary/30 focus:border-primary" disabled={isLoading} />
+          <Button onClick={handleSend} disabled={!input.trim() || isLoading} className="bg-primary hover:bg-primary/90">
             <Send className="w-4 h-4" />
           </Button>
         </div>

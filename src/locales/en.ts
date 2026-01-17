@@ -100,6 +100,7 @@ export const en = {
   yourBalance: "Your Balance",
   analyses: "analyses",
   messages: "messages",
+  consultationsRemaining: "consultations",
   singleAnalysis: "1 listing market analysis",
   singleAnalysisDesc: "One detailed vehicle analysis",
   techConsultation: "Technical consultation",

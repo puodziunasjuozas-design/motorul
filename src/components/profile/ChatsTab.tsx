@@ -66,6 +66,25 @@ const ChatsTab = ({ onCreditsUsed }: ChatsTabProps) => {
   };
   const handleNewChat = async () => {
     if (!user) return;
+    
+    // Check and deduct credits first
+    const { data: currentCredits } = await supabase
+      .from("user_credits")
+      .select("chat_messages")
+      .eq("user_id", user.id)
+      .single();
+    
+    if (!currentCredits || currentCredits.chat_messages <= 0) {
+      toast.error(t("noCredits") || "Neturite konsultacijų kreditų");
+      return;
+    }
+    
+    // Deduct one consultation credit
+    await supabase
+      .from("user_credits")
+      .update({ chat_messages: currentCredits.chat_messages - 1 })
+      .eq("user_id", user.id);
+    
     const {
       data,
       error
@@ -79,6 +98,8 @@ const ChatsTab = ({ onCreditsUsed }: ChatsTabProps) => {
       toast.error(t("errorCreatingChat"));
     } else {
       setConversations([data, ...conversations]);
+      fetchCredits();
+      onCreditsUsed?.();
       // Open chat dialog with new conversation
       setActiveConversation(data);
       setChatDialogOpen(true);

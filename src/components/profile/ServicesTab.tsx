@@ -117,7 +117,7 @@ const ServicesTab = () => {
             <div className="flex items-center gap-2">
               <MessageSquare className="text-primary h-5 w-5 sm:h-[28px] sm:w-[28px] flex-shrink-0" />
               <span className="text-foreground text-xl sm:text-2xl md:text-4xl font-semibold">
-                <strong>{loading ? "..." : credits?.chat_messages ?? 0}</strong> {t("messages")}
+                <strong>{loading ? "..." : credits?.chat_messages ?? 0}</strong> {t("consultationsRemaining")}
               </span>
             </div>
           </div>
@@ -177,7 +177,7 @@ const ServicesTab = () => {
                     </div>
                     <div className="flex items-center gap-2">
                       <MessageSquare className="w-4 h-4 text-primary flex-shrink-0" />
-                      <span className="text-lg sm:text-xl md:text-2xl font-semibold">{pkg.messages} {t("messages")}</span>
+                      <span className="text-lg sm:text-xl md:text-2xl font-semibold">{pkg.messages} {t("consultationsRemaining")}</span>
                     </div>
                   </div>
                   <div className="flex sm:flex-col items-center sm:items-end justify-between sm:text-right gap-2">
