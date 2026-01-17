@@ -8,7 +8,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import AnalysisTool from "./AnalysisTool";
-import AnalysisResult from "@/components/AnalysisResult";
+import AnalysisResult, { AnalysisData } from "@/components/AnalysisResult";
+import ChatDialog from "./ChatDialog";
 
 interface Analysis {
   id: string;
@@ -46,6 +47,8 @@ const AnalysesTab = ({ showAnalysisTool = false, onAnalysisToolClose, onCreditsU
   const [analyses, setAnalyses] = useState<Analysis[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedAnalysis, setSelectedAnalysis] = useState<Analysis | null>(null);
+  const [chatDialogOpen, setChatDialogOpen] = useState(false);
+  const [analysisContext, setAnalysisContext] = useState<AnalysisData | null>(null);
 
   useEffect(() => {
     if (user) {
@@ -101,6 +104,49 @@ const AnalysesTab = ({ showAnalysisTool = false, onAnalysisToolClose, onCreditsU
     onAnalysisToolClose?.();
   };
 
+  const handleTransferToConsultation = async (data: AnalysisData) => {
+    if (!user) return;
+    
+    // Check credits first
+    const { data: currentCredits } = await supabase
+      .from("user_credits")
+      .select("chat_messages")
+      .eq("user_id", user.id)
+      .single();
+    
+    if (!currentCredits || currentCredits.chat_messages <= 0) {
+      toast.error(t("noConsultationCredits") || "Neturite konsultacijų kreditų");
+      return;
+    }
+    
+    // Deduct one consultation credit
+    await supabase
+      .from("user_credits")
+      .update({ chat_messages: currentCredits.chat_messages - 1 })
+      .eq("user_id", user.id);
+    
+    // Create new conversation
+    const { data: newConversation, error } = await supabase
+      .from("chat_conversations")
+      .insert({
+        user_id: user.id,
+        title: `${data.vehicleInfo.make} ${data.vehicleInfo.model} (${data.vehicleInfo.year})`,
+        is_active: true,
+        messages_count: 0
+      })
+      .select()
+      .single();
+    
+    if (error) {
+      toast.error(t("errorCreatingChat"));
+      return;
+    }
+    
+    onCreditsUsed?.();
+    setAnalysisContext(data);
+    setChatDialogOpen(true);
+  };
+
   const convertToAnalysisData = (analysis: Analysis) => {
     const repairItems = Array.isArray(analysis.repair_items) ? analysis.repair_items : [];
     const videos = Array.isArray(analysis.videos) ? analysis.videos : [];
@@ -149,7 +195,18 @@ const AnalysesTab = ({ showAnalysisTool = false, onAnalysisToolClose, onCreditsU
         >
           ← {t("back")}
         </Button>
-        <AnalysisResult data={convertToAnalysisData(selectedAnalysis)} />
+        <AnalysisResult 
+          data={convertToAnalysisData(selectedAnalysis)} 
+          onTransferToConsultation={handleTransferToConsultation}
+        />
+        <ChatDialog
+          open={chatDialogOpen}
+          onOpenChange={setChatDialogOpen}
+          conversationId=""
+          conversationTitle={analysisContext ? `${analysisContext.vehicleInfo.make} ${analysisContext.vehicleInfo.model}` : t("technicalConsultation")}
+          analysisContext={analysisContext}
+          onCreditsUsed={onCreditsUsed}
+        />
       </div>
     );
   }

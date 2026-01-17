@@ -8,6 +8,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { AnalysisData } from "@/components/AnalysisResult";
 
 interface Message {
   id: string;
@@ -20,13 +21,15 @@ interface ChatDialogProps {
   conversationId: string;
   conversationTitle: string;
   onCreditsUsed?: () => void;
+  analysisContext?: AnalysisData | null;
 }
 const ChatDialog = ({
   open,
   onOpenChange,
   conversationId,
   conversationTitle,
-  onCreditsUsed
+  onCreditsUsed,
+  analysisContext
 }: ChatDialogProps) => {
   const { t } = useLanguage();
   const { user } = useAuth();
@@ -42,14 +45,49 @@ const ChatDialog = ({
   }, [messages]);
   useEffect(() => {
     if (open) {
-      // Add welcome message when dialog opens
-      setMessages([{
-        id: "welcome",
-        role: "assistant",
-        content: t("chatWelcomeMessage") || "Sveiki! Aš esu jūsų automobilio konsultantas. Kaip galiu jums padėti?"
-      }]);
+      if (analysisContext) {
+        // Create context message from analysis data
+        const contextMessage = `${t("analysisContextMessage") || "Turiu klausimų apie šią analizę:"}
+
+🚗 **${analysisContext.vehicleInfo.make} ${analysisContext.vehicleInfo.model}** (${analysisContext.vehicleInfo.year})
+📊 Rida: ${analysisContext.vehicleInfo.mileage}
+⛽ Kuras: ${analysisContext.vehicleInfo.fuelType}
+🔧 Pavarų dėžė: ${analysisContext.vehicleInfo.transmission}
+
+💰 Dabartinė kaina: €${analysisContext.marketAnalysis.currentPrice.toLocaleString()}
+📈 Rinkos vidurkis: €${analysisContext.marketAnalysis.marketAverage.toLocaleString()}
+💎 Perpardavimo vertė: €${analysisContext.marketAnalysis.estimatedResaleValue.toLocaleString()}
+
+🔧 Remonto kaina: €${analysisContext.repairEstimate.totalCost.toLocaleString()}
+${analysisContext.profitability.isProfitable ? "✅" : "❌"} Potencialus pelnas: €${analysisContext.profitability.potentialProfit.toLocaleString()}`;
+
+        setMessages([
+          {
+            id: "welcome",
+            role: "assistant",
+            content: `Sveiki! Matau, kad norite pasikonsultuoti apie ${analysisContext.vehicleInfo.make} ${analysisContext.vehicleInfo.model}. Turiu visą analizės informaciją - klauskite drąsiai!`
+          },
+          {
+            id: "context",
+            role: "user",
+            content: contextMessage
+          },
+          {
+            id: "ready",
+            role: "assistant",
+            content: "Puiku! Supratau analizės duomenis. Kokį klausimą turite apie šį automobilį?"
+          }
+        ]);
+      } else {
+        // Add welcome message when dialog opens without context
+        setMessages([{
+          id: "welcome",
+          role: "assistant",
+          content: t("chatWelcomeMessage") || "Sveiki! Aš esu jūsų automobilio konsultantas. Kaip galiu jums padėti?"
+        }]);
+      }
     }
-  }, [open, t]);
+  }, [open, t, analysisContext]);
 
   const handleSend = async () => {
     if (!input.trim() || isLoading) return;
