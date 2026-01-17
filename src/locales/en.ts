@@ -182,4 +182,6 @@ export const en = {
   transferToConsultation: "Transfer to consultation",
   analysisContextMessage: "I have questions about this analysis:",
   noConsultationCredits: "You don't have consultation credits",
+  viewAll: "View all",
+  testimonialsSubtitle: "What our customers say about our services",
 };
