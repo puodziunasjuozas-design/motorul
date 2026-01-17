@@ -1,30 +1,52 @@
-import { Camera, TrendingUp, Wrench, Play, Calculator, ThumbsUp, Quote } from "lucide-react";
+import { Camera, TrendingUp, Wrench, Play, Calculator, ThumbsUp } from "lucide-react";
 import { Link } from "react-router-dom";
 import Header from "@/components/Header";
 import FeatureCard from "@/components/FeatureCard";
 import ScrollingCar from "@/components/ScrollingCar";
 import { useLanguage } from "@/contexts/LanguageContext";
-
 const Index = () => {
-  const { t } = useLanguage();
-
-  const features = [
-    { icon: Camera, titleKey: "photoAnalysis", descriptionKey: "photoAnalysisDesc" },
-    { icon: TrendingUp, titleKey: "marketAnalysisTitle", descriptionKey: "marketAnalysisDesc" },
-    { icon: Calculator, titleKey: "profitCalculator", descriptionKey: "profitCalculatorDesc" },
-    { icon: Wrench, titleKey: "repairEstimateTitle", descriptionKey: "repairEstimateDesc" },
-    { icon: Play, titleKey: "videoInstructions", descriptionKey: "videoInstructionsDesc" },
-    { icon: ThumbsUp, titleKey: "aiRecommendations", descriptionKey: "aiRecommendationsDesc" }
-  ];
-
-  const testimonials = [
-    { textKey: "testimonial1", authorKey: "testimonial1Author", roleKey: "testimonial1Role" },
-    { textKey: "testimonial2", authorKey: "testimonial2Author", roleKey: "testimonial2Role" },
-    { textKey: "testimonial3", authorKey: "testimonial3Author", roleKey: "testimonial3Role" },
-  ];
-
-  return (
-    <div className="min-h-screen bg-background">
+  const {
+    t
+  } = useLanguage();
+  const features = [{
+    icon: Camera,
+    titleKey: "photoAnalysis",
+    descriptionKey: "photoAnalysisDesc"
+  }, {
+    icon: TrendingUp,
+    titleKey: "marketAnalysisTitle",
+    descriptionKey: "marketAnalysisDesc"
+  }, {
+    icon: Calculator,
+    titleKey: "profitCalculator",
+    descriptionKey: "profitCalculatorDesc"
+  }, {
+    icon: Wrench,
+    titleKey: "repairEstimateTitle",
+    descriptionKey: "repairEstimateDesc"
+  }, {
+    icon: Play,
+    titleKey: "videoInstructions",
+    descriptionKey: "videoInstructionsDesc"
+  }, {
+    icon: ThumbsUp,
+    titleKey: "aiRecommendations",
+    descriptionKey: "aiRecommendationsDesc"
+  }];
+  const testimonials = [{
+    textKey: "testimonial1",
+    authorKey: "testimonial1Author",
+    roleKey: "testimonial1Role"
+  }, {
+    textKey: "testimonial2",
+    authorKey: "testimonial2Author",
+    roleKey: "testimonial2Role"
+  }, {
+    textKey: "testimonial3",
+    authorKey: "testimonial3Author",
+    roleKey: "testimonial3Role"
+  }];
+  return <div className="min-h-screen bg-background">
       <Header />
       
       {/* Hero Section */}
@@ -37,22 +59,16 @@ const Index = () => {
               <span className="text-red-600 font-extrabold">{t("heroHighlight")}</span> {t("heroTitle")}
             </h1>
             
-            <p className="text-sm sm:text-lg text-muted-foreground mb-6 sm:mb-8 animate-slide-up px-2" style={{ animationDelay: "100ms" }}>
+            <p className="text-sm sm:text-lg text-muted-foreground mb-6 sm:mb-8 animate-slide-up px-2" style={{
+            animationDelay: "100ms"
+          }}>
               {t("heroSubtitle")}
             </p>
           </div>
 
           {/* Features Grid */}
           <div className="grid grid-cols-2 md:grid-cols-3 gap-2 sm:gap-4 max-w-4xl mx-auto mb-8 sm:mb-16">
-            {features.map((feature, index) => (
-              <FeatureCard 
-                key={feature.titleKey} 
-                icon={feature.icon} 
-                title={t(feature.titleKey)} 
-                description={t(feature.descriptionKey)} 
-                delay={index * 100} 
-              />
-            ))}
+            {features.map((feature, index) => <FeatureCard key={feature.titleKey} icon={feature.icon} title={t(feature.titleKey)} description={t(feature.descriptionKey)} delay={index * 100} />)}
           </div>
         </div>
       </section>
@@ -68,13 +84,10 @@ const Index = () => {
           </h2>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-            {testimonials.map((testimonial, index) => (
-              <div 
-                key={index}
-                className="bg-card border border-border rounded-xl p-6 relative animate-slide-up"
-                style={{ animationDelay: `${index * 100}ms` }}
-              >
-                <Quote className="w-8 h-8 text-primary/20 absolute top-4 right-4" />
+            {testimonials.map((testimonial, index) => <div key={index} className="bg-card border rounded-xl p-6 relative animate-slide-up border-primary" style={{
+            animationDelay: `${index * 100}ms`
+          }}>
+                
                 <p className="text-muted-foreground mb-4 text-sm sm:text-base leading-relaxed">
                   "{t(testimonial.textKey)}"
                 </p>
@@ -89,8 +102,7 @@ const Index = () => {
                     <p className="text-xs text-muted-foreground">{t(testimonial.roleKey)}</p>
                   </div>
                 </div>
-              </div>
-            ))}
+              </div>)}
           </div>
         </div>
       </section>
@@ -99,24 +111,16 @@ const Index = () => {
       <footer className="py-8 border-t border-border">
         <div className="container mx-auto px-4 sm:px-6">
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 mb-4">
-            <Link 
-              to="/about" 
-              className="text-sm sm:text-base text-muted-foreground hover:text-foreground transition-colors"
-            >
+            <Link to="/about" className="text-sm sm:text-base text-muted-foreground hover:text-foreground transition-colors">
               {t("aboutUs")}
             </Link>
-            <Link 
-              to="/business" 
-              className="text-sm sm:text-base text-muted-foreground hover:text-foreground transition-colors"
-            >
+            <Link to="/business" className="text-sm sm:text-base text-muted-foreground hover:text-foreground transition-colors">
               {t("forBusiness")}
             </Link>
           </div>
           <p className="text-center text-sm text-muted-foreground">© 2026 {t("title")}</p>
         </div>
       </footer>
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
