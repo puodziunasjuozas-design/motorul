@@ -182,4 +182,6 @@ export const lt = {
   transferToConsultation: "Perkelti į konsultaciją",
   analysisContextMessage: "Turiu klausimų apie šią analizę:",
   noConsultationCredits: "Neturite konsultacijų kreditų",
+  viewAll: "Žiūrėti visus",
+  testimonialsSubtitle: "Ką mūsų klientai sako apie mūsų paslaugas",
 };
