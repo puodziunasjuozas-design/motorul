@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { MessageCircle, Plus, Trash2, Calendar, MessageSquare, ShoppingCart } from "lucide-react";
+import { MessageCircle, Plus, Trash2, Calendar, MessageSquare } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -127,23 +126,6 @@ const ChatsTab = ({ onCreditsUsed }: ChatsTabProps) => {
       </div>;
   }
   return <div className="space-y-4">
-      {/* Credits display with buy more link */}
-      <div className="flex items-center justify-between p-4 bg-zinc-900 rounded-lg border border-primary/20">
-        <div className="flex items-center gap-2">
-          <MessageSquare className="w-5 h-5 text-primary" />
-          <span className="text-foreground font-medium">
-            {t("remainingMessages")}: <span className="text-primary">{chatCredits}/30</span>
-          </span>
-        </div>
-        <Link 
-          to="/#services" 
-          className="flex items-center gap-1 text-primary hover:text-primary/80 transition-colors font-medium text-sm"
-        >
-          <ShoppingCart className="w-4 h-4" />
-          {t("buyMore")}
-        </Link>
-      </div>
-
       {chatCredits > 0 && (
         <Button onClick={handleNewChat} className="w-full bg-primary hover:bg-primary/90">
           <Plus className="w-4 h-4 mr-2" />

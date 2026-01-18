@@ -201,6 +201,4 @@ export const en = {
   testimonialTooLong: "Testimonial is too long (max 500 characters)",
   nameTooLong: "Name is too long (max 50 characters)",
   userTestimonials: "Customer testimonials",
-  remainingMessages: "Messages remaining",
-  buyMore: "Buy more",
 };

@@ -201,6 +201,4 @@ export const lt = {
   testimonialTooLong: "Atsiliepimas per ilgas (maks. 500 simbolių)",
   nameTooLong: "Vardas per ilgas (maks. 50 simbolių)",
   userTestimonials: "Klientų atsiliepimai",
-  remainingMessages: "Liko žinučių",
-  buyMore: "Nusipirkti daugiau",
 };
