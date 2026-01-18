@@ -1,12 +1,11 @@
 import Header from "@/components/Header";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Users, Target, Award, Shield } from "lucide-react";
-
 const AboutUs = () => {
-  const { t } = useLanguage();
-
-  return (
-    <div className="min-h-screen bg-background">
+  const {
+    t
+  } = useLanguage();
+  return <div className="min-h-screen bg-background">
       <Header />
       
       <section className="pt-24 sm:pt-32 pb-12 sm:pb-20">
@@ -18,7 +17,7 @@ const AboutUs = () => {
             
             <div className="space-y-8 sm:space-y-12">
               {/* Mission */}
-              <div className="bg-card rounded-xl p-6 sm:p-8 border border-border">
+              <div className="bg-card rounded-xl p-6 sm:p-8 border-2 border-primary">
                 <div className="flex items-center gap-3 mb-4">
                   <Target className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
                   <h2 className="text-xl sm:text-2xl font-semibold">{t("ourMission")}</h2>
@@ -29,7 +28,7 @@ const AboutUs = () => {
               </div>
 
               {/* Team */}
-              <div className="bg-card rounded-xl p-6 sm:p-8 border border-border">
+              <div className="bg-card rounded-xl p-6 sm:p-8 border-2 border-primary">
                 <div className="flex items-center gap-3 mb-4">
                   <Users className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
                   <h2 className="text-xl sm:text-2xl font-semibold">{t("ourTeam")}</h2>
@@ -40,7 +39,7 @@ const AboutUs = () => {
               </div>
 
               {/* Values */}
-              <div className="bg-card rounded-xl p-6 sm:p-8 border border-border">
+              <div className="bg-card rounded-xl p-6 sm:p-8 border-2 border-primary">
                 <div className="flex items-center gap-3 mb-4">
                   <Award className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
                   <h2 className="text-xl sm:text-2xl font-semibold">{t("ourValues")}</h2>
@@ -51,7 +50,7 @@ const AboutUs = () => {
               </div>
 
               {/* Trust */}
-              <div className="bg-card rounded-xl p-6 sm:p-8 border border-border">
+              <div className="bg-card rounded-xl p-6 sm:p-8 border-2 border-primary">
                 <div className="flex items-center gap-3 mb-4">
                   <Shield className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
                   <h2 className="text-xl sm:text-2xl font-semibold">{t("whyTrustUs")}</h2>
@@ -71,8 +70,6 @@ const AboutUs = () => {
           <p>© 2026 {t("title")}</p>
         </div>
       </footer>
-    </div>
-  );
+    </div>;
 };
-
 export default AboutUs;
