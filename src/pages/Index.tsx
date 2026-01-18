@@ -1,52 +1,27 @@
-import { Camera, TrendingUp, Wrench, Play, Calculator, ThumbsUp, ArrowRight } from "lucide-react";
+import { Camera, TrendingUp, Wrench, Play, Calculator, ThumbsUp, ArrowRight, Star } from "lucide-react";
 import { Link } from "react-router-dom";
 import Header from "@/components/Header";
 import FeatureCard from "@/components/FeatureCard";
 import ScrollingCar from "@/components/ScrollingCar";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { getFeaturedTestimonials } from "@/data/testimonials";
+
 const Index = () => {
-  const {
-    t
-  } = useLanguage();
-  const features = [{
-    icon: Camera,
-    titleKey: "photoAnalysis",
-    descriptionKey: "photoAnalysisDesc"
-  }, {
-    icon: TrendingUp,
-    titleKey: "marketAnalysisTitle",
-    descriptionKey: "marketAnalysisDesc"
-  }, {
-    icon: Calculator,
-    titleKey: "profitCalculator",
-    descriptionKey: "profitCalculatorDesc"
-  }, {
-    icon: Wrench,
-    titleKey: "repairEstimateTitle",
-    descriptionKey: "repairEstimateDesc"
-  }, {
-    icon: Play,
-    titleKey: "videoInstructions",
-    descriptionKey: "videoInstructionsDesc"
-  }, {
-    icon: ThumbsUp,
-    titleKey: "aiRecommendations",
-    descriptionKey: "aiRecommendationsDesc"
-  }];
-  const testimonials = [{
-    textKey: "testimonial1",
-    authorKey: "testimonial1Author",
-    roleKey: "testimonial1Role"
-  }, {
-    textKey: "testimonial2",
-    authorKey: "testimonial2Author",
-    roleKey: "testimonial2Role"
-  }, {
-    textKey: "testimonial3",
-    authorKey: "testimonial3Author",
-    roleKey: "testimonial3Role"
-  }];
-  return <div className="min-h-screen bg-background">
+  const { t, language } = useLanguage();
+
+  const features = [
+    { icon: Camera, titleKey: "photoAnalysis", descriptionKey: "photoAnalysisDesc" },
+    { icon: TrendingUp, titleKey: "marketAnalysisTitle", descriptionKey: "marketAnalysisDesc" },
+    { icon: Calculator, titleKey: "profitCalculator", descriptionKey: "profitCalculatorDesc" },
+    { icon: Wrench, titleKey: "repairEstimateTitle", descriptionKey: "repairEstimateDesc" },
+    { icon: Play, titleKey: "videoInstructions", descriptionKey: "videoInstructionsDesc" },
+    { icon: ThumbsUp, titleKey: "aiRecommendations", descriptionKey: "aiRecommendationsDesc" },
+  ];
+
+  const testimonials = getFeaturedTestimonials(language);
+
+  return (
+    <div className="min-h-screen bg-background">
       <Header />
       
       {/* Hero Section */}
@@ -59,16 +34,22 @@ const Index = () => {
               <span className="text-red-600 font-extrabold">{t("heroHighlight")}</span> {t("heroTitle")}
             </h1>
             
-            <p className="text-sm sm:text-lg text-muted-foreground mb-6 sm:mb-8 animate-slide-up px-2" style={{
-            animationDelay: "100ms"
-          }}>
+            <p className="text-sm sm:text-lg text-muted-foreground mb-6 sm:mb-8 animate-slide-up px-2" style={{ animationDelay: "100ms" }}>
               {t("heroSubtitle")}
             </p>
           </div>
 
           {/* Features Grid */}
           <div className="grid grid-cols-2 md:grid-cols-3 gap-2 sm:gap-4 max-w-4xl mx-auto mb-8 sm:mb-16">
-            {features.map((feature, index) => <FeatureCard key={feature.titleKey} icon={feature.icon} title={t(feature.titleKey)} description={t(feature.descriptionKey)} delay={index * 100} />)}
+            {features.map((feature, index) => (
+              <FeatureCard
+                key={feature.titleKey}
+                icon={feature.icon}
+                title={t(feature.titleKey)}
+                description={t(feature.descriptionKey)}
+                delay={index * 100}
+              />
+            ))}
           </div>
         </div>
       </section>
@@ -93,25 +74,35 @@ const Index = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-            {testimonials.map((testimonial, index) => <div key={index} className="bg-card border rounded-xl p-6 relative animate-slide-up border-primary" style={{
-            animationDelay: `${index * 100}ms`
-          }}>
-                
+            {testimonials.map((testimonial, index) => (
+              <div
+                key={testimonial.id}
+                className="bg-card border rounded-xl p-6 relative animate-slide-up border-primary"
+                style={{ animationDelay: `${index * 100}ms` }}
+              >
+                {/* Rating */}
+                <div className="flex gap-1 mb-3">
+                  {[...Array(testimonial.rating)].map((_, i) => (
+                    <Star key={i} className="w-3.5 h-3.5 fill-primary text-primary" />
+                  ))}
+                </div>
+
                 <p className="text-muted-foreground mb-4 text-sm sm:text-base leading-relaxed">
-                  "{t(testimonial.textKey)}"
+                  "{testimonial.text}"
                 </p>
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
                     <span className="text-primary font-semibold text-sm">
-                      {t(testimonial.authorKey).charAt(0)}
+                      {testimonial.author.charAt(0)}
                     </span>
                   </div>
                   <div>
-                    <p className="font-semibold text-sm">{t(testimonial.authorKey)}</p>
-                    <p className="text-xs text-muted-foreground">{t(testimonial.roleKey)}</p>
+                    <p className="font-semibold text-sm">{testimonial.author}</p>
+                    <p className="text-xs text-muted-foreground">{testimonial.country}</p>
                   </div>
                 </div>
-              </div>)}
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -130,6 +121,8 @@ const Index = () => {
           <p className="text-center text-sm text-muted-foreground">© 2026 {t("title")}</p>
         </div>
       </footer>
-    </div>;
+    </div>
+  );
 };
+
 export default Index;
