@@ -247,6 +247,39 @@ export type Database = {
         }
         Relationships: []
       }
+      user_testimonials: {
+        Row: {
+          author_name: string
+          country: string
+          created_at: string
+          id: string
+          is_approved: boolean | null
+          rating: number
+          text: string
+          user_id: string
+        }
+        Insert: {
+          author_name: string
+          country: string
+          created_at?: string
+          id?: string
+          is_approved?: boolean | null
+          rating: number
+          text: string
+          user_id: string
+        }
+        Update: {
+          author_name?: string
+          country?: string
+          created_at?: string
+          id?: string
+          is_approved?: boolean | null
+          rating?: number
+          text?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

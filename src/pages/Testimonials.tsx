@@ -1,15 +1,85 @@
+import { useState, useEffect } from "react";
 import { ArrowLeft, Star } from "lucide-react";
 import { Link } from "react-router-dom";
 import Header from "@/components/Header";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { getTestimonialsForLanguage } from "@/data/testimonials";
+import { getTestimonialsForLanguage, Testimonial } from "@/data/testimonials";
+import TestimonialForm from "@/components/TestimonialForm";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
+
+interface UserTestimonial {
+  id: string;
+  text: string;
+  author_name: string;
+  country: string;
+  rating: number;
+  created_at: string;
+}
 
 const Testimonials = () => {
   const { t, language } = useLanguage();
-  
-  const testimonials = getTestimonialsForLanguage(language);
+  const { user } = useAuth();
+  const [hasPurchases, setHasPurchases] = useState(false);
+  const [userTestimonials, setUserTestimonials] = useState<UserTestimonial[]>([]);
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  const staticTestimonials = getTestimonialsForLanguage(language);
+
+  // Check if user has purchases
+  useEffect(() => {
+    const checkPurchases = async () => {
+      if (!user) {
+        setHasPurchases(false);
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from("purchases")
+        .select("id")
+        .eq("user_id", user.id)
+        .eq("status", "completed")
+        .limit(1);
+
+      if (!error && data && data.length > 0) {
+        setHasPurchases(true);
+      }
+    };
+
+    checkPurchases();
+  }, [user]);
+
+  // Fetch approved user testimonials
+  useEffect(() => {
+    const fetchUserTestimonials = async () => {
+      const { data, error } = await supabase
+        .from("user_testimonials")
+        .select("*")
+        .eq("is_approved", true)
+        .order("created_at", { ascending: false });
+
+      if (!error && data) {
+        setUserTestimonials(data);
+      }
+    };
+
+    fetchUserTestimonials();
+  }, [refreshKey]);
+
+  // Combine static and user testimonials
+  const allTestimonials: Testimonial[] = [
+    ...userTestimonials.map((ut) => ({
+      id: ut.id,
+      text: ut.text,
+      author: ut.author_name,
+      country: ut.country,
+      countryCode: language,
+      rating: ut.rating,
+    })),
+    ...staticTestimonials,
+  ];
 
   return (
     <div className="min-h-screen bg-background">
@@ -35,13 +105,23 @@ const Testimonials = () => {
             </p>
           </div>
 
+          {/* Testimonial Form for users with purchases */}
+          {user && hasPurchases && (
+            <div className="max-w-xl mx-auto mb-12">
+              <TestimonialForm 
+                userId={user.id} 
+                onSuccess={() => setRefreshKey((k) => k + 1)} 
+              />
+            </div>
+          )}
+
           {/* Testimonials Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
-            {testimonials.map((testimonial, index) => (
+            {allTestimonials.map((testimonial, index) => (
               <Card
                 key={testimonial.id}
                 className="p-6 bg-card border-primary/20 hover:border-primary/50 transition-all duration-300 animate-slide-up relative"
-                style={{ animationDelay: `${index * 100}ms` }}
+                style={{ animationDelay: `${index * 50}ms` }}
               >
                 {/* Rating */}
                 <div className="flex gap-1 mb-4">
