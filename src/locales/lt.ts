@@ -144,7 +144,7 @@ export const lt = {
   forBusiness: "Verslams",
   aboutUsTitle: "Apie mus",
   ourMission: "Mūsų misija",
-  ourMissionDesc: "Padėti žmonėms priimti protingus sprendimus perkant naudotą transportą. Naudojame pažangiausias AI technologijas, kad analizuotume automobilių būklę, rinkos kainas ir remonto kaštus.",
+  ourMissionDesc: "Padėti žmonėms priimti protingus sprendimus perkant naudotą transportą. Naudojame pažangiausias technologijas, kad analizuotume automobilių būklę, rinkos kainas ir remonto kaštus.",
   ourTeam: "Mūsų komanda",
   ourTeamDesc: "Esame entuziastų komanda, kurią vienija aistra automobiliams ir technologijoms. Mūsų ekspertai turi daugiametę patirtį automobilių pramonėje.",
   ourValues: "Mūsų vertybės",
