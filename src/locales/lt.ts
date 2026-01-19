@@ -150,7 +150,7 @@ export const lt = {
   ourValues: "Mūsų vertybės",
   ourValuesDesc: "Skaidrumas, tikslumas ir klientų pasitenkinimas yra mūsų pagrindinės vertybės. Siekiame, kad kiekvienas vartotojas gautų patikimą ir objektyvią informaciją.",
   whyTrustUs: "Kodėl mumis pasitikėti?",
-  whyTrustUsDesc: "Mūsų AI sistema analizuoja tūkstančius skelbimų ir realių pardavimų, kad pateiktų tiksliausius rinkos duomenis. Nuolat tobuliname savo algoritmus.",
+  whyTrustUsDesc: "Mūsų sistema analizuoja tūkstančius skelbimų ir realių pardavimų, kad pateiktų tiksliausius rinkos duomenis. Nuolat tobuliname savo algoritmus.",
   businessTitle: "Sprendimai verslui",
   businessSubtitle: "Automatizuokite automobilių vertinimą ir sutaupykite laiką su mūsų API ir verslo įrankiais.",
   businessBenefit1: "Masinė analizė",
