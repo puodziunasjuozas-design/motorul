@@ -201,4 +201,17 @@ export const lt = {
   testimonialTooLong: "Atsiliepimas per ilgas (maks. 500 simbolių)",
   nameTooLong: "Vardas per ilgas (maks. 50 simbolių)",
   userTestimonials: "Klientų atsiliepimai",
+  
+  // How It Works
+  howItWorksTitle: "Kaip tai veikia?",
+  howItWorksStep1Title: "Įkelkite informaciją",
+  howItWorksStep1Desc: "Pridėkite skelbimo nuotraukas, aprašymą arba tiesiog nuorodą į skelbimą. Sistema priima visus populiarius formatų tipus.",
+  howItWorksStep2Title: "Automatinė analizė",
+  howItWorksStep2Desc: "Mūsų sistema nuskaito nuotraukas, atpažįsta automobilio markę, modelį, metus ir matomus defektus. Taip pat analizuoja aprašymo tekstą.",
+  howItWorksStep3Title: "Rinkos palyginimas",
+  howItWorksStep3Desc: "Lyginame su tūkstančiais panašių skelbimų rinkoje, kad nustatytume ar kaina yra gera, vidutinė ar per didelė.",
+  howItWorksStep4Title: "Išsami ataskaita",
+  howItWorksStep4Desc: "Gausite detalią ataskaitą su remonto kainomis, perpardavimo verte, pelno skaičiavimu ir rekomendacija ar verta pirkti.",
+  howItWorksPrinciple: "Veikimo principas",
+  howItWorksPrincipleDesc: "Sistema remiasi išmaniaisiais algoritmais, kurie analizuoja vizualinę ir tekstinę informaciją. Lyginame duomenis su realiais pardavimais ir aktyviais skelbimais, kad pateiktume tiksliausius rinkos įvertinimus. Remonto kainos skaičiuojamos pagal vidutines Europos autoservisų kainas.",
 };

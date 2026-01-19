@@ -201,4 +201,17 @@ export const en = {
   testimonialTooLong: "Testimonial is too long (max 500 characters)",
   nameTooLong: "Name is too long (max 50 characters)",
   userTestimonials: "Customer testimonials",
+  
+  // How It Works
+  howItWorksTitle: "How does it work?",
+  howItWorksStep1Title: "Upload information",
+  howItWorksStep1Desc: "Add listing photos, description or just a link to the listing. The system accepts all popular format types.",
+  howItWorksStep2Title: "Automatic analysis",
+  howItWorksStep2Desc: "Our system scans photos, recognizes the car make, model, year and visible defects. It also analyzes the description text.",
+  howItWorksStep3Title: "Market comparison",
+  howItWorksStep3Desc: "We compare with thousands of similar listings on the market to determine if the price is good, average or too high.",
+  howItWorksStep4Title: "Detailed report",
+  howItWorksStep4Desc: "You'll receive a detailed report with repair costs, resale value, profit calculation and a recommendation on whether it's worth buying.",
+  howItWorksPrinciple: "Operating principle",
+  howItWorksPrincipleDesc: "The system relies on smart algorithms that analyze visual and textual information. We compare data with real sales and active listings to provide the most accurate market valuations. Repair costs are calculated based on average European car service prices.",
 };
