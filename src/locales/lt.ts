@@ -203,7 +203,7 @@ export const lt = {
   userTestimonials: "Klientų atsiliepimai",
   
   // How It Works
-  howItWorksTitle: "Kaip tai veikia?",
+  howItWorksTitle: "Kaip veikia analizė?",
   howItWorksStep1Title: "Įkelkite informaciją",
   howItWorksStep1Desc: "Pridėkite skelbimo nuotraukas, aprašymą arba tiesiog nuorodą į skelbimą. Sistema priima visus populiarius formatų tipus.",
   howItWorksStep2Title: "Automatinė analizė",
