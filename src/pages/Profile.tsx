@@ -6,6 +6,7 @@ import Header from "@/components/Header";
 import ServicesTab from "@/components/profile/ServicesTab";
 import AnalysesTab from "@/components/profile/AnalysesTab";
 import ChatsTab from "@/components/profile/ChatsTab";
+import AccountSettingsDialog from "@/components/profile/AccountSettingsDialog";
 import { Button } from "@/components/ui/button";
 import { ShoppingBag, BarChart3, MessageSquare, ArrowRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -122,6 +123,11 @@ const Profile = () => {
             />
           )}
           {activeTab === "consultations" && <ChatsTab onCreditsUsed={fetchCredits} />}
+        </div>
+
+        {/* Account Settings Button */}
+        <div className="flex justify-center mt-8">
+          <AccountSettingsDialog />
         </div>
       </div>
     </div>
