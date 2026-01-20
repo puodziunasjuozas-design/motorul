@@ -227,4 +227,13 @@ export const en = {
   howConsultationStep4Desc: "We provide information about required parts, their prices, and recommended service centers in your area.",
   howConsultationPrinciple: "Consultation principle",
   howConsultationPrincipleDesc: "Consultation works like a personal automotive expert – we answer questions, find relevant information online, provide repair video tutorials and help you find the best part prices and reliable service centers. All information is presented clearly and tailored to your specific situation.",
+
+  // Account Settings
+  accountSettings: "Account settings",
+  displayName: "Display name",
+  displayNamePlaceholder: "Enter your name...",
+  save: "Save",
+  saving: "Saving...",
+  profileSaved: "Profile saved!",
+  profileSaveError: "Failed to save profile",
 };

@@ -227,4 +227,13 @@ export const lt = {
   howConsultationStep4Desc: "Pateikiame informaciją apie reikalingas detales, jų kainas, bei rekomenduojamus servisus jūsų regione.",
   howConsultationPrinciple: "Konsultacijos principas",
   howConsultationPrincipleDesc: "Konsultacija veikia kaip asmeninis automobilių ekspertas – atsakome į klausimus, surandame reikiamą informaciją internete, pateikiame remonto vaizdo medžiagą ir padedame rasti geriausias dalių kainas bei patikimus servisus. Visa informacija pateikiama suprantamai ir pritaikyta būtent jūsų situacijai.",
+
+  // Account Settings
+  accountSettings: "Paskyros informacija",
+  displayName: "Profilio vardas",
+  displayNamePlaceholder: "Įveskite savo vardą...",
+  save: "Išsaugoti",
+  saving: "Saugoma...",
+  profileSaved: "Profilis išsaugotas!",
+  profileSaveError: "Nepavyko išsaugoti profilio",
 };
