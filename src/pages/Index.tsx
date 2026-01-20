@@ -120,6 +120,69 @@ const Index = () => {
         </div>
       </section>
 
+      {/* How Consultation Works Section */}
+      <section className="py-12 sm:py-20 bg-muted/30">
+        <div className="container mx-auto px-4 sm:px-6">
+          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8 sm:mb-12">
+            {t("howConsultationWorksTitle")}
+          </h2>
+          
+          <div className="max-w-4xl mx-auto space-y-6 sm:space-y-8">
+            {/* Step 1 */}
+            <div className="flex gap-4 sm:gap-6 items-start animate-slide-up">
+              <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-lg">
+                1
+              </div>
+              <div>
+                <h3 className="text-lg sm:text-xl font-semibold mb-2">{t("howConsultationStep1Title")}</h3>
+                <p className="text-muted-foreground text-sm sm:text-base">{t("howConsultationStep1Desc")}</p>
+              </div>
+            </div>
+
+            {/* Step 2 */}
+            <div className="flex gap-4 sm:gap-6 items-start animate-slide-up" style={{ animationDelay: "100ms" }}>
+              <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-lg">
+                2
+              </div>
+              <div>
+                <h3 className="text-lg sm:text-xl font-semibold mb-2">{t("howConsultationStep2Title")}</h3>
+                <p className="text-muted-foreground text-sm sm:text-base">{t("howConsultationStep2Desc")}</p>
+              </div>
+            </div>
+
+            {/* Step 3 */}
+            <div className="flex gap-4 sm:gap-6 items-start animate-slide-up" style={{ animationDelay: "200ms" }}>
+              <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-lg">
+                3
+              </div>
+              <div>
+                <h3 className="text-lg sm:text-xl font-semibold mb-2">{t("howConsultationStep3Title")}</h3>
+                <p className="text-muted-foreground text-sm sm:text-base">{t("howConsultationStep3Desc")}</p>
+              </div>
+            </div>
+
+            {/* Step 4 */}
+            <div className="flex gap-4 sm:gap-6 items-start animate-slide-up" style={{ animationDelay: "300ms" }}>
+              <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-lg">
+                4
+              </div>
+              <div>
+                <h3 className="text-lg sm:text-xl font-semibold mb-2">{t("howConsultationStep4Title")}</h3>
+                <p className="text-muted-foreground text-sm sm:text-base">{t("howConsultationStep4Desc")}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Consultation Principle Box */}
+          <div className="max-w-3xl mx-auto mt-10 sm:mt-16 p-6 sm:p-8 bg-card border-2 border-primary rounded-xl">
+            <h3 className="text-xl sm:text-2xl font-bold text-center mb-4">{t("howConsultationPrinciple")}</h3>
+            <p className="text-muted-foreground text-center text-sm sm:text-base leading-relaxed">
+              {t("howConsultationPrincipleDesc")}
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* Testimonials Section */}
       <section className="py-12 sm:py-20 bg-muted/30">
         <div className="container mx-auto px-4 sm:px-6">

@@ -214,4 +214,17 @@ export const en = {
   howItWorksStep4Desc: "You'll receive a detailed report with repair costs, resale value, profit calculation and a recommendation on whether it's worth buying.",
   howItWorksPrinciple: "Operating principle",
   howItWorksPrincipleDesc: "The system relies on smart algorithms that analyze visual and textual information. We compare data with real sales and active listings to provide the most accurate market valuations. Repair costs are calculated based on average European car service prices.",
+
+  // How Consultation Works
+  howConsultationWorksTitle: "How does consultation work?",
+  howConsultationStep1Title: "Ask a question",
+  howConsultationStep1Desc: "Write any technical question about your car or motorcycle – from diagnostics to maintenance tips.",
+  howConsultationStep2Title: "We find information",
+  howConsultationStep2Desc: "The system searches the internet for the latest information about your problem, including technical descriptions and forums.",
+  howConsultationStep3Title: "Repair videos and instructions",
+  howConsultationStep3Desc: "We find video tutorials from YouTube and other sources that show how to perform repairs step by step.",
+  howConsultationStep4Title: "Parts and services",
+  howConsultationStep4Desc: "We provide information about required parts, their prices, and recommended service centers in your area.",
+  howConsultationPrinciple: "Consultation principle",
+  howConsultationPrincipleDesc: "Consultation works like a personal automotive expert – we answer questions, find relevant information online, provide repair video tutorials and help you find the best part prices and reliable service centers. All information is presented clearly and tailored to your specific situation.",
 };

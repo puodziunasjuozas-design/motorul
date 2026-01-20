@@ -214,4 +214,17 @@ export const lt = {
   howItWorksStep4Desc: "Gausite detalią ataskaitą su remonto kainomis, perpardavimo verte, pelno skaičiavimu ir rekomendacija ar verta pirkti.",
   howItWorksPrinciple: "Veikimo principas",
   howItWorksPrincipleDesc: "Sistema remiasi išmaniaisiais algoritmais, kurie analizuoja vizualinę ir tekstinę informaciją. Lyginame duomenis su realiais pardavimais ir aktyviais skelbimais, kad pateiktume tiksliausius rinkos įvertinimus. Remonto kainos skaičiuojamos pagal vidutines Europos autoservisų kainas.",
+
+  // How Consultation Works
+  howConsultationWorksTitle: "Kaip veikia konsultacija?",
+  howConsultationStep1Title: "Užduokite klausimą",
+  howConsultationStep1Desc: "Parašykite bet kokį techninį klausimą apie savo automobilį ar motociklą – nuo gedimų diagnostikos iki priežiūros patarimų.",
+  howConsultationStep2Title: "Surandame informaciją",
+  howConsultationStep2Desc: "Sistema ieško internete naujausios informacijos apie jūsų problemą, įskaitant techninius aprašymus ir forumus.",
+  howConsultationStep3Title: "Remonto video ir instrukcijos",
+  howConsultationStep3Desc: "Surandame vaizdo instrukcijas iš YouTube ir kitų šaltinių, kurios parodo kaip patiems atlikti remontą žingsnis po žingsnio.",
+  howConsultationStep4Title: "Dalys ir servisai",
+  howConsultationStep4Desc: "Pateikiame informaciją apie reikalingas detales, jų kainas, bei rekomenduojamus servisus jūsų regione.",
+  howConsultationPrinciple: "Konsultacijos principas",
+  howConsultationPrincipleDesc: "Konsultacija veikia kaip asmeninis automobilių ekspertas – atsakome į klausimus, surandame reikiamą informaciją internete, pateikiame remonto vaizdo medžiagą ir padedame rasti geriausias dalių kainas bei patikimus servisus. Visa informacija pateikiama suprantamai ir pritaikyta būtent jūsų situacijai.",
 };
