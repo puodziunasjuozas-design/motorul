@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Car, Bike, Mail, Lock, ArrowLeft } from "lucide-react";
+import { Car, Bike, Mail, Lock, ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { z } from "zod";
 const Auth = forwardRef<HTMLDivElement>((_, ref) => {
   const {
@@ -15,6 +15,7 @@ const Auth = forwardRef<HTMLDivElement>((_, ref) => {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<{
     email?: string;
@@ -166,7 +167,22 @@ const Auth = forwardRef<HTMLDivElement>((_, ref) => {
                 <Lock className="w-4 h-4 text-primary" />
                 {t("password")}
               </label>
-              <Input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••••" className={`bg-card border-border focus:border-primary ${errors.password ? 'border-destructive' : ''}`} />
+              <div className="relative">
+                <Input 
+                  type={showPassword ? "text" : "password"} 
+                  value={password} 
+                  onChange={e => setPassword(e.target.value)} 
+                  placeholder="••••••••" 
+                  className={`bg-card border-border focus:border-primary pr-10 ${errors.password ? 'border-destructive' : ''}`} 
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
               {errors.password && <p className="text-xs text-destructive">{errors.password}</p>}
             </div>
 
