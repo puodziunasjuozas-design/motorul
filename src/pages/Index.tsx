@@ -5,23 +5,38 @@ import FeatureCard from "@/components/FeatureCard";
 import ScrollingCar from "@/components/ScrollingCar";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getFeaturedTestimonials } from "@/data/testimonials";
-
 const Index = () => {
-  const { t, language } = useLanguage();
-
-  const features = [
-    { icon: Camera, titleKey: "photoAnalysis", descriptionKey: "photoAnalysisDesc" },
-    { icon: TrendingUp, titleKey: "marketAnalysisTitle", descriptionKey: "marketAnalysisDesc" },
-    { icon: Calculator, titleKey: "profitCalculator", descriptionKey: "profitCalculatorDesc" },
-    { icon: Wrench, titleKey: "repairEstimateTitle", descriptionKey: "repairEstimateDesc" },
-    { icon: Play, titleKey: "videoInstructions", descriptionKey: "videoInstructionsDesc" },
-    { icon: ThumbsUp, titleKey: "aiRecommendations", descriptionKey: "aiRecommendationsDesc" },
-  ];
-
+  const {
+    t,
+    language
+  } = useLanguage();
+  const features = [{
+    icon: Camera,
+    titleKey: "photoAnalysis",
+    descriptionKey: "photoAnalysisDesc"
+  }, {
+    icon: TrendingUp,
+    titleKey: "marketAnalysisTitle",
+    descriptionKey: "marketAnalysisDesc"
+  }, {
+    icon: Calculator,
+    titleKey: "profitCalculator",
+    descriptionKey: "profitCalculatorDesc"
+  }, {
+    icon: Wrench,
+    titleKey: "repairEstimateTitle",
+    descriptionKey: "repairEstimateDesc"
+  }, {
+    icon: Play,
+    titleKey: "videoInstructions",
+    descriptionKey: "videoInstructionsDesc"
+  }, {
+    icon: ThumbsUp,
+    titleKey: "aiRecommendations",
+    descriptionKey: "aiRecommendationsDesc"
+  }];
   const testimonials = getFeaturedTestimonials(language);
-
-  return (
-    <div className="min-h-screen bg-background">
+  return <div className="min-h-screen bg-background">
       <Header />
       
       {/* Hero Section */}
@@ -31,25 +46,19 @@ const Index = () => {
         <div className="container mx-auto px-4 sm:px-6 relative">
           <div className="max-w-3xl mx-auto text-center mb-8 sm:mb-16">
             <h1 className="text-2xl sm:text-4xl md:text-6xl font-bold mb-4 sm:mb-6 leading-tight animate-slide-up">
-              <span className="text-red-600 font-extrabold">{t("heroHighlight")}</span> {t("heroTitle")}
+              <span className="font-extrabold text-primary">{t("heroHighlight")}</span> {t("heroTitle")}
             </h1>
             
-            <p className="text-sm sm:text-lg text-muted-foreground mb-6 sm:mb-8 animate-slide-up px-2" style={{ animationDelay: "100ms" }}>
+            <p className="text-sm sm:text-lg text-muted-foreground mb-6 sm:mb-8 animate-slide-up px-2" style={{
+            animationDelay: "100ms"
+          }}>
               {t("heroSubtitle")}
             </p>
           </div>
 
           {/* Features Grid */}
           <div className="grid grid-cols-2 md:grid-cols-3 gap-2 sm:gap-4 max-w-4xl mx-auto mb-8 sm:mb-16">
-            {features.map((feature, index) => (
-              <FeatureCard
-                key={feature.titleKey}
-                icon={feature.icon}
-                title={t(feature.titleKey)}
-                description={t(feature.descriptionKey)}
-                delay={index * 100}
-              />
-            ))}
+            {features.map((feature, index) => <FeatureCard key={feature.titleKey} icon={feature.icon} title={t(feature.titleKey)} description={t(feature.descriptionKey)} delay={index * 100} />)}
           </div>
         </div>
       </section>
@@ -77,7 +86,9 @@ const Index = () => {
             </div>
 
             {/* Step 2 */}
-            <div className="flex gap-4 sm:gap-6 items-start animate-slide-up" style={{ animationDelay: "100ms" }}>
+            <div className="flex gap-4 sm:gap-6 items-start animate-slide-up" style={{
+            animationDelay: "100ms"
+          }}>
               <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-lg">
                 2
               </div>
@@ -88,7 +99,9 @@ const Index = () => {
             </div>
 
             {/* Step 3 */}
-            <div className="flex gap-4 sm:gap-6 items-start animate-slide-up" style={{ animationDelay: "200ms" }}>
+            <div className="flex gap-4 sm:gap-6 items-start animate-slide-up" style={{
+            animationDelay: "200ms"
+          }}>
               <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-lg">
                 3
               </div>
@@ -99,7 +112,9 @@ const Index = () => {
             </div>
 
             {/* Step 4 */}
-            <div className="flex gap-4 sm:gap-6 items-start animate-slide-up" style={{ animationDelay: "300ms" }}>
+            <div className="flex gap-4 sm:gap-6 items-start animate-slide-up" style={{
+            animationDelay: "300ms"
+          }}>
               <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-lg">
                 4
               </div>
@@ -140,7 +155,9 @@ const Index = () => {
             </div>
 
             {/* Step 2 */}
-            <div className="flex gap-4 sm:gap-6 items-start animate-slide-up" style={{ animationDelay: "100ms" }}>
+            <div className="flex gap-4 sm:gap-6 items-start animate-slide-up" style={{
+            animationDelay: "100ms"
+          }}>
               <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-lg">
                 2
               </div>
@@ -151,7 +168,9 @@ const Index = () => {
             </div>
 
             {/* Step 3 */}
-            <div className="flex gap-4 sm:gap-6 items-start animate-slide-up" style={{ animationDelay: "200ms" }}>
+            <div className="flex gap-4 sm:gap-6 items-start animate-slide-up" style={{
+            animationDelay: "200ms"
+          }}>
               <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-lg">
                 3
               </div>
@@ -162,7 +181,9 @@ const Index = () => {
             </div>
 
             {/* Step 4 */}
-            <div className="flex gap-4 sm:gap-6 items-start animate-slide-up" style={{ animationDelay: "300ms" }}>
+            <div className="flex gap-4 sm:gap-6 items-start animate-slide-up" style={{
+            animationDelay: "300ms"
+          }}>
               <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-lg">
                 4
               </div>
@@ -190,27 +211,19 @@ const Index = () => {
             <h2 className="text-2xl sm:text-3xl font-bold text-center">
               {t("testimonials")}
             </h2>
-            <Link 
-              to="/testimonials" 
-              className="flex items-center gap-1 text-primary hover:text-primary/80 transition-colors group"
-            >
+            <Link to="/testimonials" className="flex items-center gap-1 text-primary hover:text-primary/80 transition-colors group">
               <span className="text-sm font-medium hidden sm:inline">{t("viewAll")}</span>
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-            {testimonials.map((testimonial, index) => (
-              <div
-                key={testimonial.id}
-                className="bg-card border rounded-xl p-6 relative animate-slide-up border-primary"
-                style={{ animationDelay: `${index * 100}ms` }}
-              >
+            {testimonials.map((testimonial, index) => <div key={testimonial.id} className="bg-card border rounded-xl p-6 relative animate-slide-up border-primary" style={{
+            animationDelay: `${index * 100}ms`
+          }}>
                 {/* Rating */}
                 <div className="flex gap-1 mb-3">
-                  {[...Array(testimonial.rating)].map((_, i) => (
-                    <Star key={i} className="w-3.5 h-3.5 fill-primary text-primary" />
-                  ))}
+                  {[...Array(testimonial.rating)].map((_, i) => <Star key={i} className="w-3.5 h-3.5 fill-primary text-primary" />)}
                 </div>
 
                 <p className="text-muted-foreground mb-4 text-sm sm:text-base leading-relaxed">
@@ -227,8 +240,7 @@ const Index = () => {
                     <p className="text-xs text-muted-foreground">{testimonial.country}</p>
                   </div>
                 </div>
-              </div>
-            ))}
+              </div>)}
           </div>
         </div>
       </section>
@@ -247,8 +259,6 @@ const Index = () => {
           <p className="text-center text-sm text-muted-foreground">© 2026 {t("title")}</p>
         </div>
       </footer>
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
