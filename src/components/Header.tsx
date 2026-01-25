@@ -4,19 +4,20 @@ import { Button } from "@/components/ui/button";
 import { Car, Bike, LogOut, User } from "lucide-react";
 import LanguageSelector from "@/components/LanguageSelector";
 import { useLanguage } from "@/contexts/LanguageContext";
-
 const Header = () => {
-  const { user, signOut } = useAuth();
+  const {
+    user,
+    signOut
+  } = useAuth();
   const navigate = useNavigate();
-  const { t } = useLanguage();
-  
+  const {
+    t
+  } = useLanguage();
   const handleSignOut = async () => {
     await signOut();
     navigate("/");
   };
-  
-  return (
-    <header className="fixed top-0 left-0 right-0 z-50 glass-card border-b border-border/30">
+  return <header className="fixed top-0 left-0 right-0 z-50 glass-card border-b border-border/30">
       <div className="container mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3">
@@ -29,8 +30,8 @@ const Header = () => {
             </div>
             <div>
               <h1 className="text-xl font-bold tracking-tight">
-                <span className="gradient-text">Auto</span>
-                <span className="text-foreground">Analizė</span>
+                <span className="gradient-text text-3xl font-extrabold">​MOTORIX</span>
+                
               </h1>
               <p className="text-xs text-muted-foreground">{t("subtitle")}</p>
             </div>
@@ -39,31 +40,20 @@ const Header = () => {
           <div className="flex items-center gap-2 sm:gap-4">
             <LanguageSelector />
             
-            {user ? (
-              <>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  onClick={() => navigate("/profile")}
-                  className="flex items-center gap-2"
-                >
+            {user ? <>
+                <Button variant="ghost" size="sm" onClick={() => navigate("/profile")} className="flex items-center gap-2">
                   <User className="w-4 h-4 text-primary" />
                   <span className="hidden sm:inline text-muted-foreground">{t("profile")}</span>
                 </Button>
                 <Button variant="ghost" size="sm" onClick={handleSignOut}>
                   <LogOut className="w-4 h-4" />
                 </Button>
-              </>
-            ) : (
-              <Button variant="hero" size="sm" onClick={() => navigate("/auth")}>
+              </> : <Button variant="hero" size="sm" onClick={() => navigate("/auth")}>
                 {t("login")}
-              </Button>
-            )}
+              </Button>}
           </div>
         </div>
       </div>
-    </header>
-  );
+    </header>;
 };
-
 export default Header;
