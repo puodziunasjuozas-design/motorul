@@ -33,7 +33,7 @@ const Header = () => {
                 <span className="gradient-text text-3xl font-extrabold">​MOTORIX</span>
                 
               </h1>
-              <p className="text-xs text-muted-foreground">{t("subtitle")}</p>
+              
             </div>
           </Link>
           
