@@ -102,7 +102,7 @@ const Index = () => {
             <div className="flex gap-4 sm:gap-6 items-start animate-slide-up" style={{
             animationDelay: "200ms"
           }}>
-              <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-lg">
+              <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center font-bold text-lg border-primary bg-background text-primary border">
                 3
               </div>
               <div>
