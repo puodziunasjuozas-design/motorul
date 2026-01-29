@@ -145,7 +145,7 @@ const Index = () => {
           <div className="max-w-4xl mx-auto space-y-6 sm:space-y-8">
             {/* Step 1 */}
             <div className="flex gap-4 sm:gap-6 items-start animate-slide-up">
-              <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-lg">
+              <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center font-bold text-lg bg-background text-primary border-primary border">
                 1
               </div>
               <div>
