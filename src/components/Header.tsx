@@ -30,7 +30,7 @@ const Header = () => {
             </div>
             <div>
               <h1 className="text-xl font-bold tracking-tight">
-                <span className="gradient-text text-3xl font-extrabold">​MOTORIX</span>
+                <span className="gradient-text text-3xl font-extrabold">​MOTORUL</span>
                 
               </h1>
               
