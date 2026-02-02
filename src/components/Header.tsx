@@ -31,9 +31,9 @@ const Header = ({ activeTab, onTabChange, showProfileTabs = false }: HeaderProps
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 glass-card border-b border-border/30">
-      <div className="container mx-auto px-6 py-4 border-primary border-0">
-        <div className="flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-3">
+      <div className="container mx-auto px-4 sm:px-6 py-4 border-primary border-0">
+        <div className="flex items-center justify-between gap-2">
+          <Link to="/" className="flex items-center gap-3 flex-shrink-0">
             <div className="relative">
               <div className="absolute inset-0 bg-primary/20 blur-xl rounded-full" />
               <div className="relative flex items-center gap-1 p-2 rounded-xl bg-primary/10">
@@ -41,14 +41,40 @@ const Header = ({ activeTab, onTabChange, showProfileTabs = false }: HeaderProps
                 <Bike className="w-5 h-5 text-primary" />
               </div>
             </div>
-            <div>
+            <div className="hidden sm:block">
               <h1 className="text-xl font-bold tracking-tight">
                 <span className="gradient-text text-3xl font-extrabold">​MOTORUL</span>
               </h1>
             </div>
           </Link>
+
+          {/* Profile Navigation Tabs - in header */}
+          {showProfileTabs && onTabChange && (
+            <div className="flex gap-1 sm:gap-2 overflow-x-auto flex-1 justify-center">
+              {tabs.map(tab => {
+                const Icon = tab.icon;
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => onTabChange(tab.id)}
+                    className={`
+                      flex items-center gap-1 sm:gap-2 px-2 py-1.5 sm:px-3 sm:py-2
+                      rounded-lg text-xs sm:text-sm font-medium
+                      transition-all duration-200 whitespace-nowrap
+                      ${activeTab === tab.id 
+                        ? "bg-primary text-primary-foreground" 
+                        : "bg-black/50 text-muted-foreground hover:bg-black/70 hover:text-foreground border border-primary/30"}
+                    `}
+                  >
+                    <Icon className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" />
+                    <span className="hidden sm:inline">{tab.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
           
-          <div className="flex items-center gap-2 sm:gap-4">
+          <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
             <LanguageSelector />
             
             {user ? (
@@ -69,34 +95,6 @@ const Header = ({ activeTab, onTabChange, showProfileTabs = false }: HeaderProps
           </div>
         </div>
       </div>
-
-      {/* Profile Navigation Tabs */}
-      {showProfileTabs && onTabChange && (
-        <div className="container mx-auto px-4 sm:px-6 pb-3">
-          <div className="flex gap-2 sm:gap-3 overflow-x-auto">
-            {tabs.map(tab => {
-              const Icon = tab.icon;
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => onTabChange(tab.id)}
-                  className={`
-                    flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-2
-                    rounded-lg text-sm sm:text-base font-medium
-                    transition-all duration-200 whitespace-nowrap
-                    ${activeTab === tab.id 
-                      ? "bg-primary text-primary-foreground" 
-                      : "bg-black/50 text-muted-foreground hover:bg-black/70 hover:text-foreground border border-primary/30"}
-                  `}
-                >
-                  <Icon className="h-4 w-4 flex-shrink-0" />
-                  <span>{tab.label}</span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      )}
     </header>
   );
 };

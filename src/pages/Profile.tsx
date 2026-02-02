@@ -92,7 +92,7 @@ const Profile = () => {
         showProfileTabs={true}
       />
       
-      <div className="container mx-auto px-4 sm:px-6 pt-32 sm:pt-36 pb-12 sm:pb-20">
+      <div className="container mx-auto px-4 sm:px-6 pt-24 sm:pt-28 pb-12 sm:pb-20">
         {/* Main Profile Content - only show when on services tab */}
         {activeTab === "services" && (
           <>
