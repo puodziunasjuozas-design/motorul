@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/contexts/LanguageContext";
 import Header from "@/components/Header";
@@ -7,7 +7,7 @@ import ServicesTab from "@/components/profile/ServicesTab";
 import AnalysesTab from "@/components/profile/AnalysesTab";
 import ChatsTab from "@/components/profile/ChatsTab";
 import AccountSettingsDialog from "@/components/profile/AccountSettingsDialog";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Search, MessageSquare, ArrowRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -15,7 +15,9 @@ import { supabase } from "@/integrations/supabase/client";
 type TabType = "services" | "analyses" | "consultations";
 
 const Profile = () => {
-  const [activeTab, setActiveTab] = useState<TabType>("services");
+  const [searchParams] = useSearchParams();
+  const initialTab = (searchParams.get("tab") as TabType) || "services";
+  const [activeTab, setActiveTab] = useState<TabType>(initialTab);
   const [showAnalysisTool, setShowAnalysisTool] = useState(false);
   const [analysisCredits, setAnalysisCredits] = useState<number>(0);
   const [chatCredits, setChatCredits] = useState<number>(0);
@@ -89,7 +91,6 @@ const Profile = () => {
       <Header 
         activeTab={activeTab} 
         onTabChange={handleTabChange}
-        showProfileTabs={true}
       />
       
       <div className="container mx-auto px-4 sm:px-6 pt-24 sm:pt-28 pb-12 sm:pb-20">

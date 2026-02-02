@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Car, Bike, LogOut, User, ShoppingBag, BarChart3, MessageSquare } from "lucide-react";
@@ -10,12 +10,12 @@ type TabType = "services" | "analyses" | "consultations";
 interface HeaderProps {
   activeTab?: TabType;
   onTabChange?: (tab: TabType) => void;
-  showProfileTabs?: boolean;
 }
 
-const Header = ({ activeTab, onTabChange, showProfileTabs = false }: HeaderProps) => {
+const Header = ({ activeTab, onTabChange }: HeaderProps) => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const { t } = useLanguage();
 
   const handleSignOut = async () => {
@@ -28,6 +28,14 @@ const Header = ({ activeTab, onTabChange, showProfileTabs = false }: HeaderProps
     { id: "analyses" as TabType, label: t("analyses"), icon: BarChart3 },
     { id: "consultations" as TabType, label: t("technicalConsultations"), icon: MessageSquare }
   ];
+
+  const handleTabClick = (tabId: TabType) => {
+    if (location.pathname === "/profile" && onTabChange) {
+      onTabChange(tabId);
+    } else {
+      navigate(`/profile?tab=${tabId}`);
+    }
+  };
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 glass-card border-b border-border/30">
@@ -48,20 +56,21 @@ const Header = ({ activeTab, onTabChange, showProfileTabs = false }: HeaderProps
             </div>
           </Link>
 
-          {/* Profile Navigation Tabs - in header */}
-          {showProfileTabs && onTabChange && (
+          {/* Profile Navigation Tabs - visible when logged in */}
+          {user && (
             <div className="flex gap-1 sm:gap-2 overflow-x-auto flex-1 justify-center">
               {tabs.map(tab => {
                 const Icon = tab.icon;
+                const isActive = location.pathname === "/profile" && activeTab === tab.id;
                 return (
                   <button
                     key={tab.id}
-                    onClick={() => onTabChange(tab.id)}
+                    onClick={() => handleTabClick(tab.id)}
                     className={`
                       flex items-center gap-1 sm:gap-2 px-2 py-1.5 sm:px-3 sm:py-2
                       rounded-lg text-xs sm:text-sm font-medium
                       transition-all duration-200 whitespace-nowrap
-                      ${activeTab === tab.id 
+                      ${isActive 
                         ? "bg-primary text-primary-foreground" 
                         : "bg-black/50 text-muted-foreground hover:bg-black/70 hover:text-foreground border border-primary/30"}
                     `}
