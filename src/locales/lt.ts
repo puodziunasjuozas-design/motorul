@@ -236,4 +236,10 @@ export const lt = {
   saving: "Saugoma...",
   profileSaved: "Profilis išsaugotas!",
   profileSaveError: "Nepavyko išsaugoti profilio",
+
+  // Profile Page
+  userAccount: "Vartotojo paskyra",
+  remainingCredits: "Likę kreditai",
+  activeChats: "Aktyvūs chat'ai",
+  buyServices: "Pirkti paslaugas",
 };
