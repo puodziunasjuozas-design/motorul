@@ -9,7 +9,11 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
-const AccountSettingsDialog = () => {
+interface AccountSettingsDialogProps {
+  onSave?: () => void;
+}
+
+const AccountSettingsDialog = ({ onSave }: AccountSettingsDialogProps) => {
   const [open, setOpen] = useState(false);
   const [displayName, setDisplayName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -65,6 +69,7 @@ const AccountSettingsDialog = () => {
       
       toast.success(t("profileSaved"));
       setOpen(false);
+      onSave?.();
     } catch (error) {
       toast.error(t("profileSaveError"));
     } finally {

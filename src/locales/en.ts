@@ -236,4 +236,10 @@ export const en = {
   saving: "Saving...",
   profileSaved: "Profile saved!",
   profileSaveError: "Failed to save profile",
+
+  // Profile Page
+  userAccount: "User account",
+  remainingCredits: "Remaining credits",
+  activeChats: "Active chats",
+  buyServices: "Buy services",
 };
