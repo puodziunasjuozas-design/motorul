@@ -1,10 +1,13 @@
-import { Camera, TrendingUp, Wrench, Play, Calculator, ThumbsUp, ArrowRight, Star } from "lucide-react";
+import { Camera, TrendingUp, Wrench, Play, Calculator, ThumbsUp, ArrowRight, Star, Search, MessageSquare } from "lucide-react";
 import { Link } from "react-router-dom";
 import Header from "@/components/Header";
 import FeatureCard from "@/components/FeatureCard";
 import ScrollingCar from "@/components/ScrollingCar";
+import AnalysisPreview from "@/components/AnalysisPreview";
+import ChatPreview from "@/components/ChatPreview";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getFeaturedTestimonials } from "@/data/testimonials";
+
 const Index = () => {
   const {
     t,
@@ -66,141 +69,31 @@ const Index = () => {
       {/* Scrolling Car Animation */}
       <ScrollingCar />
 
-      {/* How It Works Section */}
+      {/* Analysis Example Section */}
       <section className="py-12 sm:py-20 bg-background">
         <div className="container mx-auto px-4 sm:px-6">
-          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8 sm:mb-12">
-            {t("howItWorksTitle")}
-          </h2>
+          <div className="flex items-center justify-center gap-3 mb-8 sm:mb-12">
+            <Search className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
+            <h2 className="text-2xl sm:text-3xl font-bold text-center">
+              {t("analysisResults")}
+            </h2>
+          </div>
           
-          <div className="max-w-4xl mx-auto space-y-6 sm:space-y-8">
-            {/* Step 1 */}
-            <div className="flex gap-4 sm:gap-6 items-start animate-slide-up">
-              <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center font-bold text-lg bg-background text-primary border-primary border">
-                1
-              </div>
-              <div>
-                <h3 className="text-lg sm:text-xl font-semibold mb-2">{t("howItWorksStep1Title")}</h3>
-                <p className="text-muted-foreground text-sm sm:text-base">{t("howItWorksStep1Desc")}</p>
-              </div>
-            </div>
-
-            {/* Step 2 */}
-            <div className="flex gap-4 sm:gap-6 items-start animate-slide-up" style={{
-            animationDelay: "100ms"
-          }}>
-              <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center font-bold text-lg bg-background text-primary border-primary border">
-                2
-              </div>
-              <div>
-                <h3 className="text-lg sm:text-xl font-semibold mb-2">{t("howItWorksStep2Title")}</h3>
-                <p className="text-muted-foreground text-sm sm:text-base">{t("howItWorksStep2Desc")}</p>
-              </div>
-            </div>
-
-            {/* Step 3 */}
-            <div className="flex gap-4 sm:gap-6 items-start animate-slide-up" style={{
-            animationDelay: "200ms"
-          }}>
-              <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center font-bold text-lg border-primary bg-background text-primary border">
-                3
-              </div>
-              <div>
-                <h3 className="text-lg sm:text-xl font-semibold mb-2">{t("howItWorksStep3Title")}</h3>
-                <p className="text-muted-foreground text-sm sm:text-base">{t("howItWorksStep3Desc")}</p>
-              </div>
-            </div>
-
-            {/* Step 4 */}
-            <div className="flex gap-4 sm:gap-6 items-start animate-slide-up" style={{
-            animationDelay: "300ms"
-          }}>
-              <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center font-bold text-lg text-primary bg-background border-primary border">
-                4
-              </div>
-              <div>
-                <h3 className="text-lg sm:text-xl font-semibold mb-2">{t("howItWorksStep4Title")}</h3>
-                <p className="text-muted-foreground text-sm sm:text-base">{t("howItWorksStep4Desc")}</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Principle Box */}
-          <div className="max-w-3xl mx-auto mt-10 sm:mt-16 p-6 sm:p-8 bg-card border-2 border-primary rounded-xl">
-            <h3 className="text-xl sm:text-2xl font-bold text-center mb-4">{t("howItWorksPrinciple")}</h3>
-            <p className="text-muted-foreground text-center text-sm sm:text-base leading-relaxed">
-              {t("howItWorksPrincipleDesc")}
-            </p>
-          </div>
+          <AnalysisPreview />
         </div>
       </section>
 
-      {/* How Consultation Works Section */}
+      {/* Chat Example Section */}
       <section className="py-12 sm:py-20 bg-muted/30">
         <div className="container mx-auto px-4 sm:px-6">
-          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8 sm:mb-12">
-            {t("howConsultationWorksTitle")}
-          </h2>
+          <div className="flex items-center justify-center gap-3 mb-8 sm:mb-12">
+            <MessageSquare className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
+            <h2 className="text-2xl sm:text-3xl font-bold text-center">
+              {t("technicalConsultation")}
+            </h2>
+          </div>
           
-          <div className="max-w-4xl mx-auto space-y-6 sm:space-y-8">
-            {/* Step 1 */}
-            <div className="flex gap-4 sm:gap-6 items-start animate-slide-up">
-              <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center font-bold text-lg bg-background text-primary border-primary border">
-                1
-              </div>
-              <div>
-                <h3 className="text-lg sm:text-xl font-semibold mb-2">{t("howConsultationStep1Title")}</h3>
-                <p className="text-muted-foreground text-sm sm:text-base">{t("howConsultationStep1Desc")}</p>
-              </div>
-            </div>
-
-            {/* Step 2 */}
-            <div className="flex gap-4 sm:gap-6 items-start animate-slide-up" style={{
-            animationDelay: "100ms"
-          }}>
-              <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center font-bold text-lg bg-background text-primary border-primary border">
-                2
-              </div>
-              <div>
-                <h3 className="text-lg sm:text-xl font-semibold mb-2">{t("howConsultationStep2Title")}</h3>
-                <p className="text-muted-foreground text-sm sm:text-base">{t("howConsultationStep2Desc")}</p>
-              </div>
-            </div>
-
-            {/* Step 3 */}
-            <div className="flex gap-4 sm:gap-6 items-start animate-slide-up" style={{
-            animationDelay: "200ms"
-          }}>
-              <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center font-bold text-lg bg-background text-primary border-primary border">
-                3
-              </div>
-              <div>
-                <h3 className="text-lg sm:text-xl font-semibold mb-2">{t("howConsultationStep3Title")}</h3>
-                <p className="text-muted-foreground text-sm sm:text-base">{t("howConsultationStep3Desc")}</p>
-              </div>
-            </div>
-
-            {/* Step 4 */}
-            <div className="flex gap-4 sm:gap-6 items-start animate-slide-up" style={{
-            animationDelay: "300ms"
-          }}>
-              <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center font-bold text-lg bg-background text-primary border border-primary">
-                4
-              </div>
-              <div>
-                <h3 className="text-lg sm:text-xl font-semibold mb-2">{t("howConsultationStep4Title")}</h3>
-                <p className="text-muted-foreground text-sm sm:text-base">{t("howConsultationStep4Desc")}</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Consultation Principle Box */}
-          <div className="max-w-3xl mx-auto mt-10 sm:mt-16 p-6 sm:p-8 bg-card border-2 border-primary rounded-xl">
-            <h3 className="text-xl sm:text-2xl font-bold text-center mb-4">{t("howConsultationPrinciple")}</h3>
-            <p className="text-muted-foreground text-center text-sm sm:text-base leading-relaxed">
-              {t("howConsultationPrincipleDesc")}
-            </p>
-          </div>
+          <ChatPreview />
         </div>
       </section>
 
