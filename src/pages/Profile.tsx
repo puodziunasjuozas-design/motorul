@@ -9,7 +9,7 @@ import ChatsTab from "@/components/profile/ChatsTab";
 import AccountSettingsDialog from "@/components/profile/AccountSettingsDialog";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Search, MessageSquare, ArrowRight } from "lucide-react";
+import { Search, MessageSquare, ArrowRight, LogOut } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 type TabType = "services" | "analyses" | "consultations";
@@ -24,8 +24,13 @@ const Profile = () => {
   const [activeChatsCount, setActiveChatsCount] = useState<number>(0);
   const [analysesCount, setAnalysesCount] = useState<number>(0);
   const [displayName, setDisplayName] = useState<string | null>(null);
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
   const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/");
+  };
   const { t } = useLanguage();
 
   useEffect(() => {
@@ -109,7 +114,12 @@ const Profile = () => {
                         {displayName || user?.email || "—"}
                       </p>
                     </div>
-                    <AccountSettingsDialog onSave={fetchStats} />
+                    <div className="flex items-center gap-2">
+                      <AccountSettingsDialog onSave={fetchStats} />
+                      <Button variant="ghost" size="sm" onClick={handleSignOut} className="text-muted-foreground hover:text-destructive">
+                        <LogOut className="w-4 h-4" />
+                      </Button>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
