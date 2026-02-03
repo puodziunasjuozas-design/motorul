@@ -87,15 +87,10 @@ const Header = ({ activeTab, onTabChange }: HeaderProps) => {
             <LanguageSelector />
             
             {user ? (
-              <>
-                <Button variant="ghost" size="sm" onClick={() => navigate("/profile")} className="flex items-center gap-2">
-                  <User className="w-4 h-4 text-primary" />
-                  <span className="hidden sm:inline text-muted-foreground">{t("profile")}</span>
-                </Button>
-                <Button variant="ghost" size="sm" onClick={handleSignOut}>
-                  <LogOut className="w-4 h-4" />
-                </Button>
-              </>
+              <Button variant="ghost" size="sm" onClick={() => navigate("/profile")} className="flex items-center gap-2">
+                <User className="w-4 h-4 text-primary" />
+                <span className="hidden sm:inline text-muted-foreground">{t("profile")}</span>
+              </Button>
             ) : (
               <Button variant="hero" size="sm" onClick={() => navigate("/auth")}>
                 {t("login")}
