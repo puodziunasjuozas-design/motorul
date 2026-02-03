@@ -58,7 +58,7 @@ const Header = ({ activeTab, onTabChange }: HeaderProps) => {
 
           {/* Profile Navigation Tabs - visible when logged in */}
           {user && (
-            <div className="flex gap-1 sm:gap-2 overflow-x-auto flex-1 justify-center">
+            <div className="flex gap-6 sm:gap-10 flex-1 justify-center">
               {tabs.map(tab => {
                 const Icon = tab.icon;
                 const isActive = location.pathname === "/profile" && activeTab === tab.id;
@@ -67,16 +67,14 @@ const Header = ({ activeTab, onTabChange }: HeaderProps) => {
                     key={tab.id}
                     onClick={() => handleTabClick(tab.id)}
                     className={`
-                      flex items-center gap-1 sm:gap-2 px-2 py-1.5 sm:px-3 sm:py-2
-                      rounded-lg text-xs sm:text-sm font-medium
-                      transition-all duration-200 whitespace-nowrap
+                      p-2 transition-all duration-200
                       ${isActive 
-                        ? "bg-primary text-primary-foreground" 
-                        : "bg-black/50 text-muted-foreground hover:bg-black/70 hover:text-foreground border border-primary/30"}
+                        ? "text-primary" 
+                        : "text-muted-foreground hover:text-primary"}
                     `}
+                    title={tab.label}
                   >
-                    <Icon className="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" />
-                    <span className="hidden sm:inline">{tab.label}</span>
+                    <Icon className="h-5 w-5 sm:h-6 sm:w-6" />
                   </button>
                 );
               })}
