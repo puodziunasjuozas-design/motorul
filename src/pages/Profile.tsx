@@ -9,7 +9,7 @@ import ChatsTab from "@/components/profile/ChatsTab";
 import AccountSettingsDialog from "@/components/profile/AccountSettingsDialog";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Search, MessageSquare, ArrowRight, LogOut } from "lucide-react";
+import { Search, MessageSquare, LogOut } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 type TabType = "services" | "analyses" | "consultations";
@@ -18,11 +18,8 @@ const Profile = () => {
   const [searchParams] = useSearchParams();
   const initialTab = (searchParams.get("tab") as TabType) || "analyses";
   const [activeTab, setActiveTab] = useState<TabType>(initialTab);
-  const [showAnalysisTool, setShowAnalysisTool] = useState(false);
   const [analysisCredits, setAnalysisCredits] = useState<number>(0);
   const [chatCredits, setChatCredits] = useState<number>(0);
-  const [activeChatsCount, setActiveChatsCount] = useState<number>(0);
-  const [analysesCount, setAnalysesCount] = useState<number>(0);
   const [displayName, setDisplayName] = useState<string | null>(null);
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
@@ -53,23 +50,6 @@ const Profile = () => {
 
   const fetchStats = async () => {
     if (!user) return;
-    
-    // Fetch active chats count
-    const { count: chatsCount } = await supabase
-      .from("chat_conversations")
-      .select("*", { count: "exact", head: true })
-      .eq("user_id", user.id)
-      .eq("is_active", true);
-    
-    setActiveChatsCount(chatsCount || 0);
-
-    // Fetch analyses count
-    const { count: analysisCount } = await supabase
-      .from("analysis_history")
-      .select("*", { count: "exact", head: true })
-      .eq("user_id", user.id);
-    
-    setAnalysesCount(analysisCount || 0);
 
     // Fetch display name
     const { data: profile } = await supabase
@@ -88,7 +68,6 @@ const Profile = () => {
 
   const handleTabChange = (tabId: TabType) => {
     setActiveTab(tabId);
-    setShowAnalysisTool(false);
   };
 
   // Check if we're on the profile/account view (not purchases)
@@ -112,7 +91,7 @@ const Profile = () => {
           </div>
         )}
 
-        {/* Profile View - Account info + History tabs */}
+        {/* Profile View - Account info + Both Histories */}
         {isProfileView && (
           <>
             {/* User Account Section */}
@@ -163,31 +142,20 @@ const Profile = () => {
               </Card>
             </div>
 
-            {/* Start Analysis Button - only show in analyses tab when tool is not open AND user has credits */}
-            {activeTab === "analyses" && !showAnalysisTool && analysisCredits > 0 && (
-              <div className="flex justify-center mb-8">
-                <Button 
-                  variant="hero" 
-                  size="xl" 
-                  onClick={() => setShowAnalysisTool(true)}
-                  className="gap-3"
-                >
-                  {t("startNewAnalysis")}
-                  <ArrowRight className="w-5 h-5" />
-                </Button>
+            {/* Analyses History Section */}
+            <div className="mb-8">
+              <h2 className="text-white text-2xl sm:text-3xl font-bold mb-4">{t("analysisHistory")}</h2>
+              <div className="border border-primary/30 rounded-lg p-4 sm:p-6 bg-background">
+                <AnalysesTab onCreditsUsed={fetchCredits} />
               </div>
-            )}
+            </div>
 
-            {/* Tab content - History */}
-            <div className="border border-primary/30 rounded-lg p-4 sm:p-6 bg-background">
-              {activeTab === "analyses" && (
-                <AnalysesTab 
-                  showAnalysisTool={showAnalysisTool} 
-                  onAnalysisToolClose={() => setShowAnalysisTool(false)}
-                  onCreditsUsed={fetchCredits}
-                />
-              )}
-              {activeTab === "consultations" && <ChatsTab onCreditsUsed={fetchCredits} />}
+            {/* Consultations History Section */}
+            <div className="mb-8">
+              <h2 className="text-white text-2xl sm:text-3xl font-bold mb-4">{t("technicalConsultations")}</h2>
+              <div className="border border-primary/30 rounded-lg p-4 sm:p-6 bg-background">
+                <ChatsTab onCreditsUsed={fetchCredits} />
+              </div>
             </div>
           </>
         )}

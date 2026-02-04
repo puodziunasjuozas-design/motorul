@@ -7,7 +7,6 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import AnalysisTool from "./AnalysisTool";
 import AnalysisResult, { AnalysisData } from "@/components/AnalysisResult";
 import ChatDialog from "./ChatDialog";
 
@@ -36,12 +35,10 @@ interface Analysis {
 }
 
 interface AnalysesTabProps {
-  showAnalysisTool?: boolean;
-  onAnalysisToolClose?: () => void;
   onCreditsUsed?: () => void;
 }
 
-const AnalysesTab = ({ showAnalysisTool = false, onAnalysisToolClose, onCreditsUsed }: AnalysesTabProps) => {
+const AnalysesTab = ({ onCreditsUsed }: AnalysesTabProps) => {
   const { t } = useLanguage();
   const { user } = useAuth();
   const [analyses, setAnalyses] = useState<Analysis[]>([]);
@@ -97,11 +94,6 @@ const AnalysesTab = ({ showAnalysisTool = false, onAnalysisToolClose, onCreditsU
       default:
         return "bg-zinc-600";
     }
-  };
-
-  const handleToolClose = () => {
-    fetchAnalyses();
-    onAnalysisToolClose?.();
   };
 
   const handleTransferToConsultation = async (data: AnalysisData) => {
@@ -209,10 +201,6 @@ const AnalysesTab = ({ showAnalysisTool = false, onAnalysisToolClose, onCreditsU
         />
       </div>
     );
-  }
-
-  if (showAnalysisTool) {
-    return <AnalysisTool onClose={handleToolClose} onCreditsUsed={onCreditsUsed} />;
   }
 
   if (loading) {
