@@ -77,7 +77,7 @@ const Index = () => {
               {t("analysisResults")}
             </h2>
           </div>
-          <p className="text-center text-muted-foreground text-xs sm:text-sm mb-6 max-w-xl mx-auto">
+          <p className="text-center text-muted-foreground text-xs mb-6 max-w-xl mx-auto sm:text-lg">
             {t("howItWorksPrincipleDesc")}
           </p>
           
@@ -94,7 +94,7 @@ const Index = () => {
               {t("technicalConsultation")}
             </h2>
           </div>
-          <p className="text-center text-muted-foreground text-xs sm:text-sm mb-6 max-w-xl mx-auto">
+          <p className="text-center text-muted-foreground text-xs mb-6 max-w-xl mx-auto sm:text-lg">
             {t("howConsultationPrincipleDesc")}
           </p>
           
