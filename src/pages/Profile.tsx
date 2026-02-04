@@ -16,7 +16,7 @@ type TabType = "services" | "analyses" | "consultations";
 
 const Profile = () => {
   const [searchParams] = useSearchParams();
-  const initialTab = (searchParams.get("tab") as TabType) || "services";
+  const initialTab = (searchParams.get("tab") as TabType) || "analyses";
   const [activeTab, setActiveTab] = useState<TabType>(initialTab);
   const [showAnalysisTool, setShowAnalysisTool] = useState(false);
   const [analysisCredits, setAnalysisCredits] = useState<number>(0);
@@ -91,6 +91,9 @@ const Profile = () => {
     setShowAnalysisTool(false);
   };
 
+  // Check if we're on the profile/account view (not purchases)
+  const isProfileView = activeTab === "analyses" || activeTab === "consultations";
+
   return (
     <div className="min-h-screen bg-zinc-950">
       <Header 
@@ -99,8 +102,18 @@ const Profile = () => {
       />
       
       <div className="container mx-auto px-4 sm:px-6 pt-24 sm:pt-28 pb-12 sm:pb-20">
-        {/* Main Profile Content - only show when on services tab */}
+        {/* Services/Purchases Tab - Shows only prices */}
         {activeTab === "services" && (
+          <div>
+            <h2 className="text-white text-2xl sm:text-3xl font-bold mb-4">{t("buyServices")}</h2>
+            <div className="border border-primary/30 rounded-lg p-4 sm:p-6 bg-background">
+              <ServicesTab />
+            </div>
+          </div>
+        )}
+
+        {/* Profile View - Account info + History tabs */}
+        {isProfileView && (
           <>
             {/* User Account Section */}
             <div className="mb-8">
@@ -150,85 +163,33 @@ const Profile = () => {
               </Card>
             </div>
 
-            {/* Active Chats Section */}
-            <div className="mb-8">
-              <h2 className="text-white text-2xl sm:text-3xl font-bold mb-4">{t("activeChats")}</h2>
-              <Card className="bg-black border-primary/30 cursor-pointer hover:border-primary/50 transition-colors"
-                    onClick={() => handleTabChange("consultations")}>
-                <CardContent className="p-4 sm:p-6">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <MessageSquare className="text-primary h-6 w-6 sm:h-8 sm:w-8" />
-                      <div>
-                        <p className="text-white text-2xl sm:text-3xl font-bold">{activeChatsCount}</p>
-                        <p className="text-muted-foreground text-sm">{t("active")}</p>
-                      </div>
-                    </div>
-                    <ArrowRight className="text-primary h-5 w-5" />
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+            {/* Start Analysis Button - only show in analyses tab when tool is not open AND user has credits */}
+            {activeTab === "analyses" && !showAnalysisTool && analysisCredits > 0 && (
+              <div className="flex justify-center mb-8">
+                <Button 
+                  variant="hero" 
+                  size="xl" 
+                  onClick={() => setShowAnalysisTool(true)}
+                  className="gap-3"
+                >
+                  {t("startNewAnalysis")}
+                  <ArrowRight className="w-5 h-5" />
+                </Button>
+              </div>
+            )}
 
-            {/* Analysis History Section */}
-            <div className="mb-8">
-              <h2 className="text-white text-2xl sm:text-3xl font-bold mb-4">{t("analysisHistory")}</h2>
-              <Card className="bg-black border-primary/30 cursor-pointer hover:border-primary/50 transition-colors"
-                    onClick={() => handleTabChange("analyses")}>
-                <CardContent className="p-4 sm:p-6">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <Search className="text-primary h-6 w-6 sm:h-8 sm:w-8" />
-                      <div>
-                        <p className="text-white text-2xl sm:text-3xl font-bold">{analysesCount}</p>
-                        <p className="text-muted-foreground text-sm">{t("analyses")}</p>
-                      </div>
-                    </div>
-                    <ArrowRight className="text-primary h-5 w-5" />
-                  </div>
-                </CardContent>
-              </Card>
+            {/* Tab content - History */}
+            <div className="border border-primary/30 rounded-lg p-4 sm:p-6 bg-background">
+              {activeTab === "analyses" && (
+                <AnalysesTab 
+                  showAnalysisTool={showAnalysisTool} 
+                  onAnalysisToolClose={() => setShowAnalysisTool(false)}
+                  onCreditsUsed={fetchCredits}
+                />
+              )}
+              {activeTab === "consultations" && <ChatsTab onCreditsUsed={fetchCredits} />}
             </div>
           </>
-        )}
-
-        {/* Start Analysis Button - only show in analyses tab when tool is not open AND user has credits */}
-        {activeTab === "analyses" && !showAnalysisTool && analysisCredits > 0 && (
-          <div className="flex justify-center mb-8">
-            <Button 
-              variant="hero" 
-              size="xl" 
-              onClick={() => setShowAnalysisTool(true)}
-              className="gap-3"
-            >
-              {t("startNewAnalysis")}
-              <ArrowRight className="w-5 h-5" />
-            </Button>
-          </div>
-        )}
-
-        {/* Tab content */}
-        {activeTab !== "services" && (
-          <div className="border border-primary/30 rounded-lg p-4 sm:p-6 bg-background">
-            {activeTab === "analyses" && (
-              <AnalysesTab 
-                showAnalysisTool={showAnalysisTool} 
-                onAnalysisToolClose={() => setShowAnalysisTool(false)}
-                onCreditsUsed={fetchCredits}
-              />
-            )}
-            {activeTab === "consultations" && <ChatsTab onCreditsUsed={fetchCredits} />}
-          </div>
-        )}
-
-        {/* Services Section - Buy Services */}
-        {activeTab === "services" && (
-          <div>
-            <h2 className="text-white text-2xl sm:text-3xl font-bold mb-4">{t("buyServices")}</h2>
-            <div className="border border-primary/30 rounded-lg p-4 sm:p-6 bg-background">
-              <ServicesTab />
-            </div>
-          </div>
         )}
       </div>
     </div>
