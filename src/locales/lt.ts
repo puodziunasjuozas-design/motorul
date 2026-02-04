@@ -242,4 +242,14 @@ export const lt = {
   remainingCredits: "Likę kreditai",
   activeChats: "Aktyvūs chat'ai",
   buyServices: "Pirkti paslaugas",
+
+  // Password Reset
+  forgotPassword: "Pamiršote slaptažodį?",
+  resetPassword: "Atkurti slaptažodį",
+  resetPasswordDesc: "Įveskite savo el. paštą ir mes atsiųsime slaptažodžio atkūrimo nuorodą",
+  sendResetLink: "Siųsti nuorodą",
+  resetLinkSent: "Nuoroda išsiųsta!",
+  resetLinkSentDesc: "Patikrinkite savo el. paštą ir paspauskite nuorodą slaptažodžiui atkurti",
+  backToLogin: "Grįžti į prisijungimą",
+  resetEmailError: "Nepavyko išsiųsti atkūrimo nuorodos",
 };

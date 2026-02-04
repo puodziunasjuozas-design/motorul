@@ -242,4 +242,14 @@ export const en = {
   remainingCredits: "Remaining credits",
   activeChats: "Active chats",
   buyServices: "Buy services",
+
+  // Password Reset
+  forgotPassword: "Forgot password?",
+  resetPassword: "Reset Password",
+  resetPasswordDesc: "Enter your email and we'll send you a password reset link",
+  sendResetLink: "Send reset link",
+  resetLinkSent: "Link sent!",
+  resetLinkSentDesc: "Check your email and click the link to reset your password",
+  backToLogin: "Back to login",
+  resetEmailError: "Failed to send reset link",
 };
