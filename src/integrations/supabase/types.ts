@@ -18,6 +18,7 @@ export type Database = {
         Row: {
           created_at: string
           current_price: number | null
+          custom_title: string | null
           description: string | null
           estimated_resale_value: number | null
           id: string
@@ -44,6 +45,7 @@ export type Database = {
         Insert: {
           created_at?: string
           current_price?: number | null
+          custom_title?: string | null
           description?: string | null
           estimated_resale_value?: number | null
           id?: string
@@ -70,6 +72,7 @@ export type Database = {
         Update: {
           created_at?: string
           current_price?: number | null
+          custom_title?: string | null
           description?: string | null
           estimated_resale_value?: number | null
           id?: string
