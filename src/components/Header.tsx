@@ -24,17 +24,13 @@ const Header = ({ activeTab, onTabChange }: HeaderProps) => {
   };
 
   const navItems = [
-    { id: "services" as TabType, label: t("myPurchases"), icon: ShoppingBag, path: "/profile?tab=services" },
-    { id: "analyses" as TabType, label: t("analyses"), icon: BarChart3, path: "/profile?tab=analyses" },
-    { id: "consultations" as TabType, label: t("technicalConsultations"), icon: MessageSquare, path: "/profile?tab=consultations" }
+    { id: "services" as TabType, label: t("myPurchases"), icon: ShoppingBag, path: "/profile" },
+    { id: "analyses" as TabType, label: t("analyses"), icon: BarChart3, path: "/analyses" },
+    { id: "consultations" as TabType, label: t("technicalConsultations"), icon: MessageSquare, path: "/consultations" }
   ];
 
   const handleNavClick = (item: typeof navItems[0]) => {
-    if (location.pathname === "/profile" && onTabChange) {
-      onTabChange(item.id);
-    } else {
-      navigate(item.path);
-    }
+    navigate(item.path);
   };
 
   return (
@@ -61,7 +57,10 @@ const Header = ({ activeTab, onTabChange }: HeaderProps) => {
             <div className="flex gap-6 sm:gap-10 flex-1 justify-center">
               {navItems.map(item => {
                 const Icon = item.icon;
-                const isActive = location.pathname === "/profile" && activeTab === item.id;
+                const isActive = 
+                  (item.id === "services" && location.pathname === "/profile") ||
+                  (item.id === "analyses" && location.pathname === "/analyses") ||
+                  (item.id === "consultations" && location.pathname === "/consultations");
                 return (
                   <button
                     key={item.id}

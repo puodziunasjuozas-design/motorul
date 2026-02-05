@@ -8,6 +8,8 @@ import { LanguageProvider } from "@/contexts/LanguageContext";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Profile from "./pages/Profile";
+import Analyses from "./pages/Analyses";
+import Consultations from "./pages/Consultations";
 import AboutUs from "./pages/AboutUs";
 import ForBusiness from "./pages/ForBusiness";
 import Testimonials from "./pages/Testimonials";
@@ -27,6 +29,8 @@ const App = () => (
               <Route path="/" element={<Index />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/profile" element={<Profile />} />
+              <Route path="/analyses" element={<Analyses />} />
+              <Route path="/consultations" element={<Consultations />} />
               <Route path="/about" element={<AboutUs />} />
               <Route path="/business" element={<ForBusiness />} />
               <Route path="/testimonials" element={<Testimonials />} />
