@@ -23,17 +23,17 @@ const Header = ({ activeTab, onTabChange }: HeaderProps) => {
     navigate("/");
   };
 
-  const tabs = [
-    { id: "services" as TabType, label: t("myPurchases"), icon: ShoppingBag },
-    { id: "analyses" as TabType, label: t("analyses"), icon: BarChart3 },
-    { id: "consultations" as TabType, label: t("technicalConsultations"), icon: MessageSquare }
+  const navItems = [
+    { id: "services" as TabType, label: t("myPurchases"), icon: ShoppingBag, path: "/profile?tab=services" },
+    { id: "analyses" as TabType, label: t("analyses"), icon: BarChart3, path: "/profile?tab=analyses" },
+    { id: "consultations" as TabType, label: t("technicalConsultations"), icon: MessageSquare, path: "/profile?tab=consultations" }
   ];
 
-  const handleTabClick = (tabId: TabType) => {
+  const handleNavClick = (item: typeof navItems[0]) => {
     if (location.pathname === "/profile" && onTabChange) {
-      onTabChange(tabId);
+      onTabChange(item.id);
     } else {
-      navigate(`/profile?tab=${tabId}`);
+      navigate(item.path);
     }
   };
 
@@ -59,20 +59,20 @@ const Header = ({ activeTab, onTabChange }: HeaderProps) => {
           {/* Profile Navigation Tabs - visible when logged in */}
           {user && (
             <div className="flex gap-6 sm:gap-10 flex-1 justify-center">
-              {tabs.map(tab => {
-                const Icon = tab.icon;
-                const isActive = location.pathname === "/profile" && activeTab === tab.id;
+              {navItems.map(item => {
+                const Icon = item.icon;
+                const isActive = location.pathname === "/profile" && activeTab === item.id;
                 return (
                   <button
-                    key={tab.id}
-                    onClick={() => handleTabClick(tab.id)}
+                    key={item.id}
+                    onClick={() => handleNavClick(item)}
                     className={`
                       p-2 transition-all duration-200
                       ${isActive 
                         ? "text-primary" 
                         : "text-muted-foreground hover:text-primary"}
                     `}
-                    title={tab.label}
+                    title={item.label}
                   >
                     <Icon className="h-5 w-5 sm:h-6 sm:w-6" />
                   </button>
