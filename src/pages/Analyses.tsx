@@ -8,6 +8,7 @@ import AnalysisTool from "@/components/profile/AnalysisTool";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import analysesCarGif from "@/assets/analyses-history-car.gif";
 
 const Analyses = () => {
   const { user } = useAuth();
@@ -58,21 +59,24 @@ const Analyses = () => {
           />
         ) : (
           <>
-            {analysisCredits > 0 && (
-              <Button 
-                variant="hero" 
-                size="lg" 
-                className="w-full mb-6"
-                onClick={() => setShowAnalysisTool(true)}
-              >
-                <Plus className="w-5 h-5 mr-2" />
-                {t("startNewAnalysis")}
-              </Button>
-            )}
-
             <h2 className="text-foreground text-2xl sm:text-3xl font-bold mb-4">{t("analysisHistory")}</h2>
             <div className="border border-primary/30 rounded-lg p-4 sm:p-6 bg-background">
+              {analysisCredits > 0 && (
+                <Button 
+                  variant="hero" 
+                  size="lg" 
+                  className="w-full mb-6"
+                  onClick={() => setShowAnalysisTool(true)}
+                >
+                  <Plus className="w-5 h-5 mr-2" />
+                  {t("startNewAnalysis")}
+                </Button>
+              )}
               <AnalysesTab key={refreshKey} onCreditsUsed={handleCreditsUsed} />
+            </div>
+
+            <div className="flex justify-center mt-8">
+              <img src={analysesCarGif} alt="" className="w-40 h-auto opacity-70" />
             </div>
           </>
         )}

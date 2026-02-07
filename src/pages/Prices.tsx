@@ -4,6 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/contexts/LanguageContext";
 import Header from "@/components/Header";
 import ServicesTab from "@/components/profile/ServicesTab";
+import pricesCarGif from "@/assets/prices-car.gif";
 
 const Prices = () => {
   const { user } = useAuth();
@@ -24,6 +25,10 @@ const Prices = () => {
         <h2 className="text-foreground text-2xl sm:text-3xl font-bold mb-4">{t("buyServices")}</h2>
         <div className="border border-primary/30 rounded-lg p-4 sm:p-6 bg-background">
           <ServicesTab />
+        </div>
+
+        <div className="flex justify-center mt-8">
+          <img src={pricesCarGif} alt="" className="w-40 h-auto opacity-70" />
         </div>
       </div>
     </div>

@@ -1,10 +1,10 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/contexts/LanguageContext";
 import Header from "@/components/Header";
 import ChatsTab from "@/components/profile/ChatsTab";
-import { supabase } from "@/integrations/supabase/client";
+import consultationsCarGif from "@/assets/consultations-history-car.gif";
 
 const Consultations = () => {
   const { user } = useAuth();
@@ -29,6 +29,10 @@ const Consultations = () => {
         <h2 className="text-foreground text-2xl sm:text-3xl font-bold mb-4">{t("technicalConsultations")}</h2>
         <div className="border border-primary/30 rounded-lg p-4 sm:p-6 bg-background">
           <ChatsTab onCreditsUsed={fetchCredits} />
+        </div>
+
+        <div className="flex justify-center mt-8">
+          <img src={consultationsCarGif} alt="" className="w-40 h-auto opacity-70" />
         </div>
       </div>
     </div>
