@@ -3,11 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/contexts/LanguageContext";
 import Header from "@/components/Header";
-import ServicesTab from "@/components/profile/ServicesTab";
 import AccountSettingsDialog from "@/components/profile/AccountSettingsDialog";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Search, MessageSquare, LogOut } from "lucide-react";
+import { Search, MessageSquare, LogOut, ShoppingBag } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 const Profile = () => {
@@ -60,7 +59,7 @@ const Profile = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header activeTab="services" />
+      <Header />
       
       <div className="container mx-auto px-4 sm:px-6 pt-24 sm:pt-28 pb-12 sm:pb-20">
         {/* User Account Section */}
@@ -111,13 +110,16 @@ const Profile = () => {
           </Card>
         </div>
 
-        {/* Services/Purchases Section */}
-        <div>
-          <h2 className="text-foreground text-2xl sm:text-3xl font-bold mb-4">{t("buyServices")}</h2>
-          <div className="border border-primary/30 rounded-lg p-4 sm:p-6 bg-background">
-            <ServicesTab />
-          </div>
-        </div>
+        {/* Buy Services Button */}
+        <Button 
+          variant="hero" 
+          size="lg" 
+          className="w-full"
+          onClick={() => navigate("/prices")}
+        >
+          <ShoppingBag className="w-5 h-5 mr-2" />
+          {t("buyServices")}
+        </Button>
       </div>
     </div>
   );
