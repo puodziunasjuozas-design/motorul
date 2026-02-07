@@ -242,6 +242,7 @@ export const en = {
   remainingCredits: "Remaining credits",
   activeChats: "Active chats",
   buyServices: "Buy services",
+  rename: "Rename",
 
   // Password Reset
   forgotPassword: "Forgot password?",

@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Trash2, ExternalLink, Car, Calendar } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Trash2, ExternalLink, Car, Calendar, Pencil, Check, X } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -12,6 +13,7 @@ import ChatDialog from "./ChatDialog";
 
 interface Analysis {
   id: string;
+  custom_title: string | null;
   vehicle_make: string;
   vehicle_model: string;
   vehicle_year: number | null;
@@ -46,6 +48,8 @@ const AnalysesTab = ({ onCreditsUsed }: AnalysesTabProps) => {
   const [selectedAnalysis, setSelectedAnalysis] = useState<Analysis | null>(null);
   const [chatDialogOpen, setChatDialogOpen] = useState(false);
   const [analysisContext, setAnalysisContext] = useState<AnalysisData | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editTitle, setEditTitle] = useState("");
 
   useEffect(() => {
     if (user) {
@@ -78,6 +82,33 @@ const AnalysesTab = ({ onCreditsUsed }: AnalysesTabProps) => {
       setAnalyses(analyses.filter(a => a.id !== id));
       toast.success(t("analysisDeleted"));
     }
+  };
+
+  const handleStartRename = (e: React.MouseEvent, analysis: Analysis) => {
+    e.stopPropagation();
+    setEditingId(analysis.id);
+    setEditTitle(analysis.custom_title || `${analysis.vehicle_make} ${analysis.vehicle_model}`);
+  };
+
+  const handleSaveRename = async (e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
+    const trimmed = editTitle.trim().slice(0, 40);
+    const { error } = await supabase
+      .from("analysis_history")
+      .update({ custom_title: trimmed || null })
+      .eq("id", id);
+    
+    if (error) {
+      toast.error(t("error"));
+    } else {
+      setAnalyses(analyses.map(a => a.id === id ? { ...a, custom_title: trimmed || null } : a));
+    }
+    setEditingId(null);
+  };
+
+  const handleCancelRename = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setEditingId(null);
   };
 
   const getPriceRatingColor = (rating: string | null) => {
@@ -235,11 +266,32 @@ const AnalysesTab = ({ onCreditsUsed }: AnalysesTabProps) => {
                 <div className="p-2 rounded-lg bg-primary/10 flex-shrink-0">
                   <Car className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
                 </div>
-                <div className="min-w-0">
-                  <h4 className="font-medium text-foreground text-sm sm:text-base truncate">
-                    {analysis.vehicle_make} {analysis.vehicle_model}
-                    {analysis.vehicle_year && ` (${analysis.vehicle_year})`}
-                  </h4>
+                <div className="min-w-0 flex-1">
+                  {editingId === analysis.id ? (
+                    <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                      <Input
+                        value={editTitle}
+                        onChange={(e) => setEditTitle(e.target.value.slice(0, 40))}
+                        className="h-7 text-sm max-w-[200px]"
+                        maxLength={40}
+                        autoFocus
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") handleSaveRename(e as any, analysis.id);
+                          if (e.key === "Escape") setEditingId(null);
+                        }}
+                      />
+                      <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={(e) => handleSaveRename(e, analysis.id)}>
+                        <Check className="w-3 h-3 text-green-500" />
+                      </Button>
+                      <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={handleCancelRename}>
+                        <X className="w-3 h-3 text-destructive" />
+                      </Button>
+                    </div>
+                  ) : (
+                    <h4 className="font-medium text-foreground text-sm sm:text-base truncate">
+                      {analysis.custom_title || `${analysis.vehicle_make} ${analysis.vehicle_model}${analysis.vehicle_year ? ` (${analysis.vehicle_year})` : ""}`}
+                    </h4>
+                  )}
                   <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-1">
                     <div className="flex items-center gap-1 text-xs sm:text-sm text-muted-foreground">
                       <Calendar className="w-3 h-3 flex-shrink-0" />
@@ -258,7 +310,15 @@ const AnalysesTab = ({ onCreditsUsed }: AnalysesTabProps) => {
                   </div>
                 </div>
               </div>
-              <div className="flex items-center gap-2 self-end sm:self-auto flex-shrink-0">
+              <div className="flex items-center gap-1 self-end sm:self-auto flex-shrink-0">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={(e) => handleStartRename(e, analysis)}
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  <Pencil className="w-3.5 h-3.5" />
+                </Button>
                 {analysis.listing_url && (
                   <Button 
                     variant="ghost" 

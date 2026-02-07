@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { MessageCircle, Plus, Trash2, Calendar, MessageSquare } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { MessageCircle, Plus, Trash2, Calendar, MessageSquare, Pencil, Check, X } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -30,6 +31,8 @@ const ChatsTab = ({ onCreditsUsed }: ChatsTabProps) => {
   const [chatCredits, setChatCredits] = useState<number>(0);
   const [chatDialogOpen, setChatDialogOpen] = useState(false);
   const [activeConversation, setActiveConversation] = useState<ChatConversation | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editTitle, setEditTitle] = useState("");
 
   useEffect(() => {
     if (user) {
@@ -120,6 +123,34 @@ const ChatsTab = ({ onCreditsUsed }: ChatsTabProps) => {
     setActiveConversation(conversation);
     setChatDialogOpen(true);
   };
+
+  const handleStartRename = (e: React.MouseEvent, chat: ChatConversation) => {
+    e.stopPropagation();
+    setEditingId(chat.id);
+    setEditTitle(chat.title || "");
+  };
+
+  const handleSaveRename = async (e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
+    const trimmed = editTitle.trim().slice(0, 40);
+    const { error } = await supabase
+      .from("chat_conversations")
+      .update({ title: trimmed || null })
+      .eq("id", id);
+    
+    if (error) {
+      toast.error(t("error"));
+    } else {
+      setConversations(conversations.map(c => c.id === id ? { ...c, title: trimmed || null } : c));
+    }
+    setEditingId(null);
+  };
+
+  const handleCancelRename = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setEditingId(null);
+  };
+
   if (loading) {
     return <div className="flex items-center justify-center py-12">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
@@ -141,14 +172,36 @@ const ChatsTab = ({ onCreditsUsed }: ChatsTabProps) => {
           {conversations.map(chat => <Card key={chat.id} className="bg-zinc-900 border-primary/20 hover:border-primary/40 transition-colors cursor-pointer" onClick={() => handleOpenChat(chat)}>
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <div className="p-2 rounded-lg bg-primary/10">
+                  <div className="flex items-center gap-4 min-w-0 flex-1">
+                    <div className="p-2 rounded-lg bg-primary/10 flex-shrink-0">
                       <MessageCircle className="w-5 h-5 text-primary" />
                     </div>
-                    <div>
-                      <h4 className="font-medium text-foreground">
-                        {chat.title || t("untitledChat")}
-                      </h4>
+                    <div className="min-w-0 flex-1">
+                      {editingId === chat.id ? (
+                        <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                          <Input
+                            value={editTitle}
+                            onChange={(e) => setEditTitle(e.target.value.slice(0, 40))}
+                            className="h-7 text-sm max-w-[200px]"
+                            maxLength={40}
+                            autoFocus
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") handleSaveRename(e as any, chat.id);
+                              if (e.key === "Escape") setEditingId(null);
+                            }}
+                          />
+                          <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={(e) => handleSaveRename(e, chat.id)}>
+                            <Check className="w-3 h-3 text-green-500" />
+                          </Button>
+                          <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={handleCancelRename}>
+                            <X className="w-3 h-3 text-destructive" />
+                          </Button>
+                        </div>
+                      ) : (
+                        <h4 className="font-medium text-foreground truncate">
+                          {chat.title || t("untitledChat")}
+                        </h4>
+                      )}
                       <div className="flex items-center gap-3 mt-1">
                         <div className="flex items-center gap-1 text-sm text-muted-foreground">
                           <Calendar className="w-3 h-3" />
@@ -163,12 +216,17 @@ const ChatsTab = ({ onCreditsUsed }: ChatsTabProps) => {
                       </div>
                     </div>
                   </div>
-                  <Button variant="ghost" size="sm" onClick={e => {
-              e.stopPropagation();
-              handleDelete(chat.id);
-            }} className="text-destructive hover:text-destructive">
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
+                  <div className="flex items-center gap-1 flex-shrink-0">
+                    <Button variant="ghost" size="sm" onClick={(e) => handleStartRename(e, chat)} className="text-muted-foreground hover:text-foreground">
+                      <Pencil className="w-3.5 h-3.5" />
+                    </Button>
+                    <Button variant="ghost" size="sm" onClick={e => {
+                      e.stopPropagation();
+                      handleDelete(chat.id);
+                    }} className="text-destructive hover:text-destructive">
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
                 </div>
               </CardContent>
             </Card>)}

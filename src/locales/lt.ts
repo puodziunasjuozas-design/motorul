@@ -241,7 +241,8 @@ export const lt = {
   userAccount: "Vartotojo paskyra",
   remainingCredits: "Likę kreditai",
   activeChats: "Aktyvūs chat'ai",
-  buyServices: "Pirkti paslaugas",
+  buyServices: "Nusipirkti paslaugas",
+  rename: "Pervadinti",
 
   // Password Reset
   forgotPassword: "Pamiršote slaptažodį?",

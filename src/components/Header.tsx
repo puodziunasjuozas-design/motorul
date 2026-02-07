@@ -24,7 +24,7 @@ const Header = ({ activeTab, onTabChange }: HeaderProps) => {
   };
 
   const navItems = [
-    { id: "services" as TabType, label: t("myPurchases"), icon: ShoppingBag, path: "/profile" },
+    { id: "services" as TabType, label: t("myPurchases"), icon: ShoppingBag, path: "/prices" },
     { id: "analyses" as TabType, label: t("analyses"), icon: BarChart3, path: "/analyses" },
     { id: "consultations" as TabType, label: t("technicalConsultations"), icon: MessageSquare, path: "/consultations" }
   ];
@@ -58,7 +58,7 @@ const Header = ({ activeTab, onTabChange }: HeaderProps) => {
               {navItems.map(item => {
                 const Icon = item.icon;
                 const isActive = 
-                  (item.id === "services" && location.pathname === "/profile") ||
+                  (item.id === "services" && location.pathname === "/prices") ||
                   (item.id === "analyses" && location.pathname === "/analyses") ||
                   (item.id === "consultations" && location.pathname === "/consultations");
                 return (
