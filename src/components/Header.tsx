@@ -24,9 +24,9 @@ const Header = ({ activeTab, onTabChange }: HeaderProps) => {
   };
 
   const navItems = [
-    { id: "services" as TabType, label: t("myPurchases"), icon: ShoppingBag, path: "/prices" },
+    { id: "services" as TabType, label: t("priceList"), icon: ShoppingBag, path: "/prices" },
     { id: "analyses" as TabType, label: t("analyses"), icon: BarChart3, path: "/analyses" },
-    { id: "consultations" as TabType, label: t("technicalConsultations"), icon: MessageSquare, path: "/consultations" }
+    { id: "consultations" as TabType, label: t("technicalConsultation"), icon: MessageSquare, path: "/consultations" }
   ];
 
   const handleNavClick = (item: typeof navItems[0]) => {
@@ -66,7 +66,7 @@ const Header = ({ activeTab, onTabChange }: HeaderProps) => {
                     key={item.id}
                     onClick={() => handleNavClick(item)}
                     className={`
-                      p-2 transition-all duration-200
+                      flex flex-col items-center gap-0.5 p-2 transition-all duration-200
                       ${isActive 
                         ? "text-primary" 
                         : "text-muted-foreground hover:text-primary"}
@@ -74,6 +74,7 @@ const Header = ({ activeTab, onTabChange }: HeaderProps) => {
                     title={item.label}
                   >
                     <Icon className="h-5 w-5 sm:h-6 sm:w-6" />
+                    <span className="text-[10px] sm:text-xs font-medium">{item.label}</span>
                   </button>
                 );
               })}
