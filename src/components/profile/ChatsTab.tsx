@@ -178,7 +178,7 @@ const ChatsTab = ({
                           <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={handleCancelRename}>
                             <X className="w-3 h-3 text-destructive" />
                           </Button>
-                        </div> : <h4 className="font-medium text-foreground truncate">
+                        </div> : <h4 className="text-foreground truncate text-lg font-semibold">
                           {chat.title || t("untitledChat")}
                         </h4>}
                       <div className="flex items-center gap-3 mt-1">
