@@ -27,7 +27,7 @@ const Consultations = () => {
       
       <div className="container mx-auto px-4 sm:px-6 pt-24 sm:pt-28 pb-12 sm:pb-20">
         <div className="flex justify-center mb-4">
-          <img src={consultationsCarGif} alt="" className="w-64 h-auto opacity-80" />
+          <img src={consultationsCarGif} alt="" className="w-80 sm:w-96 h-auto opacity-80" />
         </div>
         <h2 className="text-foreground text-2xl sm:text-3xl font-bold mb-4">{t("technicalConsultations")}</h2>
         <div className="border border-primary/30 rounded-lg p-4 sm:p-6 bg-background">
