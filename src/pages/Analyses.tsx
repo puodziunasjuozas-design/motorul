@@ -59,6 +59,9 @@ const Analyses = () => {
           />
         ) : (
           <>
+            <div className="flex justify-center mb-4">
+              <img src={analysesCarGif} alt="" className="w-64 h-auto opacity-80" />
+            </div>
             <h2 className="text-foreground text-2xl sm:text-3xl font-bold mb-4">{t("analysisHistory")}</h2>
             <div className="border border-primary/30 rounded-lg p-4 sm:p-6 bg-background">
               {analysisCredits > 0 && (
@@ -73,10 +76,6 @@ const Analyses = () => {
                 </Button>
               )}
               <AnalysesTab key={refreshKey} onCreditsUsed={handleCreditsUsed} />
-            </div>
-
-            <div className="flex justify-center mt-8">
-              <img src={analysesCarGif} alt="" className="w-40 h-auto opacity-70" />
             </div>
           </>
         )}
