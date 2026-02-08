@@ -80,7 +80,7 @@ const AnalysisResult = ({
         return "text-muted-foreground";
     }
   };
-  return <div className="space-y-6 animate-slide-up">
+  return <div className="space-y-6 animate-slide-up max-w-5xl mx-auto w-full">
       {/* Transfer to Consultation Button */}
       {onTransferToConsultation && (
         <Button 
