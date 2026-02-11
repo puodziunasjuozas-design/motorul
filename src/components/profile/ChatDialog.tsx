@@ -67,22 +67,22 @@ const ChatDialog = ({
 ${analysisContext.profitability.isProfitable ? "✅" : "❌"} Potencialus pelnas: €${analysisContext.profitability.potentialProfit.toLocaleString()}`;
 
         setMessages([
-          {
-            id: "welcome",
-            role: "assistant",
-            content: `Sveiki! Matau, kad norite pasikonsultuoti apie ${analysisContext.vehicleInfo.make} ${analysisContext.vehicleInfo.model}. Turiu visą analizės informaciją - klauskite drąsiai!`
-          },
-          {
-            id: "context",
-            role: "user",
-            content: contextMessage
-          },
-          {
-            id: "ready",
-            role: "assistant",
-            content: "Puiku! Supratau analizės duomenis. Kokį klausimą turite apie šį automobilį?"
-          }
-        ]);
+        {
+          id: "welcome",
+          role: "assistant",
+          content: `Sveiki! Matau, kad norite pasikonsultuoti apie ${analysisContext.vehicleInfo.make} ${analysisContext.vehicleInfo.model}. Turiu visą analizės informaciją - klauskite drąsiai!`
+        },
+        {
+          id: "context",
+          role: "user",
+          content: contextMessage
+        },
+        {
+          id: "ready",
+          role: "assistant",
+          content: "Puiku! Supratau analizės duomenis. Kokį klausimą turite apie šį automobilį?"
+        }]
+        );
       } else {
         setMessages([{
           id: "welcome",
@@ -98,12 +98,12 @@ ${analysisContext.profitability.isProfitable ? "✅" : "❌"} Potencialus pelnas
       const reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onload = () => resolve(reader.result as string);
-      reader.onerror = error => reject(error);
+      reader.onerror = (error) => reject(error);
     });
   };
 
   const handleSend = async () => {
-    if ((!input.trim() && chatImages.length === 0) || isLoading) return;
+    if (!input.trim() && chatImages.length === 0 || isLoading) return;
 
     const userText = input.trim();
     const imagesToSend = [...chatImages];
@@ -113,7 +113,7 @@ ${analysisContext.profitability.isProfitable ? "✅" : "❌"} Potencialus pelnas
       role: "user",
       content: userText + (imagesToSend.length > 0 ? ` 📷 (${imagesToSend.length} nuotr.)` : "")
     };
-    setMessages(prev => [...prev, userMessage]);
+    setMessages((prev) => [...prev, userMessage]);
     setInput("");
     setChatImages([]);
     setIsLoading(true);
@@ -121,36 +121,36 @@ ${analysisContext.profitability.isProfitable ? "✅" : "❌"} Potencialus pelnas
     try {
       // Build message content with images
       const userContent: any[] = [];
-      
+
       if (imagesToSend.length > 0) {
-        const base64Images = await Promise.all(imagesToSend.map(f => fileToBase64(f)));
+        const base64Images = await Promise.all(imagesToSend.map((f) => fileToBase64(f)));
         for (const img of base64Images) {
           userContent.push({ type: "image_url", image_url: { url: img } });
         }
       }
-      
-      userContent.push({ 
-        type: "text", 
-        text: userText || "Prašau išanalizuoti šias nuotraukas." 
+
+      userContent.push({
+        type: "text",
+        text: userText || "Prašau išanalizuoti šias nuotraukas."
       });
 
       // Build history for AI
-      const aiMessages = messages
-        .filter(m => m.id !== "welcome" || messages.length <= 1)
-        .map(m => ({
-          role: m.role,
-          content: m.content
-        }));
-      
+      const aiMessages = messages.
+      filter((m) => m.id !== "welcome" || messages.length <= 1).
+      map((m) => ({
+        role: m.role,
+        content: m.content
+      }));
+
       aiMessages.push({ role: "user", content: userContent as any });
 
       const resp = await fetch(CHAT_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`
         },
-        body: JSON.stringify({ messages: aiMessages }),
+        body: JSON.stringify({ messages: aiMessages })
       });
 
       if (resp.status === 429) {
@@ -187,7 +187,7 @@ ${analysisContext.profitability.isProfitable ? "✅" : "❌"} Potencialus pelnas
           if (!line.startsWith("data: ")) continue;
 
           const jsonStr = line.slice(6).trim();
-          if (jsonStr === "[DONE]") { streamDone = true; break; }
+          if (jsonStr === "[DONE]") {streamDone = true;break;}
 
           try {
             const parsed = JSON.parse(jsonStr);
@@ -195,7 +195,7 @@ ${analysisContext.profitability.isProfitable ? "✅" : "❌"} Potencialus pelnas
             if (content) {
               assistantSoFar += content;
               const current = assistantSoFar;
-              setMessages(prev => {
+              setMessages((prev) => {
                 const last = prev[prev.length - 1];
                 if (last?.role === "assistant" && last.id === "streaming") {
                   return prev.map((m, i) => i === prev.length - 1 ? { ...m, content: current } : m);
@@ -211,12 +211,12 @@ ${analysisContext.profitability.isProfitable ? "✅" : "❌"} Potencialus pelnas
       }
 
       // Finalize the streaming message with a proper ID
-      setMessages(prev => prev.map(m => m.id === "streaming" ? { ...m, id: Date.now().toString() } : m));
+      setMessages((prev) => prev.map((m) => m.id === "streaming" ? { ...m, id: Date.now().toString() } : m));
       onCreditsUsed?.();
     } catch (error) {
       console.error("Chat error:", error);
       toast.error("Klaida siunčiant žinutę");
-      setMessages(prev => [...prev, {
+      setMessages((prev) => [...prev, {
         id: Date.now().toString(),
         role: "assistant",
         content: "Atsiprašau, įvyko klaida. Bandykite dar kartą."
@@ -235,8 +235,8 @@ ${analysisContext.profitability.isProfitable ? "✅" : "❌"} Potencialus pelnas
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      const files = Array.from(e.target.files).filter(f => f.type.startsWith("image/"));
-      setChatImages(prev => [...prev, ...files].slice(0, 3));
+      const files = Array.from(e.target.files).filter((f) => f.type.startsWith("image/"));
+      setChatImages((prev) => [...prev, ...files].slice(0, 3));
     }
   };
 
@@ -247,31 +247,31 @@ ${analysisContext.profitability.isProfitable ? "✅" : "❌"} Potencialus pelnas
           <DialogTitle className="text-foreground flex items-center gap-2">
             <Bot className="w-5 h-5 text-primary" />
             {conversationTitle || t("technicalConsultation")}
-            <span className="text-xs text-muted-foreground ml-2">GPT-5 Mini + Vision</span>
+            
           </DialogTitle>
         </DialogHeader>
 
         <ScrollArea className="flex-1 pr-4" ref={scrollRef}>
           <div className="space-y-4 pb-4">
-            {messages.map(message => (
-              <div key={message.id} className={`flex gap-3 ${message.role === "user" ? "justify-end" : "justify-start"}`}>
-                {message.role === "assistant" && (
-                  <div className="w-8 h-8 flex-shrink-0 bg-background flex items-center justify-center rounded border border-red-800">
+            {messages.map((message) =>
+            <div key={message.id} className={`flex gap-3 ${message.role === "user" ? "justify-end" : "justify-start"}`}>
+                {message.role === "assistant" &&
+              <div className="w-8 h-8 flex-shrink-0 bg-background flex items-center justify-center rounded border border-red-800">
                     <Bot className="w-4 h-4 text-primary" />
                   </div>
-                )}
+              }
                 <div className={`max-w-[90%] sm:max-w-[85%] rounded-lg px-4 py-2 whitespace-pre-wrap ${message.role === "user" ? "bg-primary text-primary-foreground" : "bg-zinc-800 text-foreground"}`}>
                   {message.content}
                 </div>
-                {message.role === "user" && (
-                  <div className="w-8 h-8 rounded-full bg-zinc-700 flex items-center justify-center flex-shrink-0">
+                {message.role === "user" &&
+              <div className="w-8 h-8 rounded-full bg-zinc-700 flex items-center justify-center flex-shrink-0">
                     <User className="w-4 h-4 text-foreground" />
                   </div>
-                )}
+              }
               </div>
-            ))}
-            {isLoading && (
-              <div className="flex gap-3 justify-start">
+            )}
+            {isLoading &&
+            <div className="flex gap-3 justify-start">
                 <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
                   <Bot className="w-4 h-4 text-primary" />
                 </div>
@@ -283,25 +283,25 @@ ${analysisContext.profitability.isProfitable ? "✅" : "❌"} Potencialus pelnas
                   </div>
                 </div>
               </div>
-            )}
+            }
           </div>
         </ScrollArea>
 
-        {chatImages.length > 0 && (
-          <div className="flex gap-2 px-2">
-            {chatImages.map((img, i) => (
-              <div key={i} className="relative w-16 h-16 rounded overflow-hidden border border-border">
+        {chatImages.length > 0 &&
+        <div className="flex gap-2 px-2">
+            {chatImages.map((img, i) =>
+          <div key={i} className="relative w-16 h-16 rounded overflow-hidden border border-border">
                 <img src={URL.createObjectURL(img)} alt="" className="w-full h-full object-cover" />
                 <button
-                  onClick={() => setChatImages(prev => prev.filter((_, idx) => idx !== i))}
-                  className="absolute top-0 right-0 bg-destructive rounded-bl p-0.5"
-                >
+              onClick={() => setChatImages((prev) => prev.filter((_, idx) => idx !== i))}
+              className="absolute top-0 right-0 bg-destructive rounded-bl p-0.5">
+
                   <X className="w-3 h-3 text-white" />
                 </button>
               </div>
-            ))}
+          )}
           </div>
-        )}
+        }
 
         <div className="flex gap-2 pt-4 border-t border-primary/20">
           <input
@@ -310,36 +310,36 @@ ${analysisContext.profitability.isProfitable ? "✅" : "❌"} Potencialus pelnas
             accept="image/*"
             multiple
             className="hidden"
-            onChange={handleImageSelect}
-          />
+            onChange={handleImageSelect} />
+
           <Button
             variant="outline"
             size="icon"
             onClick={() => fileInputRef.current?.click()}
             disabled={isLoading}
-            className="border-primary/30 hover:bg-primary/10"
-          >
+            className="border-primary/30 hover:bg-primary/10">
+
             <ImagePlus className="w-4 h-4" />
           </Button>
           <Input
             value={input}
-            onChange={e => setInput(e.target.value)}
+            onChange={(e) => setInput(e.target.value)}
             onKeyPress={handleKeyPress}
             placeholder={t("typeMessage") || "Įveskite žinutę arba siųskite nuotrauką..."}
             className="flex-1 bg-zinc-900 border-primary/30 focus:border-primary"
-            disabled={isLoading}
-          />
+            disabled={isLoading} />
+
           <Button
             onClick={handleSend}
-            disabled={(!input.trim() && chatImages.length === 0) || isLoading}
-            className="bg-primary hover:bg-primary/90"
-          >
+            disabled={!input.trim() && chatImages.length === 0 || isLoading}
+            className="bg-primary hover:bg-primary/90">
+
             <Send className="w-4 h-4" />
           </Button>
         </div>
       </DialogContent>
-    </Dialog>
-  );
+    </Dialog>);
+
 };
 
 export default ChatDialog;
