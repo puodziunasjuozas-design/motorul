@@ -319,7 +319,7 @@ ${analysisContext.profitability.isProfitable ? "✅" : "❌"} Potencialus pelnas
             disabled={isLoading}
             className="border-primary/30 hover:bg-primary/10">
 
-            <ImagePlus className="w-4 h-4" />
+            <ImagePlus className="w-4 h-4 text-red-800" />
           </Button>
           <Input
             value={input}
