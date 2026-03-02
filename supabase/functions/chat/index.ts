@@ -20,7 +20,7 @@ serve(async (req) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "openai/gpt-5-mini",
+        model: "openai/gpt-5-nano",
         messages: [
           {
             role: "system",
@@ -33,7 +33,7 @@ Tavo specializacija:
 - Remonto kaštų skaičiavimas pagal Lietuvos kainas
 - Perpardavimo strategijos ir patarimai
 
-Atsakyk visada lietuviškai. Būk konkretus, profesionalus ir draugiškas. Naudok emoji kai tinka.
+Atsakyk visada lietuviškai. Būk konkretus, profesionalus ir draugiškas. Naudok emoji kai tinka. Formatuok atsakymus naudodamas markdown: **bold**, *italic*, sąrašus, antraštes kai reikia.
 Jei vartotojas siunčia nuotraukas - analizuok jas kaip Google Lens / vaizdo atpažinimas: identifikuok automobilį, jo būklę, galimus defektus, rūdis, dažo defektus ir t.t.`
           },
           ...messages,
