@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,8 +6,10 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Send, Bot, User, ImagePlus, X } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { AnalysisData } from "@/components/AnalysisResult";
+import ReactMarkdown from "react-markdown";
 
 interface Message {
   id: string;
@@ -40,6 +42,7 @@ const ChatDialog = ({
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [chatImages, setChatImages] = useState<File[]>([]);
+  const [loadedFromDb, setLoadedFromDb] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -49,9 +52,25 @@ const ChatDialog = ({
     }
   }, [messages]);
 
+  // Load existing messages from database
   useEffect(() => {
-    if (open) {
-      if (analysisContext) {
+    if (!open || !conversationId || !user) return;
+    setLoadedFromDb(false);
+
+    const loadMessages = async () => {
+      const { data } = await supabase
+        .from("chat_messages")
+        .select("*")
+        .eq("conversation_id", conversationId)
+        .order("created_at", { ascending: true });
+
+      if (data && data.length > 0) {
+        setMessages(data.map((m) => ({
+          id: m.id,
+          role: m.role as "user" | "assistant",
+          content: m.content
+        })));
+      } else if (analysisContext) {
         const contextMessage = `${t("analysisContextMessage") || "Turiu klausimų apie šią analizę:"}
 
 🚗 **${analysisContext.vehicleInfo.make} ${analysisContext.vehicleInfo.model}** (${analysisContext.vehicleInfo.year})
@@ -66,32 +85,52 @@ const ChatDialog = ({
 🔧 Remonto kaina: €${analysisContext.repairEstimate.totalCost.toLocaleString()}
 ${analysisContext.profitability.isProfitable ? "✅" : "❌"} Potencialus pelnas: €${analysisContext.profitability.potentialProfit.toLocaleString()}`;
 
-        setMessages([
-        {
+        const welcomeMsg: Message = {
           id: "welcome",
           role: "assistant",
           content: `Sveiki! Matau, kad norite pasikonsultuoti apie ${analysisContext.vehicleInfo.make} ${analysisContext.vehicleInfo.model}. Turiu visą analizės informaciją - klauskite drąsiai!`
-        },
-        {
-          id: "context",
-          role: "user",
-          content: contextMessage
-        },
-        {
+        };
+        const contextMsg: Message = { id: "context", role: "user", content: contextMessage };
+        const readyMsg: Message = {
           id: "ready",
           role: "assistant",
           content: "Puiku! Supratau analizės duomenis. Kokį klausimą turite apie šį automobilį?"
-        }]
-        );
+        };
+        setMessages([welcomeMsg, contextMsg, readyMsg]);
+        // Save initial messages to DB
+        await saveMessageToDb(conversationId, "assistant", welcomeMsg.content);
+        await saveMessageToDb(conversationId, "user", contextMsg.content);
+        await saveMessageToDb(conversationId, "assistant", readyMsg.content);
       } else {
-        setMessages([{
+        const welcome: Message = {
           id: "welcome",
           role: "assistant",
           content: t("chatWelcomeMessage") || "Sveiki! Aš esu jūsų automobilio konsultantas su GPT-5 Mini ir vaizdo atpažinimu. Galite siųsti nuotraukas - analizuosiu jas! 📸"
-        }]);
+        };
+        setMessages([welcome]);
+        await saveMessageToDb(conversationId, "assistant", welcome.content);
       }
+      setLoadedFromDb(true);
+    };
+
+    loadMessages();
+  }, [open, conversationId, user]);
+
+  const saveMessageToDb = async (convId: string, role: string, content: string) => {
+    try {
+      await supabase.from("chat_messages").insert({
+        conversation_id: convId,
+        role,
+        content
+      });
+      // Update conversation timestamp
+      await supabase.from("chat_conversations").update({
+        updated_at: new Date().toISOString()
+      }).eq("id", convId);
+    } catch (e) {
+      console.error("Failed to save message:", e);
     }
-  }, [open, t, analysisContext]);
+  };
 
   const fileToBase64 = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
@@ -103,23 +142,26 @@ ${analysisContext.profitability.isProfitable ? "✅" : "❌"} Potencialus pelnas
   };
 
   const handleSend = async () => {
-    if (!input.trim() && chatImages.length === 0 || isLoading) return;
+    if ((!input.trim() && chatImages.length === 0) || isLoading) return;
 
     const userText = input.trim();
     const imagesToSend = [...chatImages];
 
+    const displayContent = userText + (imagesToSend.length > 0 ? ` 📷 (${imagesToSend.length} nuotr.)` : "");
     const userMessage: Message = {
       id: Date.now().toString(),
       role: "user",
-      content: userText + (imagesToSend.length > 0 ? ` 📷 (${imagesToSend.length} nuotr.)` : "")
+      content: displayContent
     };
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
     setChatImages([]);
     setIsLoading(true);
 
+    // Save user message to DB
+    await saveMessageToDb(conversationId, "user", displayContent);
+
     try {
-      // Build message content with images
       const userContent: any[] = [];
 
       if (imagesToSend.length > 0) {
@@ -134,14 +176,12 @@ ${analysisContext.profitability.isProfitable ? "✅" : "❌"} Potencialus pelnas
         text: userText || "Prašau išanalizuoti šias nuotraukas."
       });
 
-      // Build history for AI
-      const aiMessages = messages.
-      filter((m) => m.id !== "welcome" || messages.length <= 1).
-      map((m) => ({
+      // Build history for AI (last 20 messages for speed)
+      const recentMessages = messages.slice(-20);
+      const aiMessages = recentMessages.map((m) => ({
         role: m.role,
         content: m.content
       }));
-
       aiMessages.push({ role: "user", content: userContent as any });
 
       const resp = await fetch(CHAT_URL, {
@@ -153,19 +193,10 @@ ${analysisContext.profitability.isProfitable ? "✅" : "❌"} Potencialus pelnas
         body: JSON.stringify({ messages: aiMessages })
       });
 
-      if (resp.status === 429) {
-        toast.error("Per daug užklausų. Pabandykite vėliau.");
-        setIsLoading(false);
-        return;
-      }
-      if (resp.status === 402) {
-        toast.error("Pasiektas limitas.");
-        setIsLoading(false);
-        return;
-      }
+      if (resp.status === 429) { toast.error("Per daug užklausų."); setIsLoading(false); return; }
+      if (resp.status === 402) { toast.error("Pasiektas limitas."); setIsLoading(false); return; }
       if (!resp.ok || !resp.body) throw new Error("Nepavyko prisijungti prie AI");
 
-      // Stream response
       const reader = resp.body.getReader();
       const decoder = new TextDecoder();
       let textBuffer = "";
@@ -187,7 +218,7 @@ ${analysisContext.profitability.isProfitable ? "✅" : "❌"} Potencialus pelnas
           if (!line.startsWith("data: ")) continue;
 
           const jsonStr = line.slice(6).trim();
-          if (jsonStr === "[DONE]") {streamDone = true;break;}
+          if (jsonStr === "[DONE]") { streamDone = true; break; }
 
           try {
             const parsed = JSON.parse(jsonStr);
@@ -210,17 +241,17 @@ ${analysisContext.profitability.isProfitable ? "✅" : "❌"} Potencialus pelnas
         }
       }
 
-      // Finalize the streaming message with a proper ID
+      // Finalize and save assistant message
       setMessages((prev) => prev.map((m) => m.id === "streaming" ? { ...m, id: Date.now().toString() } : m));
+      if (assistantSoFar) {
+        await saveMessageToDb(conversationId, "assistant", assistantSoFar);
+      }
       onCreditsUsed?.();
     } catch (error) {
       console.error("Chat error:", error);
       toast.error("Klaida siunčiant žinutę");
-      setMessages((prev) => [...prev, {
-        id: Date.now().toString(),
-        role: "assistant",
-        content: "Atsiprašau, įvyko klaida. Bandykite dar kartą."
-      }]);
+      const errContent = "Atsiprašau, įvyko klaida. Bandykite dar kartą.";
+      setMessages((prev) => [...prev, { id: Date.now().toString(), role: "assistant", content: errContent }]);
     } finally {
       setIsLoading(false);
     }
@@ -247,31 +278,36 @@ ${analysisContext.profitability.isProfitable ? "✅" : "❌"} Potencialus pelnas
           <DialogTitle className="text-foreground flex items-center gap-2">
             <Bot className="w-5 h-5 text-primary" />
             {conversationTitle || t("technicalConsultation")}
-            
           </DialogTitle>
         </DialogHeader>
 
         <ScrollArea className="flex-1 pr-4" ref={scrollRef}>
           <div className="space-y-4 pb-4">
             {messages.map((message) =>
-            <div key={message.id} className={`flex gap-3 ${message.role === "user" ? "justify-end" : "justify-start"}`}>
+              <div key={message.id} className={`flex gap-3 ${message.role === "user" ? "justify-end" : "justify-start"}`}>
                 {message.role === "assistant" &&
-              <div className="w-8 h-8 flex-shrink-0 bg-background flex items-center justify-center rounded border border-red-800">
+                  <div className="w-8 h-8 flex-shrink-0 bg-background flex items-center justify-center rounded border border-red-800">
                     <Bot className="w-4 h-4 text-primary" />
                   </div>
-              }
-                <div className={`max-w-[90%] sm:max-w-[85%] rounded-lg px-4 py-2 whitespace-pre-wrap ${message.role === "user" ? "bg-primary text-primary-foreground" : "bg-zinc-800 text-foreground"}`}>
-                  {message.content}
+                }
+                <div className={`max-w-[90%] sm:max-w-[85%] rounded-lg px-4 py-2 ${message.role === "user" ? "bg-primary text-primary-foreground whitespace-pre-wrap" : "bg-zinc-800 text-foreground"}`}>
+                  {message.role === "assistant" ? (
+                    <div className="prose prose-sm prose-invert max-w-none prose-p:my-1 prose-ul:my-1 prose-ol:my-1 prose-li:my-0.5 prose-headings:my-2 prose-pre:bg-zinc-900 prose-pre:text-zinc-100 prose-code:text-primary prose-strong:text-foreground">
+                      <ReactMarkdown>{message.content}</ReactMarkdown>
+                    </div>
+                  ) : (
+                    message.content
+                  )}
                 </div>
                 {message.role === "user" &&
-              <div className="w-8 h-8 rounded-full bg-zinc-700 flex items-center justify-center flex-shrink-0">
+                  <div className="w-8 h-8 rounded-full bg-zinc-700 flex items-center justify-center flex-shrink-0">
                     <User className="w-4 h-4 text-foreground" />
                   </div>
-              }
+                }
               </div>
             )}
-            {isLoading &&
-            <div className="flex gap-3 justify-start">
+            {isLoading && messages[messages.length - 1]?.id !== "streaming" &&
+              <div className="flex gap-3 justify-start">
                 <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
                   <Bot className="w-4 h-4 text-primary" />
                 </div>
@@ -288,18 +324,17 @@ ${analysisContext.profitability.isProfitable ? "✅" : "❌"} Potencialus pelnas
         </ScrollArea>
 
         {chatImages.length > 0 &&
-        <div className="flex gap-2 px-2">
+          <div className="flex gap-2 px-2">
             {chatImages.map((img, i) =>
-          <div key={i} className="relative w-16 h-16 rounded overflow-hidden border border-border">
+              <div key={i} className="relative w-16 h-16 rounded overflow-hidden border border-border">
                 <img src={URL.createObjectURL(img)} alt="" className="w-full h-full object-cover" />
                 <button
-              onClick={() => setChatImages((prev) => prev.filter((_, idx) => idx !== i))}
-              className="absolute top-0 right-0 bg-destructive rounded-bl p-0.5">
-
+                  onClick={() => setChatImages((prev) => prev.filter((_, idx) => idx !== i))}
+                  className="absolute top-0 right-0 bg-destructive rounded-bl p-0.5">
                   <X className="w-3 h-3 text-white" />
                 </button>
               </div>
-          )}
+            )}
           </div>
         }
 
@@ -311,14 +346,12 @@ ${analysisContext.profitability.isProfitable ? "✅" : "❌"} Potencialus pelnas
             multiple
             className="hidden"
             onChange={handleImageSelect} />
-
           <Button
             variant="outline"
             size="icon"
             onClick={() => fileInputRef.current?.click()}
             disabled={isLoading}
             className="border-primary/30 hover:bg-primary/10">
-
             <ImagePlus className="w-4 h-4 text-red-800" />
           </Button>
           <Input
@@ -328,18 +361,16 @@ ${analysisContext.profitability.isProfitable ? "✅" : "❌"} Potencialus pelnas
             placeholder={t("typeMessage") || "Įveskite žinutę arba siųskite nuotrauką..."}
             className="flex-1 bg-zinc-900 border-primary/30 focus:border-primary"
             disabled={isLoading} />
-
           <Button
             onClick={handleSend}
-            disabled={!input.trim() && chatImages.length === 0 || isLoading}
+            disabled={(!input.trim() && chatImages.length === 0) || isLoading}
             className="bg-primary hover:bg-primary/90">
-
             <Send className="w-4 h-4" />
           </Button>
         </div>
       </DialogContent>
-    </Dialog>);
-
+    </Dialog>
+  );
 };
 
 export default ChatDialog;
