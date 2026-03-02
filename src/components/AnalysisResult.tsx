@@ -222,7 +222,7 @@ const AnalysisResult = ({
               {t("positives")}
             </h3>
             <ul className="space-y-2">
-              {data.positives.map((positive, index) => <li key={index} className="flex items-start gap-2 text-sm text-emerald-300">
+              {data.positives.map((positive, index) => <li key={index} className="flex items-start gap-2 text-sm text-muted-foreground">
                   <span className="text-emerald-500 mt-1">✓</span>
                   {positive}
                 </li>)}
