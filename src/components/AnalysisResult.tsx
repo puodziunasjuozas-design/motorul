@@ -167,7 +167,7 @@ const AnalysisResult = ({
           {t("repairEstimate")}
         </h3>
         <div className="space-y-3">
-          {data.repairEstimate.items.map((item, index) => <div key={index} className="flex items-center justify-between p-3 rounded-lg bg-secondary/30 border-primary">
+          {data.repairEstimate.items.map((item, index) => <div key={index} className="flex items-center justify-between p-3 rounded-lg bg-secondary/30 border-primary border">
               <div className="flex items-center gap-3">
                 <div className={`w-2 h-2 rounded-full ${item.urgency === "high" ? "bg-destructive" : item.urgency === "medium" ? "bg-warning" : "bg-muted-foreground"}`} />
                 <span className={getUrgencyColor(item.urgency)}>{item.name}</span>
