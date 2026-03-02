@@ -82,15 +82,15 @@ const AnalysisResult = ({
   };
   return <div className="space-y-6 animate-slide-up max-w-5xl mx-auto w-full">
       {/* Transfer to Consultation Button */}
-      {onTransferToConsultation && (
-        <Button 
-          onClick={() => onTransferToConsultation(data)}
-          className="w-full bg-primary hover:bg-primary/90"
-        >
+      {onTransferToConsultation &&
+    <Button
+      onClick={() => onTransferToConsultation(data)}
+      className="w-full bg-primary hover:bg-primary/90">
+      
           <MessageCircle className="w-4 h-4 mr-2" />
           {t("transferToConsultation")}
         </Button>
-      )}
+    }
 
       {/* Vehicle Info */}
       <Card className="glass-card p-6">
@@ -167,7 +167,7 @@ const AnalysisResult = ({
           {t("repairEstimate")}
         </h3>
         <div className="space-y-3">
-          {data.repairEstimate.items.map((item, index) => <div key={index} className="flex items-center justify-between p-3 rounded-lg bg-secondary/30">
+          {data.repairEstimate.items.map((item, index) => <div key={index} className="flex items-center justify-between p-3 rounded-lg bg-secondary/30 border-primary">
               <div className="flex items-center gap-3">
                 <div className={`w-2 h-2 rounded-full ${item.urgency === "high" ? "bg-destructive" : item.urgency === "medium" ? "bg-warning" : "bg-muted-foreground"}`} />
                 <span className={getUrgencyColor(item.urgency)}>{item.name}</span>
@@ -216,14 +216,14 @@ const AnalysisResult = ({
             </ul>
           </Card>}
         
-        {data.positives.length > 0 && <Card className="glass-card p-6 border-2 border-green-800 bg-green-950/30">
-            <h3 className="text-lg font-semibold mb-3 flex items-center gap-2 text-green-800">
+        {data.positives.length > 0 && <Card className="glass-card p-6 border-primary/30">
+            <h3 className="text-lg font-semibold mb-3 flex items-center gap-2 text-primary">
               <CheckCircle2 className="w-5 h-5" />
               {t("positives")}
             </h3>
             <ul className="space-y-2">
               {data.positives.map((positive, index) => <li key={index} className="flex items-start gap-2 text-sm text-muted-foreground">
-                  <span className="text-emerald-500 mt-1">✓</span>
+                  <span className="text-primary mt-1">•</span>
                   {positive}
                 </li>)}
             </ul>
