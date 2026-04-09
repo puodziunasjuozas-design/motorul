@@ -359,7 +359,7 @@ ${analysisContext.profitability.isProfitable ? "✅" : "❌"} Potencialus pelnas
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={handleKeyPress}
             placeholder={t("typeMessage") || "Įveskite žinutę arba siųskite nuotrauką..."}
-            className="flex-1 bg-zinc-900 border-primary/30 focus:border-primary"
+            className="flex-1 border-primary/30 focus:border-primary bg-black"
             disabled={isLoading} />
           <Button
             onClick={handleSend}
