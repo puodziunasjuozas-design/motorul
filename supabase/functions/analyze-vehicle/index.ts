@@ -23,7 +23,12 @@ serve(async (req) => {
     console.log("Images count:", imageBase64List?.length || 0);
     console.log("Listing URL:", listingUrl || "none");
 
-    const systemPrompt = `Tu esi profesionalus automobilių ir motociklų ekspertas Lietuvoje. Tavo užduotis - išanalizuoti transporto priemonės skelbimą ir pateikti išsamią pirkimo rekomendaciją.
+    const systemPrompt = `Tu esi profesionalus automobilių ir motociklų ekspertas Lietuvoje su 20+ metų patirtimi.
+
+GRIEŽTA TAISYKLĖ: Tu analizuoji TIK transporto priemonių skelbimus (automobiliai, motociklai, sunkvežimiai ir kt.). Jei pateikta informacija ar nuotraukos nėra susijusios su transporto priemone, grąžink klaidą:
+{"error": "Pateikta informacija nesusijusi su transporto priemone. Prašau pateikti automobilio ar motociklo skelbimą."}
+
+Tavo užduotis - išanalizuoti transporto priemonės skelbimą ir pateikti išsamią pirkimo rekomendaciją.
 
 VISADA atsakyk JSON formatu su tokia struktūra:
 {
@@ -51,18 +56,21 @@ VISADA atsakyk JSON formatu su tokia struktūra:
   "profitability": {
     "isProfitable": true,
     "potentialProfit": 3000,
-    "recommendation": "Rekomendacija lietuvių kalba"
+    "recommendation": "Išsami rekomendacija lietuvių kalba – ar verta pirkti, kokios rizikos, ką patikrinti prieš perkant"
   },
-  "warnings": ["Perspėjimas 1", "Perspėjimas 2"],
-  "positives": ["Privalumas 1", "Privalumas 2"],
-  "youtubeSearchQueries": ["BMW N47 timing chain replacement", "BMW 320d maintenance"]
+  "warnings": ["Konkretus perspėjimas su paaiškinimu"],
+  "positives": ["Konkretus privalumas su paaiškinimu"],
+  "youtubeSearchQueries": ["BMW N47 timing chain replacement", "BMW 320d common problems"]
 }
 
-Remonto kainas skaičiuok pagal Lietuvos rinką. Įvertink:
-- Tipines šio modelio problemas
-- Ridos įtaką būklei
-- Sezoninį kainų svyravimą
-- Perpardavimo potencialą
+Analizės kokybė:
+- Remonto kainas skaičiuok pagal Lietuvos rinką (tiek darbas, tiek detalės)
+- Identifikuok KONKREČIAS tipines šio modelio/metų/variklio problemas
+- Įvertink ridos realumą (ar gali būti sukta)
+- Įvertink nuotraukose matomą būklę detaliai (rūdys, dažo defektai, salono būklė)
+- Pateik sezoninį kainų svyravimą
+- Perpardavimo potencialą su konkrečiais skaičiais
+- Recommendations turi būti konkretūs ir praktiški
 
 youtubeSearchQueries lauke pateik 3-5 angliškus paieškos terminus, kurie padėtų rasti remonto video šiam konkrečiam automobiliui.`;
 
@@ -86,7 +94,7 @@ youtubeSearchQueries lauke pateik 3-5 angliškus paieškos terminus, kurie padė
       }
       userContent.push({
         type: "text",
-        text: "Išanalizuok šias nuotraukas ir įvertink automobilio būklę."
+        text: "Išanalizuok šias nuotraukas ir detaliai įvertink transporto priemonės būklę – dažo būklę, rūdis, salono nusidėvėjimą, padangų būklę ir kitus matomus aspektus."
       });
     }
 
@@ -145,6 +153,14 @@ youtubeSearchQueries lauke pateik 3-5 angliškus paieškos terminus, kurie padė
     } catch (e) {
       console.error("Failed to parse AI response:", content);
       throw new Error("Nepavyko apdoroti AI atsakymo");
+    }
+
+    // Check if AI returned an error (non-transport content)
+    if (analysisResult.error) {
+      return new Response(JSON.stringify({ error: analysisResult.error }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
     console.log("Analysis completed successfully");
