@@ -290,10 +290,10 @@ ${analysisContext.profitability.isProfitable ? "✅" : "❌"} Potencialus pelnas
                     <Bot className="w-4 h-4 text-primary" />
                   </div>
                 }
-                <div className={`max-w-[90%] sm:max-w-[85%] rounded-lg px-4 py-2 ${message.role === "user" ? "bg-primary text-primary-foreground whitespace-pre-wrap" : "bg-zinc-800 text-foreground"}`}>
+                <div className={`max-w-[90%] sm:max-w-[85%] px-4 py-2 ${message.role === "user" ? "rounded-lg bg-primary text-primary-foreground whitespace-pre-wrap" : "text-foreground bg-background border-primary border rounded-sm border-solid"}`}>
                   {message.role === "assistant" ? (
                     <div className="prose prose-sm prose-invert max-w-none prose-p:my-1 prose-ul:my-1 prose-ol:my-1 prose-li:my-0.5 prose-headings:my-2 prose-pre:bg-zinc-900 prose-pre:text-zinc-100 prose-code:text-primary prose-strong:text-foreground">
-                      <ReactMarkdown>{message.content}</ReactMarkdown>
+                      <ReactMarkdown components={{ p: ({ children }) => <p className="font-extrabold text-sm bg-background">{children}</p> }}>{message.content}</ReactMarkdown>
                     </div>
                   ) : (
                     message.content
