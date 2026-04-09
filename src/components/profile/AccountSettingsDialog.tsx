@@ -111,9 +111,9 @@ const AccountSettingsDialog = ({ onSave }: AccountSettingsDialogProps) => {
           </div>
         </div>
         
-        <div className="flex justify-end">
-          <Button onClick={handleSave} disabled={isLoading} className="gap-2">
-            <Save className="h-4 w-4" />
+        <div className="flex justify-end text-primary">
+          <Button onClick={handleSave} disabled={isLoading} className="gap-2 bg-black border-primary border border-solid hover:bg-black">
+            <Save className="h-4 w-4 text-primary" />
             {isLoading ? t("saving") : t("save")}
           </Button>
         </div>
