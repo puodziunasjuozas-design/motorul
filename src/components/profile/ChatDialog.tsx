@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Send, Bot, User, ImagePlus, X } from "lucide-react";
+import { Send, Bot, User, ImagePlus, X, MessageSquare } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -43,6 +43,7 @@ const ChatDialog = ({
   const [isLoading, setIsLoading] = useState(false);
   const [chatImages, setChatImages] = useState<File[]>([]);
   const [loadedFromDb, setLoadedFromDb] = useState(false);
+  const [chatCredits, setChatCredits] = useState<number>(0);
   const scrollRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -51,6 +52,21 @@ const ChatDialog = ({
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [messages]);
+
+  // Fetch credits
+  useEffect(() => {
+    if (open && user) {
+      const fetchCredits = async () => {
+        const { data } = await supabase
+          .from("user_credits")
+          .select("chat_messages")
+          .eq("user_id", user.id)
+          .maybeSingle();
+        setChatCredits(data?.chat_messages || 0);
+      };
+      fetchCredits();
+    }
+  }, [open, user]);
 
   // Load existing messages from database
   useEffect(() => {
@@ -97,7 +113,6 @@ ${analysisContext.profitability.isProfitable ? "✅" : "❌"} Potencialus pelnas
           content: "Puiku! Supratau analizės duomenis. Kokį klausimą turite apie šį automobilį?"
         };
         setMessages([welcomeMsg, contextMsg, readyMsg]);
-        // Save initial messages to DB
         await saveMessageToDb(conversationId, "assistant", welcomeMsg.content);
         await saveMessageToDb(conversationId, "user", contextMsg.content);
         await saveMessageToDb(conversationId, "assistant", readyMsg.content);
@@ -105,7 +120,7 @@ ${analysisContext.profitability.isProfitable ? "✅" : "❌"} Potencialus pelnas
         const welcome: Message = {
           id: "welcome",
           role: "assistant",
-          content: t("chatWelcomeMessage") || "Sveiki! Aš esu jūsų automobilio konsultantas su GPT-5 Mini ir vaizdo atpažinimu. Galite siųsti nuotraukas - analizuosiu jas! 📸"
+          content: "Sveiki! 🚗 Aš esu jūsų transporto priemonių konsultantas. Galiu padėti su automobilių ir motociklų diagnostika, remonto klausimais, skelbimų vertinimu ir pirkimo patarimais. Galite siųsti ir nuotraukas – jas išanalizuosiu! 📸"
         };
         setMessages([welcome]);
         await saveMessageToDb(conversationId, "assistant", welcome.content);
@@ -123,7 +138,6 @@ ${analysisContext.profitability.isProfitable ? "✅" : "❌"} Potencialus pelnas
         role,
         content
       });
-      // Update conversation timestamp
       await supabase.from("chat_conversations").update({
         updated_at: new Date().toISOString()
       }).eq("id", convId);
@@ -158,7 +172,6 @@ ${analysisContext.profitability.isProfitable ? "✅" : "❌"} Potencialus pelnas
     setChatImages([]);
     setIsLoading(true);
 
-    // Save user message to DB
     await saveMessageToDb(conversationId, "user", displayContent);
 
     try {
@@ -241,7 +254,6 @@ ${analysisContext.profitability.isProfitable ? "✅" : "❌"} Potencialus pelnas
         }
       }
 
-      // Finalize and save assistant message
       setMessages((prev) => prev.map((m) => m.id === "streaming" ? { ...m, id: Date.now().toString() } : m));
       if (assistantSoFar) {
         await saveMessageToDb(conversationId, "assistant", assistantSoFar);
@@ -273,43 +285,49 @@ ${analysisContext.profitability.isProfitable ? "✅" : "❌"} Potencialus pelnas
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-screen h-screen max-w-none max-h-none m-0 rounded-none flex flex-col bg-zinc-950 border-none">
-        <DialogHeader>
-          <DialogTitle className="text-foreground flex items-center gap-2">
-            <Bot className="w-5 h-5 text-primary" />
-            {conversationTitle || t("technicalConsultation")}
-          </DialogTitle>
+      <DialogContent className="w-screen h-screen max-w-none max-h-none m-0 rounded-none flex flex-col bg-zinc-950 border-none p-3 sm:p-6">
+        <DialogHeader className="flex-shrink-0">
+          <div className="flex items-center justify-between">
+            <DialogTitle className="text-foreground flex items-center gap-2 text-sm sm:text-base">
+              <Bot className="w-5 h-5 text-primary" />
+              <span className="truncate">{conversationTitle || t("technicalConsultation")}</span>
+            </DialogTitle>
+            <div className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground flex-shrink-0">
+              <MessageSquare className="w-4 h-4 text-primary" />
+              <span>Liko: <span className="text-primary font-bold">{chatCredits}</span> konsultacijų</span>
+            </div>
+          </div>
         </DialogHeader>
 
-        <ScrollArea className="flex-1 pr-4" ref={scrollRef}>
-          <div className="space-y-4 pb-4">
+        <ScrollArea className="flex-1 pr-2 sm:pr-4" ref={scrollRef}>
+          <div className="space-y-3 sm:space-y-4 pb-4">
             {messages.map((message) =>
-              <div key={message.id} className={`flex gap-3 ${message.role === "user" ? "justify-end" : "justify-start"}`}>
+              <div key={message.id} className={`flex gap-2 sm:gap-3 ${message.role === "user" ? "justify-end" : "justify-start"}`}>
                 {message.role === "assistant" &&
-                  <div className="w-8 h-8 flex-shrink-0 bg-background flex items-center justify-center rounded border border-red-800">
-                    <Bot className="w-4 h-4 text-primary" />
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 flex-shrink-0 bg-background flex items-center justify-center rounded border border-red-800">
+                    <Bot className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary" />
                   </div>
                 }
-                <div className={`max-w-[90%] sm:max-w-[85%] px-4 py-2 ${message.role === "user" ? "rounded-lg bg-primary text-primary-foreground whitespace-pre-wrap" : "text-foreground bg-background border-primary border rounded-sm border-solid"}`}>
+                <div className={`max-w-[85%] sm:max-w-[80%] px-3 py-2 sm:px-4 ${message.role === "user" ? "rounded-lg bg-primary text-primary-foreground whitespace-pre-wrap text-sm" : "text-foreground bg-background border-primary border rounded-sm border-solid"}`}>
                   {message.role === "assistant" ? (
                     <div className="prose prose-sm prose-invert max-w-none prose-p:my-1 prose-ul:my-1 prose-ol:my-1 prose-li:my-0.5 prose-headings:my-2 prose-pre:bg-zinc-900 prose-pre:text-zinc-100 prose-code:text-primary prose-strong:text-foreground">
-                      <ReactMarkdown components={{ p: ({ children }) => <p className="font-extrabold text-sm bg-background">{children}</p> }}>{message.content}</ReactMarkdown>
+                      <ReactMarkdown components={{ p: ({ children }) => <p className="text-sm leading-relaxed">{children}</p> }}>{message.content}</ReactMarkdown>
                     </div>
                   ) : (
                     message.content
                   )}
                 </div>
                 {message.role === "user" &&
-                  <div className="w-8 h-8 rounded-full bg-zinc-700 flex items-center justify-center flex-shrink-0">
-                    <User className="w-4 h-4 text-foreground" />
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-zinc-700 flex items-center justify-center flex-shrink-0">
+                    <User className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-foreground" />
                   </div>
                 }
               </div>
             )}
             {isLoading && messages[messages.length - 1]?.id !== "streaming" &&
-              <div className="flex gap-3 justify-start">
-                <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
-                  <Bot className="w-4 h-4 text-primary" />
+              <div className="flex gap-2 sm:gap-3 justify-start">
+                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+                  <Bot className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary" />
                 </div>
                 <div className="bg-zinc-800 rounded-lg px-4 py-2">
                   <div className="flex gap-1">
@@ -326,7 +344,7 @@ ${analysisContext.profitability.isProfitable ? "✅" : "❌"} Potencialus pelnas
         {chatImages.length > 0 &&
           <div className="flex gap-2 px-2">
             {chatImages.map((img, i) =>
-              <div key={i} className="relative w-16 h-16 rounded overflow-hidden border border-border">
+              <div key={i} className="relative w-14 h-14 sm:w-16 sm:h-16 rounded overflow-hidden border border-border">
                 <img src={URL.createObjectURL(img)} alt="" className="w-full h-full object-cover" />
                 <button
                   onClick={() => setChatImages((prev) => prev.filter((_, idx) => idx !== i))}
@@ -338,7 +356,7 @@ ${analysisContext.profitability.isProfitable ? "✅" : "❌"} Potencialus pelnas
           </div>
         }
 
-        <div className="flex gap-2 pt-4 border-t border-primary/20">
+        <div className="flex gap-2 pt-3 sm:pt-4 border-t border-primary/20 flex-shrink-0">
           <input
             ref={fileInputRef}
             type="file"
@@ -351,20 +369,20 @@ ${analysisContext.profitability.isProfitable ? "✅" : "❌"} Potencialus pelnas
             size="icon"
             onClick={() => fileInputRef.current?.click()}
             disabled={isLoading}
-            className="border-primary/30 hover:bg-primary/10">
+            className="border-primary/30 hover:bg-primary/10 flex-shrink-0">
             <ImagePlus className="w-4 h-4 text-red-800" />
           </Button>
           <Input
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={handleKeyPress}
-            placeholder={t("typeMessage") || "Įveskite žinutę arba siųskite nuotrauką..."}
-            className="flex-1 border-primary/30 focus:border-primary bg-black"
+            placeholder={t("typeMessage") || "Įveskite žinutę apie transportą..."}
+            className="flex-1 min-w-0 border-primary/30 focus:border-primary bg-black"
             disabled={isLoading} />
           <Button
             onClick={handleSend}
             disabled={(!input.trim() && chatImages.length === 0) || isLoading}
-            className="bg-primary hover:bg-primary/90">
+            className="bg-primary hover:bg-primary/90 flex-shrink-0">
             <Send className="w-4 h-4" />
           </Button>
         </div>
