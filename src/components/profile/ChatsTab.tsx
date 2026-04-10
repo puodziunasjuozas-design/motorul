@@ -141,7 +141,7 @@ const ChatsTab = ({
   return (
     <div className="space-y-4">
       {/* Credits info bar */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-3 sm:p-4 rounded-lg bg-zinc-900 border border-primary/20">
+      <div className="flex-col gap-3 p-3 sm:p-4 rounded-lg border border-primary/20 bg-background items-center justify-between flex sm:flex-row">
         <div className="flex items-center gap-2 text-sm sm:text-base">
           <MessageSquare className="w-5 h-5 text-primary" />
           <span className="text-muted-foreground">Liko konsultacijų:</span>
