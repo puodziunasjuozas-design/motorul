@@ -216,7 +216,7 @@ const AnalysisResult = ({
             </ul>
           </Card>}
         
-        {data.positives.length > 0 && <Card className="glass-card p-6 border-primary">
+        {data.positives.length > 0 && <Card className="glass-card p-6 border-green-800 bg-green-950/30">
             <h3 className="text-lg font-semibold mb-3 flex items-center gap-2 text-green-800">
               <CheckCircle2 className="w-5 h-5" />
               {t("positives")}

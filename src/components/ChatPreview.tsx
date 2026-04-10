@@ -18,16 +18,16 @@ const ChatPreview = () => {
   ];
 
   return (
-    <div className="max-w-lg mx-auto animate-slide-up scale-[0.85] origin-top">
-      <Card className="glass-card p-3 overflow-hidden">
+    <div className="max-w-2xl mx-auto animate-slide-up">
+      <Card className="glass-card p-4 sm:p-6 overflow-hidden">
         {/* Chat Header */}
-        <div className="flex items-center gap-2 pb-2 mb-2 border-b border-border/50">
-          <MessageCircle className="w-3 h-3 text-primary" />
-          <span className="text-xs font-semibold">BMW 320d - Stabdžiai</span>
+        <div className="flex items-center gap-2 pb-3 mb-3 border-b border-border/50">
+          <MessageCircle className="w-4 h-4 text-primary" />
+          <span className="text-sm font-semibold">BMW 320d - Stabdžiai</span>
         </div>
 
         {/* Messages */}
-        <div className="space-y-2 max-h-[180px] overflow-y-auto">
+        <div className="space-y-3">
           {messages.map((msg, index) => (
             <div
               key={index}
@@ -39,7 +39,7 @@ const ChatPreview = () => {
                 </div>
               )}
               <div
-                className={`max-w-[85%] p-2 rounded-lg text-[10px] leading-relaxed ${
+                className={`max-w-[85%] p-2.5 sm:p-3 rounded-lg text-xs sm:text-sm leading-relaxed ${
                   msg.role === "user"
                     ? "bg-primary text-primary-foreground"
                     : "bg-secondary/50 text-foreground"

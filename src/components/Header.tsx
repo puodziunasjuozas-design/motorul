@@ -1,7 +1,8 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { Car, Bike, LogOut, User, ShoppingBag, BarChart3, MessageSquare } from "lucide-react";
+import { LogOut, User, ShoppingBag, BarChart3, MessageSquare } from "lucide-react";
+import logoImg from "@/assets/logo.png";
 import LanguageSelector from "@/components/LanguageSelector";
 import { useLanguage } from "@/contexts/LanguageContext";
 
@@ -38,13 +39,7 @@ const Header = ({ activeTab, onTabChange }: HeaderProps) => {
       <div className="container mx-auto px-4 sm:px-6 py-4 border-primary border-0">
         <div className="flex items-center justify-between gap-2">
           <Link to="/" className="flex items-center gap-3 flex-shrink-0">
-            <div className="relative">
-              <div className="absolute inset-0 bg-primary/20 blur-xl rounded-full" />
-              <div className="relative flex items-center gap-1 p-2 rounded-xl bg-primary/10">
-                <Car className="w-6 h-6 text-primary" />
-                <Bike className="w-5 h-5 text-primary" />
-              </div>
-            </div>
+            <img src={logoImg} alt="MOTORUL logo" className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl object-contain" />
             <div className="hidden sm:block">
               <h1 className="text-xl font-bold tracking-tight">
                 <span className="gradient-text text-3xl font-extrabold">​MOTORUL</span>
