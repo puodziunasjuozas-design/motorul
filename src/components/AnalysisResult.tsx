@@ -216,14 +216,14 @@ const AnalysisResult = ({
             </ul>
           </Card>}
         
-        {data.positives.length > 0 && <Card className="glass-card p-6 border-primary/30">
-            <h3 className="text-lg font-semibold mb-3 flex items-center gap-2 text-primary">
+        {data.positives.length > 0 && <Card className="glass-card p-6 border-primary">
+            <h3 className="text-lg font-semibold mb-3 flex items-center gap-2 text-green-800">
               <CheckCircle2 className="w-5 h-5" />
               {t("positives")}
             </h3>
             <ul className="space-y-2">
               {data.positives.map((positive, index) => <li key={index} className="flex items-start gap-2 text-sm text-muted-foreground">
-                  <span className="text-primary mt-1">•</span>
+                  <span className="mt-1 text-green-800">•</span>
                   {positive}
                 </li>)}
             </ul>
