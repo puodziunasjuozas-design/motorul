@@ -67,12 +67,9 @@ const ChatsTab = ({
     if (!user) return;
     const { data: currentCredits } = await supabase.from("user_credits").select("chat_messages").eq("user_id", user.id).single();
     if (!currentCredits || currentCredits.chat_messages <= 0) {
-      toast.error(t("noCredits") || "Neturite konsultacijų kreditų");
+      toast.error("Neturite žinučių. Papildykite balansą!");
       return;
     }
-    await supabase.from("user_credits").update({
-      chat_messages: currentCredits.chat_messages - 1
-    }).eq("user_id", user.id);
     const { data, error } = await supabase.from("chat_conversations").insert({
       user_id: user.id,
       title: t("newConversation"),
@@ -83,7 +80,6 @@ const ChatsTab = ({
       toast.error(t("errorCreatingChat"));
     } else {
       setConversations([data, ...conversations]);
-      fetchCredits();
       onCreditsUsed?.();
       setActiveConversation(data);
       setChatDialogOpen(true);
@@ -144,8 +140,8 @@ const ChatsTab = ({
       <div className="flex-col gap-3 p-3 sm:p-4 rounded-lg border border-primary/20 bg-background items-center justify-between flex sm:flex-row">
         <div className="flex items-center gap-2 text-sm sm:text-base">
           <MessageSquare className="w-5 h-5 text-primary" />
-          <span className="text-muted-foreground">Liko konsultacijų:</span>
-          <span className="text-primary font-bold text-lg">{chatCredits}</span>
+          <span className="text-muted-foreground">Liko žinučių:</span>
+          <span className={`font-bold text-lg ${chatCredits <= 5 ? 'text-destructive' : 'text-primary'}`}>{chatCredits}</span>
         </div>
         <Button
           variant="outline"
