@@ -294,7 +294,12 @@ ${analysisContext.profitability.isProfitable ? "✅" : "❌"} Potencialus pelnas
             </DialogTitle>
             <div className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground flex-shrink-0">
               <MessageSquare className="w-4 h-4 text-primary" />
-              <span>Liko: <span className="text-primary font-bold">{chatCredits}</span> konsultacijų</span>
+              <span>Liko: <span className="text-primary font-bold">{chatCredits}</span> / 30 žinučių</span>
+              {chatCredits < 5 && (
+                <a href="/prices" className="text-primary underline text-xs hover:text-primary/80 ml-1">
+                  +20 žinučių
+                </a>
+              )}
             </div>
           </div>
         </DialogHeader>
