@@ -157,6 +157,10 @@ ${analysisContext.profitability.isProfitable ? "✅" : "❌"} Potencialus pelnas
 
   const handleSend = async () => {
     if ((!input.trim() && chatImages.length === 0) || isLoading) return;
+    if (chatCredits <= 0) {
+      toast.error("Nebeliko žinučių! Papildykite savo balansą.");
+      return;
+    }
 
     const userText = input.trim();
     const imagesToSend = [...chatImages];
@@ -258,6 +262,15 @@ ${analysisContext.profitability.isProfitable ? "✅" : "❌"} Potencialus pelnas
       if (assistantSoFar) {
         await saveMessageToDb(conversationId, "assistant", assistantSoFar);
       }
+      // Decrement credits after successful exchange
+      const newCredits = chatCredits - 1;
+      setChatCredits(newCredits);
+      if (user) {
+        await supabase
+          .from("user_credits")
+          .update({ chat_messages: newCredits })
+          .eq("user_id", user.id);
+      }
       onCreditsUsed?.();
     } catch (error) {
       console.error("Chat error:", error);
@@ -294,12 +307,10 @@ ${analysisContext.profitability.isProfitable ? "✅" : "❌"} Potencialus pelnas
             </DialogTitle>
             <div className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground flex-shrink-0">
               <MessageSquare className="w-4 h-4 text-primary" />
-              <span>Liko: <span className="text-primary font-bold">{chatCredits}</span> / 30 žinučių</span>
-              {chatCredits < 5 && (
-                <a href="/prices" className="text-primary underline text-xs hover:text-primary/80 ml-1">
-                  +20 žinučių
-                </a>
-              )}
+              <span>Liko: <span className={`font-bold ${chatCredits <= 5 ? 'text-destructive' : 'text-primary'}`}>{chatCredits}</span> žinučių</span>
+              <a href="/prices" className="text-primary underline text-xs hover:text-primary/80 ml-1">
+                Papildyti
+              </a>
             </div>
           </div>
         </DialogHeader>
