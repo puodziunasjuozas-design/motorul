@@ -47,8 +47,8 @@ const ChatsTab = ({
 
   const fetchCredits = async () => {
     if (!user) return;
-    const { data } = await supabase.from("user_credits").select("chat_messages").eq("user_id", user.id).maybeSingle();
-    setChatCredits(data?.chat_messages || 0);
+    const { data } = await supabase.from("user_credits").select("consultation_credits").eq("user_id", user.id).maybeSingle();
+    setChatCredits(data?.consultation_credits || 0);
   };
 
   const fetchConversations = async () => {
