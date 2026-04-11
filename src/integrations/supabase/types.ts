@@ -227,6 +227,7 @@ export type Database = {
         Row: {
           analysis_credits: number | null
           chat_messages: number | null
+          consultation_credits: number | null
           created_at: string | null
           id: string
           updated_at: string | null
@@ -235,6 +236,7 @@ export type Database = {
         Insert: {
           analysis_credits?: number | null
           chat_messages?: number | null
+          consultation_credits?: number | null
           created_at?: string | null
           id?: string
           updated_at?: string | null
@@ -243,6 +245,7 @@ export type Database = {
         Update: {
           analysis_credits?: number | null
           chat_messages?: number | null
+          consultation_credits?: number | null
           created_at?: string | null
           id?: string
           updated_at?: string | null
