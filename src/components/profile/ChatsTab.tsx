@@ -140,7 +140,7 @@ const ChatsTab = ({
       <div className="flex-col gap-3 p-3 sm:p-4 rounded-lg border border-primary/20 bg-background items-center justify-between flex sm:flex-row">
         <div className="flex items-center gap-2 text-sm sm:text-base">
           <MessageSquare className="w-5 h-5 text-primary" />
-          <span className="text-muted-foreground">Liko žinučių:</span>
+          <span className="text-muted-foreground">Liko konsultacijų:</span>
           <span className={`font-bold text-lg ${chatCredits <= 5 ? 'text-destructive' : 'text-primary'}`}>{chatCredits}</span>
         </div>
         <Button
