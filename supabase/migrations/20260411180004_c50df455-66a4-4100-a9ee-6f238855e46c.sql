@@ -1,0 +1,1 @@
+ALTER TABLE public.chat_conversations ADD COLUMN messages_remaining integer DEFAULT 30 NOT NULL;

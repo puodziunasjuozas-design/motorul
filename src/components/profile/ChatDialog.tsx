@@ -43,7 +43,7 @@ const ChatDialog = ({
   const [isLoading, setIsLoading] = useState(false);
   const [chatImages, setChatImages] = useState<File[]>([]);
   const [loadedFromDb, setLoadedFromDb] = useState(false);
-  const [chatCredits, setChatCredits] = useState<number>(0);
+  const [messagesRemaining, setMessagesRemaining] = useState<number>(30);
   const scrollRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -53,20 +53,20 @@ const ChatDialog = ({
     }
   }, [messages]);
 
-  // Fetch credits
+  // Fetch per-conversation messages remaining
   useEffect(() => {
-    if (open && user) {
-      const fetchCredits = async () => {
+    if (open && conversationId) {
+      const fetchRemaining = async () => {
         const { data } = await supabase
-          .from("user_credits")
-          .select("chat_messages")
-          .eq("user_id", user.id)
+          .from("chat_conversations")
+          .select("messages_remaining")
+          .eq("id", conversationId)
           .maybeSingle();
-        setChatCredits(data?.chat_messages || 0);
+        setMessagesRemaining(data?.messages_remaining ?? 30);
       };
-      fetchCredits();
+      fetchRemaining();
     }
-  }, [open, user]);
+  }, [open, conversationId]);
 
   // Load existing messages from database
   useEffect(() => {
@@ -87,30 +87,30 @@ const ChatDialog = ({
           content: m.content
         })));
       } else if (analysisContext) {
-        const contextMessage = `${t("analysisContextMessage") || "Turiu klausimų apie šią analizę:"}
+        const contextMessage = `Turiu klausimų apie šią analizę:
 
-🚗 **${analysisContext.vehicleInfo.make} ${analysisContext.vehicleInfo.model}** (${analysisContext.vehicleInfo.year})
-📊 Rida: ${analysisContext.vehicleInfo.mileage}
-⛽ Kuras: ${analysisContext.vehicleInfo.fuelType}
-🔧 Pavarų dėžė: ${analysisContext.vehicleInfo.transmission}
+**${analysisContext.vehicleInfo.make} ${analysisContext.vehicleInfo.model}** (${analysisContext.vehicleInfo.year})
+Rida: ${analysisContext.vehicleInfo.mileage}
+Kuras: ${analysisContext.vehicleInfo.fuelType}
+Pavarų dėžė: ${analysisContext.vehicleInfo.transmission}
 
-💰 Dabartinė kaina: €${analysisContext.marketAnalysis.currentPrice.toLocaleString()}
-📈 Rinkos vidurkis: €${analysisContext.marketAnalysis.marketAverage.toLocaleString()}
-💎 Perpardavimo vertė: €${analysisContext.marketAnalysis.estimatedResaleValue.toLocaleString()}
+Dabartinė kaina: ${analysisContext.marketAnalysis.currentPrice.toLocaleString()} EUR
+Rinkos vidurkis: ${analysisContext.marketAnalysis.marketAverage.toLocaleString()} EUR
+Perpardavimo vertė: ${analysisContext.marketAnalysis.estimatedResaleValue.toLocaleString()} EUR
 
-🔧 Remonto kaina: €${analysisContext.repairEstimate.totalCost.toLocaleString()}
-${analysisContext.profitability.isProfitable ? "✅" : "❌"} Potencialus pelnas: €${analysisContext.profitability.potentialProfit.toLocaleString()}`;
+Remonto kaina: ${analysisContext.repairEstimate.totalCost.toLocaleString()} EUR
+${analysisContext.profitability.isProfitable ? "Pelninga" : "Nepelninga"} - Potencialus pelnas: ${analysisContext.profitability.potentialProfit.toLocaleString()} EUR`;
 
         const welcomeMsg: Message = {
           id: "welcome",
           role: "assistant",
-          content: `Sveiki! Matau, kad norite pasikonsultuoti apie ${analysisContext.vehicleInfo.make} ${analysisContext.vehicleInfo.model}. Turiu visą analizės informaciją - klauskite drąsiai!`
+          content: `Konsultantas pasiruošęs aptarti ${analysisContext.vehicleInfo.make} ${analysisContext.vehicleInfo.model} analizės rezultatus. Prašoma pateikti klausimą.`
         };
         const contextMsg: Message = { id: "context", role: "user", content: contextMessage };
         const readyMsg: Message = {
           id: "ready",
           role: "assistant",
-          content: "Puiku! Supratau analizės duomenis. Kokį klausimą turite apie šį automobilį?"
+          content: "Analizės duomenys gauti. Prašoma pateikti konkretų klausimą apie šią transporto priemonę."
         };
         setMessages([welcomeMsg, contextMsg, readyMsg]);
         await saveMessageToDb(conversationId, "assistant", welcomeMsg.content);
@@ -120,7 +120,7 @@ ${analysisContext.profitability.isProfitable ? "✅" : "❌"} Potencialus pelnas
         const welcome: Message = {
           id: "welcome",
           role: "assistant",
-          content: "Sveiki! 🚗 Aš esu jūsų transporto priemonių konsultantas. Galiu padėti su automobilių ir motociklų diagnostika, remonto klausimais, skelbimų vertinimu ir pirkimo patarimais. Galite siųsti ir nuotraukas – jas išanalizuosiu! 📸"
+          content: "Sveiki atvykę į transporto priemonių konsultaciją. Konsultantas gali padėti su automobilių ir motociklų diagnostika, remonto klausimais, skelbimų vertinimu ir pirkimo patarimais. Taip pat galima siųsti nuotraukas analizei. Prašoma pateikti klausimą."
         };
         setMessages([welcome]);
         await saveMessageToDb(conversationId, "assistant", welcome.content);
@@ -146,6 +146,15 @@ ${analysisContext.profitability.isProfitable ? "✅" : "❌"} Potencialus pelnas
     }
   };
 
+  const decrementConversationMessages = async () => {
+    const newRemaining = messagesRemaining - 1;
+    setMessagesRemaining(newRemaining);
+    await supabase
+      .from("chat_conversations")
+      .update({ messages_remaining: newRemaining })
+      .eq("id", conversationId);
+  };
+
   const fileToBase64 = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -157,15 +166,15 @@ ${analysisContext.profitability.isProfitable ? "✅" : "❌"} Potencialus pelnas
 
   const handleSend = async () => {
     if ((!input.trim() && chatImages.length === 0) || isLoading) return;
-    if (chatCredits <= 0) {
-      toast.error("Nebeliko žinučių! Papildykite savo balansą.");
+    if (messagesRemaining <= 0) {
+      toast.error("Nebeliko žinučių šioje konsultacijoje! Papildykite savo balansą.");
       return;
     }
 
     const userText = input.trim();
     const imagesToSend = [...chatImages];
 
-    const displayContent = userText + (imagesToSend.length > 0 ? ` 📷 (${imagesToSend.length} nuotr.)` : "");
+    const displayContent = userText + (imagesToSend.length > 0 ? ` (${imagesToSend.length} nuotr.)` : "");
     const userMessage: Message = {
       id: Date.now().toString(),
       role: "user",
@@ -193,7 +202,6 @@ ${analysisContext.profitability.isProfitable ? "✅" : "❌"} Potencialus pelnas
         text: userText || "Prašau išanalizuoti šias nuotraukas."
       });
 
-      // Build history for AI (last 20 messages for speed)
       const recentMessages = messages.slice(-20);
       const aiMessages = recentMessages.map((m) => ({
         role: m.role,
@@ -261,21 +269,18 @@ ${analysisContext.profitability.isProfitable ? "✅" : "❌"} Potencialus pelnas
       setMessages((prev) => prev.map((m) => m.id === "streaming" ? { ...m, id: Date.now().toString() } : m));
       if (assistantSoFar) {
         await saveMessageToDb(conversationId, "assistant", assistantSoFar);
-      }
-      // Decrement credits after successful exchange
-      const newCredits = chatCredits - 1;
-      setChatCredits(newCredits);
-      if (user) {
-        await supabase
-          .from("user_credits")
-          .update({ chat_messages: newCredits })
-          .eq("user_id", user.id);
+        
+        // If AI responded with [UNCLEAR], don't decrement messages
+        const isUnclear = assistantSoFar.trimStart().startsWith("[UNCLEAR]");
+        if (!isUnclear) {
+          await decrementConversationMessages();
+        }
       }
       onCreditsUsed?.();
     } catch (error) {
       console.error("Chat error:", error);
       toast.error("Klaida siunčiant žinutę");
-      const errContent = "Atsiprašau, įvyko klaida. Bandykite dar kartą.";
+      const errContent = "Atsiprašome, įvyko klaida. Prašoma bandyti dar kartą.";
       setMessages((prev) => [...prev, { id: Date.now().toString(), role: "assistant", content: errContent }]);
     } finally {
       setIsLoading(false);
@@ -307,7 +312,7 @@ ${analysisContext.profitability.isProfitable ? "✅" : "❌"} Potencialus pelnas
             </DialogTitle>
             <div className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground flex-shrink-0">
               <MessageSquare className="w-4 h-4 text-primary" />
-              <span>Liko: <span className={`font-bold ${chatCredits <= 5 ? 'text-destructive' : 'text-primary'}`}>{chatCredits}</span> žinučių</span>
+              <span>Liko: <span className={`font-bold ${messagesRemaining <= 5 ? 'text-destructive' : 'text-primary'}`}>{messagesRemaining}</span> / 30 žinučių</span>
               <a href="/prices" className="text-primary underline text-xs hover:text-primary/80 ml-1">
                 Papildyti
               </a>
@@ -317,29 +322,36 @@ ${analysisContext.profitability.isProfitable ? "✅" : "❌"} Potencialus pelnas
 
         <ScrollArea className="flex-1 pr-2 sm:pr-4" ref={scrollRef}>
           <div className="space-y-3 sm:space-y-4 pb-4">
-            {messages.map((message) =>
-              <div key={message.id} className={`flex gap-2 sm:gap-3 ${message.role === "user" ? "justify-end" : "justify-start"}`}>
-                {message.role === "assistant" &&
-                  <div className="w-7 h-7 sm:w-8 sm:h-8 flex-shrink-0 bg-background flex items-center justify-center rounded border border-red-800">
-                    <Bot className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary" />
-                  </div>
-                }
-                <div className={`max-w-[85%] sm:max-w-[80%] px-3 py-2 sm:px-4 ${message.role === "user" ? "rounded-lg bg-primary text-primary-foreground whitespace-pre-wrap text-sm" : "text-foreground bg-background border-primary border rounded-sm border-solid"}`}>
-                  {message.role === "assistant" ? (
-                    <div className="prose prose-sm prose-invert max-w-none prose-p:my-1 prose-ul:my-1 prose-ol:my-1 prose-li:my-0.5 prose-headings:my-2 prose-pre:bg-zinc-900 prose-pre:text-zinc-100 prose-code:text-primary prose-strong:text-foreground">
-                      <ReactMarkdown components={{ p: ({ children }) => <p className="text-sm leading-relaxed">{children}</p> }}>{message.content}</ReactMarkdown>
+            {messages.map((message) => {
+              // Hide [UNCLEAR] marker from displayed text
+              const displayText = message.role === "assistant" && message.content.trimStart().startsWith("[UNCLEAR]")
+                ? message.content.replace("[UNCLEAR]", "").trimStart()
+                : message.content;
+              
+              return (
+                <div key={message.id} className={`flex gap-2 sm:gap-3 ${message.role === "user" ? "justify-end" : "justify-start"}`}>
+                  {message.role === "assistant" &&
+                    <div className="w-7 h-7 sm:w-8 sm:h-8 flex-shrink-0 bg-background flex items-center justify-center rounded border border-red-800">
+                      <Bot className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary" />
                     </div>
-                  ) : (
-                    message.content
-                  )}
-                </div>
-                {message.role === "user" &&
-                  <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-zinc-700 flex items-center justify-center flex-shrink-0">
-                    <User className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-foreground" />
+                  }
+                  <div className={`max-w-[85%] sm:max-w-[80%] px-3 py-2 sm:px-4 ${message.role === "user" ? "rounded-lg bg-primary text-primary-foreground whitespace-pre-wrap text-sm" : "text-foreground bg-background border-primary border rounded-sm border-solid"}`}>
+                    {message.role === "assistant" ? (
+                      <div className="prose prose-sm prose-invert max-w-none prose-p:my-1 prose-ul:my-1 prose-ol:my-1 prose-li:my-0.5 prose-headings:my-2 prose-pre:bg-zinc-900 prose-pre:text-zinc-100 prose-code:text-primary prose-strong:text-foreground">
+                        <ReactMarkdown components={{ p: ({ children }) => <p className="text-sm leading-relaxed">{children}</p> }}>{displayText}</ReactMarkdown>
+                      </div>
+                    ) : (
+                      message.content
+                    )}
                   </div>
-                }
-              </div>
-            )}
+                  {message.role === "user" &&
+                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-zinc-700 flex items-center justify-center flex-shrink-0">
+                      <User className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-foreground" />
+                    </div>
+                  }
+                </div>
+              );
+            })}
             {isLoading && messages[messages.length - 1]?.id !== "streaming" &&
               <div className="flex gap-2 sm:gap-3 justify-start">
                 <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
