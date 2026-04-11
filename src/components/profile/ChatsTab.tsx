@@ -47,8 +47,8 @@ const ChatsTab = ({
 
   const fetchCredits = async () => {
     if (!user) return;
-    const { data } = await supabase.from("user_credits").select("chat_messages").eq("user_id", user.id).maybeSingle();
-    setChatCredits(data?.chat_messages || 0);
+    const { data } = await supabase.from("user_credits").select("consultation_credits").eq("user_id", user.id).maybeSingle();
+    setChatCredits(data?.consultation_credits || 0);
   };
 
   const fetchConversations = async () => {
@@ -65,9 +65,9 @@ const ChatsTab = ({
 
   const handleNewChat = async () => {
     if (!user) return;
-    const { data: currentCredits } = await supabase.from("user_credits").select("chat_messages").eq("user_id", user.id).single();
-    if (!currentCredits || currentCredits.chat_messages <= 0) {
-      toast.error("Neturite žinučių. Papildykite balansą!");
+    const { data: currentCredits } = await supabase.from("user_credits").select("consultation_credits").eq("user_id", user.id).single();
+    if (!currentCredits || (currentCredits.consultation_credits ?? 0) <= 0) {
+      toast.error("Neturite konsultacijų. Papildykite balansą!");
       return;
     }
     const { data, error } = await supabase.from("chat_conversations").insert({
@@ -79,6 +79,11 @@ const ChatsTab = ({
     if (error) {
       toast.error(t("errorCreatingChat"));
     } else {
+      // Deduct one consultation credit
+      await supabase.from("user_credits").update({
+        consultation_credits: (currentCredits.consultation_credits ?? 1) - 1
+      }).eq("user_id", user.id);
+      setChatCredits(prev => prev - 1);
       setConversations([data, ...conversations]);
       onCreditsUsed?.();
       setActiveConversation(data);

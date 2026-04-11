@@ -1,0 +1,1 @@
+ALTER TABLE public.user_credits ADD COLUMN consultation_credits integer DEFAULT 5;
