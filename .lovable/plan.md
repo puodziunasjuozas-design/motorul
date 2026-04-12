@@ -1,25 +1,38 @@
 
 
-## Planas: Pakeisti AI modelį į Google Gemini 3
+# MOTORUL aplikacijos dokumentacija – PDF
 
-### Kas bus pakeista
+## Aprašymas
+Sukursiu išsamų PDF dokumentą lietuvių kalba, kuriame bus aprašyta visa MOTORUL programa – puslapiai, funkcijos, veikimo principai, dizainas ir AI logika.
 
-Trys backend funkcijos naudoja skirtingus AI modelius. Visos bus atnaujintos į `google/gemini-3-flash-preview`:
+## Dokumento struktūra
 
-| Funkcija | Dabartinis modelis | Naujas modelis |
-|---|---|---|
-| `chat` (konsultacijos) | `openai/gpt-5-nano` | `google/gemini-3-flash-preview` |
-| `analyze-vehicle` (analizė) | `openai/gpt-5-mini` | `google/gemini-3-flash-preview` |
-| `search-youtube` | `google/gemini-2.5-flash-lite` | `google/gemini-3-flash-preview` |
+**1. Įvadas** – kas yra MOTORUL, kokia programa, kam skirta
 
-### Techniniai pakeitimai
+**2. Puslapių aprašymas:**
+- **Pagrindinis puslapis (/)** – hero sekcija, 6 funkcijų kortelės, automobilio animacija, analizės pavyzdys, konsultacijos pavyzdys, atsiliepimai
+- **Autentifikacija (/auth)** – prisijungimas, registracija, slaptažodžio atkūrimas
+- **Profilis (/profile)** – vartotojo paskyra, kreditų balansas, atsijungimas
+- **Analizės (/analyses)** – analizės istorija, naujos analizės pradėjimas
+- **Konsultacijos (/consultations)** – pokalbių sąrašas, naujų konsultacijų kūrimas
+- **Kainos (/prices)** – paslaugų pirkimas, paketai
+- **Apie mus (/about)** – misija, komanda, vertybės
+- **Verslui (/business)** – B2B pasiūlymai
+- **Atsiliepimai (/testimonials)** – vartotojų atsiliepimai
 
-1. **`supabase/functions/chat/index.ts`** — pakeisti modelį iš `openai/gpt-5-nano` į `google/gemini-3-flash-preview`
-2. **`supabase/functions/analyze-vehicle/index.ts`** — pakeisti modelį iš `openai/gpt-5-mini` į `google/gemini-3-flash-preview`
-3. **`supabase/functions/search-youtube/index.ts`** — pakeisti modelį iš `google/gemini-2.5-flash-lite` į `google/gemini-3-flash-preview`
-4. Deplointi visas tris funkcijas
+**3. Funkcijų detalus aprašymas:**
+- Automobilio analizė (AI edge function, nuotraukų/aprašymo siuntimas, JSON rezultatas)
+- Techninė konsultacija (AI chat su streaming, žinučių limitas 30/konsultaciją, [UNCLEAR] logika)
+- Kreditų sistema (analizės kreditai, konsultacijų kreditai, žinučių limitas per konsultaciją)
+- Daugiakalbystė (24 kalbos)
 
-### Rezultatas
+**4. Dizainas** – tamsus fonas, raudona/juoda spalvų schema, glass-card kortelės, animacijos
 
-Visos AI funkcijos naudos naujausią ir greitesnį Google Gemini 3 modelį su geresniu teksto ir vaizdo supratimu.
+**5. Technologijos** – React, TypeScript, Tailwind CSS, Lovable Cloud (Supabase), Lovable AI Gateway
+
+## Techninis planas
+- Naudosiu Python `reportlab` biblioteką PDF kūrimui
+- Profesionalus formatavimas su antraštėmis, lentelėmis, spalvomis
+- Failas bus išsaugotas `/mnt/documents/MOTORUL_dokumentacija.pdf`
+- QA: konvertuosiu į paveikslėlius ir patikrinsiu kiekvieną puslapį
 
