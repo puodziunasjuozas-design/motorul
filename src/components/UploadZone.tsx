@@ -65,7 +65,7 @@ const UploadZone = ({ onImagesChange, images, isAnalyzing }: UploadZoneProps) =>
         <div className="flex flex-col items-center gap-4 text-center">
           <div className="relative">
             <div className="absolute inset-0 bg-primary/20 blur-2xl rounded-full" />
-            <div className="relative p-4 rounded-2xl bg-card border border-border">
+            <div className="relative p-4 rounded-2xl bg-card border border-primary">
               {isAnalyzing ? (
                 <Loader2 className="w-8 h-8 text-primary animate-spin" />
               ) : (
