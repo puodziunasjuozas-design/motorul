@@ -1,4 +1,4 @@
-import { MessageCircle, User, Bot } from "lucide-react";
+import { MessageCircle, User, CircleUserRound } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { useLanguage } from "@/contexts/LanguageContext";
 
@@ -35,7 +35,7 @@ const ChatPreview = () => {
             >
               {msg.role === "assistant" && (
                 <div className="w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
-                  <Bot className="w-2.5 h-2.5 text-primary" />
+                  <CircleUserRound className="w-2.5 h-2.5 text-primary" />
                 </div>
               )}
               <div

@@ -61,12 +61,12 @@ const AnalysisPreview = () => {
 
         <Card className="glass-card p-4 border border-primary/50">
           <div className="flex items-center gap-2">
-            <div className="p-2 rounded-lg bg-primary/20">
-              <TrendingUp className="w-5 h-5 text-primary" />
+            <div className="p-2 rounded-lg bg-background border-green-800 border">
+              <TrendingUp className="w-5 h-5 text-green-800" />
             </div>
             <div>
               <p className="text-sm font-semibold">{t("worthBuying")}</p>
-              <p className="text-base font-bold text-primary">+€1,270</p>
+              <p className="text-base font-bold text-green-800">+€1,270</p>
             </div>
           </div>
         </Card>
