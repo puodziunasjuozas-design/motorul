@@ -184,16 +184,16 @@ const AnalysisResult = ({
       </Card>
 
       {/* Profitability */}
-      <Card className={`glass-card p-6 border-2 ${data.profitability.isProfitable ? "border-primary/50" : "border-destructive/50"}`}>
+      <Card className={`glass-card p-6 border-2 ${data.profitability.isProfitable ? "border-green-800" : "border-destructive/50"}`}>
         <div className="flex items-start gap-4">
-          <div className={`p-3 rounded-xl ${data.profitability.isProfitable ? "bg-primary/20" : "bg-destructive/20"}`}>
-            {data.profitability.isProfitable ? <TrendingUp className="w-8 h-8 text-primary" /> : <TrendingDown className="w-8 h-8 text-destructive" />}
+          <div className={`p-3 rounded-xl ${data.profitability.isProfitable ? "bg-green-950/30" : "bg-destructive/20"}`}>
+            {data.profitability.isProfitable ? <TrendingUp className="w-8 h-8 text-green-800" /> : <TrendingDown className="w-8 h-8 text-destructive" />}
           </div>
           <div className="flex-1">
             <h3 className="text-lg font-semibold mb-1">
               {data.profitability.isProfitable ? t("worthBuying") : t("notRecommended")}
             </h3>
-            <p className={`text-2xl font-bold mb-2 ${data.profitability.isProfitable ? "stat-positive" : "stat-negative"}`}>
+            <p className={`text-2xl font-bold mb-2 ${data.profitability.isProfitable ? "text-green-800" : "stat-negative"}`}>
               {data.profitability.isProfitable ? "+" : ""}€{(data.profitability.potentialProfit ?? 0).toLocaleString()}
             </p>
             <p className="text-muted-foreground">{data.profitability.recommendation}</p>
