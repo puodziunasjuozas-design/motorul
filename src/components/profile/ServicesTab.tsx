@@ -9,7 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 interface UserCredits {
   analysis_credits: number;
-  chat_messages: number;
+  consultation_credits: number;
 }
 const ServicesTab = () => {
   const {
@@ -30,7 +30,7 @@ const ServicesTab = () => {
     const {
       data,
       error
-    } = await supabase.from("user_credits").select("analysis_credits, chat_messages").eq("user_id", user.id).maybeSingle();
+    } = await supabase.from("user_credits").select("analysis_credits, consultation_credits").eq("user_id", user.id).maybeSingle();
     if (error) {
       console.error("Error fetching credits:", error);
     } else if (data) {
@@ -42,12 +42,12 @@ const ServicesTab = () => {
       } = await supabase.from("user_credits").insert({
         user_id: user.id,
         analysis_credits: 0,
-        chat_messages: 0
+        consultation_credits: 0
       });
       if (!insertError) {
         setCredits({
           analysis_credits: 0,
-          chat_messages: 0
+          consultation_credits: 0
         });
       }
     }
@@ -117,7 +117,7 @@ const ServicesTab = () => {
             <div className="flex items-center gap-2">
               <MessageSquare className="text-primary h-5 w-5 sm:h-[28px] sm:w-[28px] flex-shrink-0" />
               <span className="text-foreground text-xl sm:text-2xl md:text-4xl font-semibold">
-                <strong>{loading ? "..." : credits?.chat_messages ?? 0}</strong> {t("consultationsRemaining")}
+                <strong>{loading ? "..." : credits?.consultation_credits ?? 0}</strong> {t("consultationsRemaining")}
               </span>
             </div>
           </div>
