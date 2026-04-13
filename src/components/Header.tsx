@@ -39,7 +39,7 @@ const Header = ({ activeTab, onTabChange }: HeaderProps) => {
       <div className="container mx-auto px-4 sm:px-6 py-4 border-primary border-0">
         <div className="flex items-center justify-between gap-2">
           <Link to="/" className="flex items-center gap-3 flex-shrink-0">
-            <img src={logoImg} alt="MOTORUL logo" className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl object-contain" />
+            <img src={logoImg} alt="MOTORUL logo" className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl object-contain" />
             <div className="hidden sm:block">
               <h1 className="text-xl font-bold tracking-tight">
                 <span className="gradient-text text-3xl font-extrabold">​MOTORUL</span>
