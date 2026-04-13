@@ -59,7 +59,7 @@ const AnalysisPreview = () => {
           </div>
         </Card>
 
-        <Card className="glass-card p-4 border border-primary/50">
+        <Card className="glass-card p-4 border border-green-800">
           <div className="flex items-center gap-2">
             <div className="p-2 rounded-lg bg-background border-green-800 border">
               <TrendingUp className="w-5 h-5 text-green-800" />
