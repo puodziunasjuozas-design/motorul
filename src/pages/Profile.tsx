@@ -32,12 +32,12 @@ const Profile = () => {
     if (!user) return;
     const { data } = await supabase
       .from("user_credits")
-      .select("analysis_credits, chat_messages")
+      .select("analysis_credits, consultation_credits")
       .eq("user_id", user.id)
       .single();
     
     setAnalysisCredits(data?.analysis_credits || 0);
-    setChatCredits(data?.chat_messages || 0);
+    setChatCredits(data?.consultation_credits || 0);
   };
 
   const fetchStats = async () => {
