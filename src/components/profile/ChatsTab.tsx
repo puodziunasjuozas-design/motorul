@@ -10,6 +10,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import ChatDialog from "./ChatDialog";
+import { AnalysisData } from "@/components/AnalysisResult";
+import wheelIntroGif from "@/assets/wheel-intro.gif";
 
 interface ChatConversation {
   id: string;
@@ -22,10 +24,16 @@ interface ChatConversation {
 
 interface ChatsTabProps {
   onCreditsUsed?: () => void;
+  analysisContext?: AnalysisData | null;
+  autoOpenNewChat?: boolean;
+  onAutoOpenHandled?: () => void;
 }
 
 const ChatsTab = ({
-  onCreditsUsed
+  onCreditsUsed,
+  analysisContext,
+  autoOpenNewChat,
+  onAutoOpenHandled
 }: ChatsTabProps) => {
   const { t } = useLanguage();
   const { user } = useAuth();
@@ -37,6 +45,9 @@ const ChatsTab = ({
   const [activeConversation, setActiveConversation] = useState<ChatConversation | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editTitle, setEditTitle] = useState("");
+  const [showIntroGif, setShowIntroGif] = useState(false);
+  const [pendingAction, setPendingAction] = useState<(() => void) | null>(null);
+  const [currentAnalysisContext, setCurrentAnalysisContext] = useState<AnalysisData | null>(analysisContext || null);
 
   useEffect(() => {
     if (user) {
@@ -44,6 +55,14 @@ const ChatsTab = ({
       fetchCredits();
     }
   }, [user]);
+
+  // Handle auto-open for transfer from analysis
+  useEffect(() => {
+    if (autoOpenNewChat && user && !loading) {
+      handleNewChat(analysisContext || undefined);
+      onAutoOpenHandled?.();
+    }
+  }, [autoOpenNewChat, user, loading]);
 
   const fetchCredits = async () => {
     if (!user) return;
@@ -63,31 +82,53 @@ const ChatsTab = ({
     setLoading(false);
   };
 
-  const handleNewChat = async () => {
+  const showGifThenAction = (action: () => void) => {
+    setShowIntroGif(true);
+    setPendingAction(() => action);
+    setTimeout(() => {
+      setShowIntroGif(false);
+      action();
+    }, 2500);
+  };
+
+  const handleNewChat = async (context?: AnalysisData) => {
     if (!user) return;
     const { data: currentCredits } = await supabase.from("user_credits").select("consultation_credits").eq("user_id", user.id).single();
     if (!currentCredits || (currentCredits.consultation_credits ?? 0) <= 0) {
       toast.error("Neturite konsultacijų. Papildykite balansą!");
       return;
     }
+
+    const title = context
+      ? `${context.vehicleInfo.make} ${context.vehicleInfo.model} (${context.vehicleInfo.year})`
+      : t("newConversation");
+
     const { data, error } = await supabase.from("chat_conversations").insert({
       user_id: user.id,
-      title: t("newConversation"),
+      title,
       is_active: true,
       messages_count: 0
     }).select().single();
     if (error) {
       toast.error(t("errorCreatingChat"));
     } else {
-      // Deduct one consultation credit
       await supabase.from("user_credits").update({
         consultation_credits: (currentCredits.consultation_credits ?? 1) - 1
       }).eq("user_id", user.id);
       setChatCredits(prev => prev - 1);
       setConversations([data, ...conversations]);
       onCreditsUsed?.();
-      setActiveConversation(data);
-      setChatDialogOpen(true);
+
+      if (context) {
+        setCurrentAnalysisContext(context);
+      } else {
+        setCurrentAnalysisContext(null);
+      }
+
+      showGifThenAction(() => {
+        setActiveConversation(data);
+        setChatDialogOpen(true);
+      });
     }
   };
 
@@ -102,8 +143,11 @@ const ChatsTab = ({
   };
 
   const handleOpenChat = (conversation: ChatConversation) => {
-    setActiveConversation(conversation);
-    setChatDialogOpen(true);
+    setCurrentAnalysisContext(null);
+    showGifThenAction(() => {
+      setActiveConversation(conversation);
+      setChatDialogOpen(true);
+    });
   };
 
   const handleStartRename = (e: React.MouseEvent, chat: ChatConversation) => {
@@ -130,6 +174,15 @@ const ChatsTab = ({
     e.stopPropagation();
     setEditingId(null);
   };
+
+  // Fullscreen GIF intro overlay
+  if (showIntroGif) {
+    return (
+      <div className="fixed inset-0 z-[60] bg-black flex items-center justify-center" style={{ top: '80px' }}>
+        <img src={wheelIntroGif} alt="" className="w-72 sm:w-96 h-auto" />
+      </div>
+    );
+  }
 
   if (loading) {
     return (
@@ -160,7 +213,7 @@ const ChatsTab = ({
       </div>
 
       {chatCredits > 0 && (
-        <Button onClick={handleNewChat} className="w-full bg-primary hover:bg-primary/90">
+        <Button onClick={() => handleNewChat()} className="w-full bg-primary hover:bg-primary/90">
           <Plus className="w-4 h-4 mr-2" />
           {t("newChat")}
         </Button>
@@ -230,10 +283,17 @@ const ChatsTab = ({
             </Card>
           ))}
 
-          <ChatDialog open={chatDialogOpen} onOpenChange={setChatDialogOpen} conversationId={activeConversation?.id || ""} conversationTitle={activeConversation?.title || t("technicalConsultation")} onCreditsUsed={() => {
-            fetchCredits();
-            onCreditsUsed?.();
-          }} />
+          <ChatDialog
+            open={chatDialogOpen}
+            onOpenChange={setChatDialogOpen}
+            conversationId={activeConversation?.id || ""}
+            conversationTitle={activeConversation?.title || t("technicalConsultation")}
+            analysisContext={currentAnalysisContext}
+            onCreditsUsed={() => {
+              fetchCredits();
+              onCreditsUsed?.();
+            }}
+          />
         </div>
       )}
     </div>

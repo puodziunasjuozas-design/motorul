@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -9,7 +10,6 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import AnalysisResult, { AnalysisData } from "@/components/AnalysisResult";
-import ChatDialog from "./ChatDialog";
 interface Analysis {
   id: string;
   custom_title: string | null;
@@ -46,6 +46,7 @@ const AnalysesTab = ({
   const {
     user
   } = useAuth();
+  const navigate = useNavigate();
   const [analyses, setAnalyses] = useState<Analysis[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedAnalysis, setSelectedAnalysis] = useState<Analysis | null>(null);
@@ -133,34 +134,14 @@ const AnalysesTab = ({
     // Check credits first
     const {
       data: currentCredits
-    } = await supabase.from("user_credits").select("chat_messages").eq("user_id", user.id).single();
-    if (!currentCredits || currentCredits.chat_messages <= 0) {
+    } = await supabase.from("user_credits").select("consultation_credits").eq("user_id", user.id).single();
+    if (!currentCredits || (currentCredits.consultation_credits ?? 0) <= 0) {
       toast.error(t("noConsultationCredits") || "Neturite konsultacijų kreditų");
       return;
     }
 
-    // Deduct one consultation credit
-    await supabase.from("user_credits").update({
-      chat_messages: currentCredits.chat_messages - 1
-    }).eq("user_id", user.id);
-
-    // Create new conversation
-    const {
-      data: newConversation,
-      error
-    } = await supabase.from("chat_conversations").insert({
-      user_id: user.id,
-      title: `${data.vehicleInfo.make} ${data.vehicleInfo.model} (${data.vehicleInfo.year})`,
-      is_active: true,
-      messages_count: 0
-    }).select().single();
-    if (error) {
-      toast.error(t("errorCreatingChat"));
-      return;
-    }
-    onCreditsUsed?.();
-    setAnalysisContext(data);
-    setChatDialogOpen(true);
+    // Navigate to consultations page with analysis context
+    navigate("/consultations", { state: { analysisContext: data } });
   };
   const convertToAnalysisData = (analysis: Analysis) => {
     const repairItems = Array.isArray(analysis.repair_items) ? analysis.repair_items : [];
@@ -211,7 +192,6 @@ const AnalysesTab = ({
           ← {t("back")}
         </Button>
         <AnalysisResult data={convertToAnalysisData(selectedAnalysis)} onTransferToConsultation={handleTransferToConsultation} />
-        <ChatDialog open={chatDialogOpen} onOpenChange={setChatDialogOpen} conversationId="" conversationTitle={analysisContext ? `${analysisContext.vehicleInfo.make} ${analysisContext.vehicleInfo.model}` : t("technicalConsultation")} analysisContext={analysisContext} onCreditsUsed={onCreditsUsed} />
       </div>;
   }
   if (loading) {
