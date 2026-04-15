@@ -46,6 +46,7 @@ const AnalysesTab = ({
   const {
     user
   } = useAuth();
+  const navigate = useNavigate();
   const [analyses, setAnalyses] = useState<Analysis[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedAnalysis, setSelectedAnalysis] = useState<Analysis | null>(null);
@@ -191,7 +192,6 @@ const AnalysesTab = ({
           ← {t("back")}
         </Button>
         <AnalysisResult data={convertToAnalysisData(selectedAnalysis)} onTransferToConsultation={handleTransferToConsultation} />
-        <ChatDialog open={chatDialogOpen} onOpenChange={setChatDialogOpen} conversationId="" conversationTitle={analysisContext ? `${analysisContext.vehicleInfo.make} ${analysisContext.vehicleInfo.model}` : t("technicalConsultation")} analysisContext={analysisContext} onCreditsUsed={onCreditsUsed} />
       </div>;
   }
   if (loading) {
