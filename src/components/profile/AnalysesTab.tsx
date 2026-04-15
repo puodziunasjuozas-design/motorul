@@ -133,34 +133,14 @@ const AnalysesTab = ({
     // Check credits first
     const {
       data: currentCredits
-    } = await supabase.from("user_credits").select("chat_messages").eq("user_id", user.id).single();
-    if (!currentCredits || currentCredits.chat_messages <= 0) {
+    } = await supabase.from("user_credits").select("consultation_credits").eq("user_id", user.id).single();
+    if (!currentCredits || (currentCredits.consultation_credits ?? 0) <= 0) {
       toast.error(t("noConsultationCredits") || "Neturite konsultacijų kreditų");
       return;
     }
 
-    // Deduct one consultation credit
-    await supabase.from("user_credits").update({
-      chat_messages: currentCredits.chat_messages - 1
-    }).eq("user_id", user.id);
-
-    // Create new conversation
-    const {
-      data: newConversation,
-      error
-    } = await supabase.from("chat_conversations").insert({
-      user_id: user.id,
-      title: `${data.vehicleInfo.make} ${data.vehicleInfo.model} (${data.vehicleInfo.year})`,
-      is_active: true,
-      messages_count: 0
-    }).select().single();
-    if (error) {
-      toast.error(t("errorCreatingChat"));
-      return;
-    }
-    onCreditsUsed?.();
-    setAnalysisContext(data);
-    setChatDialogOpen(true);
+    // Navigate to consultations page with analysis context
+    navigate("/consultations", { state: { analysisContext: data } });
   };
   const convertToAnalysisData = (analysis: Analysis) => {
     const repairItems = Array.isArray(analysis.repair_items) ? analysis.repair_items : [];
