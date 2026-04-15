@@ -36,10 +36,10 @@ const Header = ({ activeTab, onTabChange }: HeaderProps) => {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 glass-card border-b border-border/30">
-      <div className="container mx-auto px-4 sm:px-6 py-4 border-primary border-0">
+       <div className="container mx-auto px-4 sm:px-6 py-1 border-primary border-0">
         <div className="flex items-center justify-between gap-2">
           <Link to="/" className="flex items-center gap-3 flex-shrink-0">
-            <img src={logoImg} alt="MOTORUL logo" className="w-24 h-24 sm:w-28 sm:h-28 rounded-xl object-contain" />
+            <img src={logoImg} alt="MOTORUL logo" className="w-14 h-14 sm:w-16 sm:h-16 rounded-xl object-contain object-center" />
             <div className="hidden sm:block">
               <h1 className="text-xl font-bold tracking-tight">
                 <span className="gradient-text text-3xl font-extrabold">​MOTORUL</span>
