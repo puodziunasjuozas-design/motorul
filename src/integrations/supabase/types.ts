@@ -163,6 +163,54 @@ export type Database = {
           },
         ]
       }
+      market_knowledge: {
+        Row: {
+          asking_price: number | null
+          created_at: string
+          estimated_repair_cost: number | null
+          fuel_type: string | null
+          id: string
+          market_average: number | null
+          mileage: string | null
+          price_rating: string | null
+          source: string | null
+          transmission: string | null
+          vehicle_make: string
+          vehicle_model: string
+          vehicle_year: number | null
+        }
+        Insert: {
+          asking_price?: number | null
+          created_at?: string
+          estimated_repair_cost?: number | null
+          fuel_type?: string | null
+          id?: string
+          market_average?: number | null
+          mileage?: string | null
+          price_rating?: string | null
+          source?: string | null
+          transmission?: string | null
+          vehicle_make: string
+          vehicle_model: string
+          vehicle_year?: number | null
+        }
+        Update: {
+          asking_price?: number | null
+          created_at?: string
+          estimated_repair_cost?: number | null
+          fuel_type?: string | null
+          id?: string
+          market_average?: number | null
+          mileage?: string | null
+          price_rating?: string | null
+          source?: string | null
+          transmission?: string | null
+          vehicle_make?: string
+          vehicle_model?: string
+          vehicle_year?: number | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
