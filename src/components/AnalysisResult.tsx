@@ -1,4 +1,4 @@
-import { TrendingUp, TrendingDown, AlertTriangle, CheckCircle2, Wrench, DollarSign, Target, Clock, MessageCircle } from "lucide-react";
+import { TrendingUp, TrendingDown, AlertTriangle, CheckCircle2, Wrench, DollarSign, Target, Clock, MessageCircle, Info } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -229,6 +229,16 @@ const AnalysisResult = ({
             </ul>
           </Card>}
       </div>
+
+      {/* Disclaimer */}
+      <Card className="glass-card p-4 sm:p-5 border-yellow-700/50 bg-yellow-950/20">
+        <div className="flex items-start gap-3">
+          <Info className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
+          <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+            {t("disclaimerLong")}
+          </p>
+        </div>
+      </Card>
 
     </div>;
 };

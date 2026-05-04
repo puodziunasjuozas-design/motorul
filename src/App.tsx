@@ -15,6 +15,7 @@ import AboutUs from "./pages/AboutUs";
 import ForBusiness from "./pages/ForBusiness";
 import Testimonials from "./pages/Testimonials";
 import NotFound from "./pages/NotFound";
+import Footer from "@/components/Footer";
 
 const queryClient = new QueryClient();
 
@@ -26,18 +27,23 @@ const App = () => (
           <Toaster />
           <Sonner />
           <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/auth" element={<Auth />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/analyses" element={<Analyses />} />
-              <Route path="/consultations" element={<Consultations />} />
-              <Route path="/prices" element={<Prices />} />
-              <Route path="/about" element={<AboutUs />} />
-              <Route path="/business" element={<ForBusiness />} />
-              <Route path="/testimonials" element={<Testimonials />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
+            <div className="min-h-screen flex flex-col">
+              <div className="flex-1">
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/auth" element={<Auth />} />
+                  <Route path="/profile" element={<Profile />} />
+                  <Route path="/analyses" element={<Analyses />} />
+                  <Route path="/consultations" element={<Consultations />} />
+                  <Route path="/prices" element={<Prices />} />
+                  <Route path="/about" element={<AboutUs />} />
+                  <Route path="/business" element={<ForBusiness />} />
+                  <Route path="/testimonials" element={<Testimonials />} />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </div>
+              <Footer />
+            </div>
           </BrowserRouter>
         </TooltipProvider>
       </AuthProvider>

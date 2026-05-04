@@ -253,4 +253,8 @@ export const lt = {
   resetLinkSentDesc: "Patikrinkite savo el. paštą ir paspauskite nuorodą slaptažodžiui atkurti",
   backToLogin: "Grįžti į prisijungimą",
   resetEmailError: "Nepavyko išsiųsti atkūrimo nuorodos",
+
+  // Disclaimer
+  disclaimerShort: "Šis įrankis skirtas tik konsultacijai. Neatsakome už netikslią informaciją ar duomenis.",
+  disclaimerLong: "DĖMESIO: Šis įrankis skirtas TIK informacinei konsultacijai. Pateikti rezultatai yra orientaciniai ir gali būti netikslūs. Mes neatsakome už netikslią analizę, sprendimus, priimtus remiantis šia informacija, ar bet kokius nuostolius. Prieš pirkdami transporto priemonę, visada atlikite nepriklausomą patikrą servise.",
 };

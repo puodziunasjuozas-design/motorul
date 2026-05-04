@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -23,22 +24,47 @@ serve(async (req) => {
     console.log("Images count:", imageBase64List?.length || 0);
     console.log("Listing URL:", listingUrl || "none");
 
+    // Fetch market knowledge from previous analyses to improve accuracy
+    let knowledgeContext = "";
+    try {
+      const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
+      const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+      if (SUPABASE_URL && SERVICE_KEY) {
+        const supa = createClient(SUPABASE_URL, SERVICE_KEY);
+        const { data: knowledge } = await supa
+          .from("market_knowledge")
+          .select("vehicle_make, vehicle_model, vehicle_year, mileage, asking_price, market_average, estimated_repair_cost, price_rating")
+          .order("created_at", { ascending: false })
+          .limit(50);
+        if (knowledge && knowledge.length > 0) {
+          knowledgeContext = `\n\nANKSTESNIŲ ANALIZIŲ DUOMENYS (naudok kaip referencinę bazę kainoms ir remontui):\n${knowledge.map(k => `- ${k.vehicle_make} ${k.vehicle_model} (${k.vehicle_year || "?"}), rida ${k.mileage || "?"}: prašoma ${k.asking_price || "?"}€, rinkos vidurkis ${k.market_average || "?"}€, remontas ${k.estimated_repair_cost || "?"}€, įvertinimas: ${k.price_rating || "?"}`).join("\n")}`;
+        }
+      }
+    } catch (e) {
+      console.log("Could not fetch market knowledge:", e);
+    }
+
     const systemPrompt = `Tu esi profesionalus automobilių ir motociklų ekspertas Lietuvoje su 20+ metų patirtimi.
 
-GRIEŽTA TAISYKLĖ: Tu analizuoji TIK transporto priemonių skelbimus (automobiliai, motociklai, sunkvežimiai ir kt.). Jei pateikta informacija ar nuotraukos nėra susijusios su transporto priemone, grąžink klaidą:
-{"error": "Pateikta informacija nesusijusi su transporto priemone. Prašau pateikti automobilio ar motociklo skelbimą."}
+GRIEŽTOS TAISYKLĖS:
+1. Analizuoji TIK transporto priemonių skelbimus. Jei pateikta informacija nesusijusi su transporto priemone, grąžink: {"error": "Pateikta informacija nesusijusi su transporto priemone."}
+2. NIEKADA neišgalvok duomenų. Jei skelbime/nuotraukose nėra konkretaus duomens (markė, modelis, metai, rida, kuras, pavarų dėžė, kaina) — naudok "Nenurodyta" arba 0. NEMELUOK ir nespėliok.
+3. Skelbimo duomenis (markė, modelis, metai, rida, kuras, pavarų dėžė, kaina) PERRAŠYK TIKSLIAI taip kaip nurodyta skelbime. Nieko nepridėk ir nekeisk.
+4. Visus skaičius (kainas, remonto kaštus) grįsk konkrečiais argumentais. Nesiūlyk fantastinių rekomendacijų.
+5. Jei trūksta informacijos tiksliai analizei — pažymėk tai įspėjimuose (warnings) ir konservatyviai vertink.
+${knowledgeContext}
 
-Tavo užduotis - išanalizuoti transporto priemonės skelbimą ir pateikti išsamią pirkimo rekomendaciją.
+Tavo užduotis - išanalizuoti transporto priemonės skelbimą ir pateikti pagrįstą pirkimo rekomendaciją.
 
 VISADA atsakyk JSON formatu su tokia struktūra:
 {
   "vehicleInfo": {
-    "make": "Markė",
-    "model": "Modelis", 
+    "make": "TIKSLI markė iš skelbimo arba 'Nenurodyta'",
+    "model": "TIKSLUS modelis iš skelbimo arba 'Nenurodyta'",
     "year": 2020,
-    "mileage": "100,000 km",
-    "fuelType": "Dyzelinas/Benzinas/Elektra/Hibridas",
-    "transmission": "Automatinė/Mechaninė"
+    "mileage": "TIKSLI rida iš skelbimo arba 'Nenurodyta'",
+    "fuelType": "TIKSLUS kuro tipas arba 'Nenurodyta'",
+    "transmission": "TIKSLI pavarų dėžė arba 'Nenurodyta'"
   },
   "marketAnalysis": {
     "currentPrice": 15000,
@@ -56,21 +82,20 @@ VISADA atsakyk JSON formatu su tokia struktūra:
   "profitability": {
     "isProfitable": true,
     "potentialProfit": 3000,
-    "recommendation": "Išsami rekomendacija lietuvių kalba – ar verta pirkti, kokios rizikos, ką patikrinti prieš perkant"
+    "recommendation": "Konkreti, pagrįsta rekomendacija lietuvių kalba – ar verta pirkti, kokios rizikos, ką patikrinti prieš perkant. Be spėlionių."
   },
-  "warnings": ["Konkretus perspėjimas su paaiškinimu"],
-  "positives": ["Konkretus privalumas su paaiškinimu"],
+  "warnings": ["Konkretus perspėjimas su paaiškinimu (ne abstraktus)"],
+  "positives": ["Konkretus privalumas su paaiškinimu (ne abstraktus)"],
   "youtubeSearchQueries": ["BMW N47 timing chain replacement", "BMW 320d common problems"]
 }
 
 Analizės kokybė:
-- Remonto kainas skaičiuok pagal Lietuvos rinką (tiek darbas, tiek detalės)
-- Identifikuok KONKREČIAS tipines šio modelio/metų/variklio problemas
-- Įvertink ridos realumą (ar gali būti sukta)
-- Įvertink nuotraukose matomą būklę detaliai (rūdys, dažo defektai, salono būklė)
-- Pateik sezoninį kainų svyravimą
-- Perpardavimo potencialą su konkrečiais skaičiais
-- Recommendations turi būti konkretūs ir praktiški
+- Remonto kainas skaičiuok pagal Lietuvos rinką (darbas + detalės), naudok realistinius skaičius
+- Identifikuok TIK realias, žinomas šio modelio/metų/variklio problemas — nespėliok
+- Jei trūksta nuotraukų ar aprašymo detalių, NEDARYK išvadų apie būklę (žymėk warnings)
+- Įvertink ridos realumą tik jei yra pakankamai duomenų
+- Perpardavimo vertę grįsk realiomis Lietuvos rinkos kainomis
+- Geriau būk konservatyvus nei pernelyg optimistiškas
 
 youtubeSearchQueries lauke pateik 3-5 angliškus paieškos terminus, kurie padėtų rasti remonto video šiam konkrečiam automobiliui.`;
 
@@ -94,7 +119,7 @@ youtubeSearchQueries lauke pateik 3-5 angliškus paieškos terminus, kurie padė
       }
       userContent.push({
         type: "text",
-        text: "Išanalizuok šias nuotraukas ir detaliai įvertink transporto priemonės būklę – dažo būklę, rūdis, salono nusidėvėjimą, padangų būklę ir kitus matomus aspektus."
+        text: "Išanalizuok šias nuotraukas ir įvertink transporto priemonės būklę pagal tai, kas iš tikrųjų matosi nuotraukose. Nedaryk prielaidų apie tai, ko nematai."
       });
     }
 
@@ -116,7 +141,8 @@ youtubeSearchQueries lauke pateik 3-5 angliškus paieškos terminus, kurie padė
           { role: "system", content: systemPrompt },
           { role: "user", content: userContent }
         ],
-        response_format: { type: "json_object" }
+        response_format: { type: "json_object" },
+        reasoning: { effort: "medium" }
       }),
     });
 
@@ -164,6 +190,31 @@ youtubeSearchQueries lauke pateik 3-5 angliškus paieškos terminus, kurie padė
     }
 
     console.log("Analysis completed successfully");
+
+    // Save to market knowledge for future learning
+    try {
+      const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
+      const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+      if (SUPABASE_URL && SERVICE_KEY && analysisResult.vehicleInfo) {
+        const supa = createClient(SUPABASE_URL, SERVICE_KEY);
+        await supa.from("market_knowledge").insert({
+          vehicle_make: analysisResult.vehicleInfo.make || "Nenurodyta",
+          vehicle_model: analysisResult.vehicleInfo.model || "Nenurodyta",
+          vehicle_year: typeof analysisResult.vehicleInfo.year === "number" ? analysisResult.vehicleInfo.year : null,
+          mileage: analysisResult.vehicleInfo.mileage,
+          fuel_type: analysisResult.vehicleInfo.fuelType,
+          transmission: analysisResult.vehicleInfo.transmission,
+          asking_price: analysisResult.marketAnalysis?.currentPrice ?? null,
+          market_average: analysisResult.marketAnalysis?.marketAverage ?? null,
+          estimated_repair_cost: analysisResult.repairEstimate?.totalCost ?? null,
+          price_rating: analysisResult.marketAnalysis?.priceRating,
+          source: "analysis",
+        });
+        console.log("Saved to market knowledge for future learning");
+      }
+    } catch (e) {
+      console.log("Could not save market knowledge:", e);
+    }
 
     return new Response(JSON.stringify(analysisResult), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },

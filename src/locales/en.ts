@@ -253,4 +253,8 @@ export const en = {
   resetLinkSentDesc: "Check your email and click the link to reset your password",
   backToLogin: "Back to login",
   resetEmailError: "Failed to send reset link",
+
+  // Disclaimer
+  disclaimerShort: "This tool is for consultation only. We are not responsible for inaccurate information or data.",
+  disclaimerLong: "NOTICE: This tool is for INFORMATIONAL consultation only. Results are indicative and may be inaccurate. We are not responsible for inaccurate analysis, decisions made based on this information, or any losses. Always conduct an independent inspection at a service center before purchasing a vehicle.",
 };
