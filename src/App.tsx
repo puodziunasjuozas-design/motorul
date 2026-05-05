@@ -7,6 +7,7 @@ import { AuthProvider } from "@/hooks/useAuth";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
+import ResetPassword from "./pages/ResetPassword";
 import Profile from "./pages/Profile";
 import Analyses from "./pages/Analyses";
 import Consultations from "./pages/Consultations";
@@ -32,6 +33,7 @@ const App = () => (
                 <Routes>
                   <Route path="/" element={<Index />} />
                   <Route path="/auth" element={<Auth />} />
+                  <Route path="/reset-password" element={<ResetPassword />} />
                   <Route path="/profile" element={<Profile />} />
                   <Route path="/analyses" element={<Analyses />} />
                   <Route path="/consultations" element={<Consultations />} />
