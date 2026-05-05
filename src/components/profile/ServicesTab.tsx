@@ -61,7 +61,7 @@ const ServicesTab = () => {
     icon: Search,
     name: t("singleAnalysis"),
     description: t("singleAnalysisDesc"),
-    price: 2,
+    price: 3,
     credits: 1,
     messages: 0
   }, {
@@ -69,7 +69,7 @@ const ServicesTab = () => {
     icon: MessageSquare,
     name: t("techConsultation"),
     description: t("techConsultationDesc"),
-    price: 6,
+    price: 8,
     credits: 0,
     messages: 30
   }, {
@@ -77,7 +77,7 @@ const ServicesTab = () => {
     icon: Zap,
     name: t("extraMessages"),
     description: t("extraMessagesDesc"),
-    price: 2,
+    price: 3,
     credits: 0,
     messages: 20
   }];
@@ -86,7 +86,7 @@ const ServicesTab = () => {
     icon: Package,
     name: "STARTER",
     description: t("starterPackDesc"),
-    price: 12,
+    price: 16,
     credits: 4,
     messages: 40,
     popular: false
@@ -95,10 +95,28 @@ const ServicesTab = () => {
     icon: Package,
     name: "PRO",
     description: t("proPackDesc"),
-    price: 18,
+    price: 24,
     credits: 10,
     messages: 80,
     popular: true
+  }, {
+    id: "analysis_10",
+    icon: Package,
+    name: "10 ANALIZIŲ",
+    description: "10 transporto priemonių analizių paketas",
+    price: 18,
+    credits: 10,
+    messages: 0,
+    popular: false
+  }, {
+    id: "analysis_20",
+    icon: Package,
+    name: "20 ANALIZIŲ",
+    description: "20 transporto priemonių analizių paketas",
+    price: 22,
+    credits: 20,
+    messages: 0,
+    popular: false
   }];
   return <div className="space-y-4 sm:space-y-6">
       {/* Current Balance */}
