@@ -54,10 +54,20 @@ const AnalysisTool = ({ onClose, onCreditsUsed }: AnalysisToolProps) => {
   };
 
   const handleAnalyze = async () => {
-    if (images.length === 0 && !description) {
+    const trimmedDesc = description.trim();
+    if (images.length === 0 && !trimmedDesc) {
       toast({
         title: t("missingInfo"),
         description: t("uploadOrDescribe"),
+        variant: "destructive"
+      });
+      return;
+    }
+    // Require minimum useful info if only description is provided
+    if (images.length === 0 && trimmedDesc.length < 30) {
+      toast({
+        title: t("missingInfo"),
+        description: "Pateikite išsamesnį skelbimo aprašymą (bent 30 simbolių) arba pridėkite nuotraukų.",
         variant: "destructive"
       });
       return;
@@ -71,8 +81,8 @@ const AnalysisTool = ({ onClose, onCreditsUsed }: AnalysisToolProps) => {
         error: analysisError
       } = await supabase.functions.invoke('analyze-vehicle', {
         body: {
-          description,
-          listingUrl,
+          description: trimmedDesc,
+          listingUrl: listingUrl.trim(),
           imageBase64List
         }
       });
@@ -82,6 +92,20 @@ const AnalysisTool = ({ onClose, onCreditsUsed }: AnalysisToolProps) => {
       if (analysisData.error) {
         throw new Error(analysisData.error);
       }
+      // Client-side data normalization: never let undefined/empty values through
+      const NA = "Nenurodyta";
+      const vi = analysisData.vehicleInfo || {};
+      analysisData.vehicleInfo = {
+        make: vi.make && String(vi.make).trim() ? vi.make : NA,
+        model: vi.model && String(vi.model).trim() ? vi.model : NA,
+        year: typeof vi.year === "number" ? vi.year : null,
+        mileage: vi.mileage && String(vi.mileage).trim() ? vi.mileage : NA,
+        fuelType: vi.fuelType && String(vi.fuelType).trim() ? vi.fuelType : NA,
+        transmission: vi.transmission && String(vi.transmission).trim() ? vi.transmission : NA,
+      };
+      analysisData.marketAnalysis = analysisData.marketAnalysis || {};
+      analysisData.repairEstimate = analysisData.repairEstimate || { totalCost: 0, items: [] };
+      analysisData.profitability = analysisData.profitability || { isProfitable: false, potentialProfit: 0, recommendation: NA };
       const {
         data: videosData
       } = await supabase.functions.invoke('search-youtube', {
