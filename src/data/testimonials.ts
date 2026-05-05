@@ -382,6 +382,136 @@ export const allTestimonials: Testimonial[] = [
     countryCode: "sl",
     rating: 5
   },
+
+  // --- Additional testimonials with mixed ratings (2 and 4) and natural typos ---
+  {
+    id: "lt6",
+    text: "Neblogai veikia bet kartais analize ne visai tiksli, mano Audi A4 ivertino brangiau nei is ties yra. Vistik padejo derybose.",
+    author: "Vytautas G.",
+    country: "Lietuva",
+    countryCode: "lt",
+    rating: 4
+  },
+  {
+    id: "lt7",
+    text: "Tikejausi daugiau. Skelbima analizavo bet kazkodel praleido kad variklis turi problemu. Pinigai ismesti i bala.",
+    author: "Donatas Š.",
+    country: "Lietuva",
+    countryCode: "lt",
+    rating: 2
+  },
+  {
+    id: "lt8",
+    text: "Naudojau du kartus, vienas kartas buvo geras kitas ne labai. Bet uz tokia kaina nesiskundziu.",
+    author: "Egle B.",
+    country: "Lietuva",
+    countryCode: "lt",
+    rating: 4
+  },
+  {
+    id: "lt9",
+    text: "Konsultacija padejo issprest variklio gedima, nereikejo i servisa vaziuot. Aciu!",
+    author: "Karolis J.",
+    country: "Lietuva",
+    countryCode: "lt",
+    rating: 4
+  },
+  {
+    id: "en4",
+    text: "Decent tool but the price estimate was a bit off for my region. Still useful for spotting issues in photos tho.",
+    author: "David M.",
+    country: "United Kingdom",
+    countryCode: "en",
+    rating: 4
+  },
+  {
+    id: "en5",
+    text: "Didnt work well for me. Got a generic answer that didnt really help with my specific car problem. Wouldnt pay again.",
+    author: "Robert P.",
+    country: "Australia",
+    countryCode: "en",
+    rating: 2
+  },
+  {
+    id: "en6",
+    text: "Good for begginers like me. Helped me understand what to look for when buying a used car.",
+    author: "Emma S.",
+    country: "Canada",
+    countryCode: "en",
+    rating: 4
+  },
+  {
+    id: "de4",
+    text: "Funktioniert ganz okey aber die Preisschätzung war für mein Bundesland nicht so genau. Trotzdem hilfreich.",
+    author: "Markus W.",
+    country: "Deutschland",
+    countryCode: "de",
+    rating: 4
+  },
+  {
+    id: "de5",
+    text: "War nicht zufrieden. Die Analyse hat wichtige sachen übersehen und ich hab am ende doch ein problem auto gekauft.",
+    author: "Andreas L.",
+    country: "Deutschland",
+    countryCode: "de",
+    rating: 2
+  },
+  {
+    id: "pl4",
+    text: "Calkiem niezle ale cena nie zawsze sie zgadza z rynkiem. Ogólnie polecam ale z rezerwa.",
+    author: "Tomasz B.",
+    country: "Polska",
+    countryCode: "pl",
+    rating: 4
+  },
+  {
+    id: "pl5",
+    text: "Slabo. Analiza byla bardzo ogólna, nic konkretnego sie nie dowiedzialem o moim aucie. Szkoda kasy.",
+    author: "Krzysztof N.",
+    country: "Polska",
+    countryCode: "pl",
+    rating: 2
+  },
+  {
+    id: "fr4",
+    text: "Pas mal mais l'estimation des reparations etait un peu optimiste pour ma région. A utiliser avec prudence.",
+    author: "Lucas R.",
+    country: "France",
+    countryCode: "fr",
+    rating: 4
+  },
+  {
+    id: "ru3",
+    text: "Нормальный сервис но не идеальный. Цены немного завышены для моего региона, в остальном норм.",
+    author: "Сергей В.",
+    country: "Россия",
+    countryCode: "ru",
+    rating: 4
+  },
+  {
+    id: "ru4",
+    text: "Не понравилось. Анализ оказался поверхностным, реальных проблем машины не нашел. Деньги на ветер.",
+    author: "Игорь М.",
+    country: "Россия",
+    countryCode: "ru",
+    rating: 2
+  },
+  {
+    id: "es3",
+    text: "Esta bien pero el precio estimado no siempre es correcto. Aun asi me ayudó a negociar un poco.",
+    author: "Javier L.",
+    country: "España",
+    countryCode: "es",
+    rating: 4
+  },
+  {
+    id: "it3",
+    text: "Discreto strumento ma la stima del prezzo era un po' alta per la mia zona. Comunque utile per i controlli.",
+    author: "Luca B.",
+    country: "Italia",
+    countryCode: "it",
+    rating: 4
+  },
 ];
 
 // Get testimonials filtered by language (country testimonials + English ones)
