@@ -1,10 +1,12 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { LogOut, User, ShoppingBag, BarChart3, MessageSquare } from "lucide-react";
+import { LogOut, User, ShoppingBag, BarChart3, MessageSquare, Shield } from "lucide-react";
 import logoImg from "@/assets/logo.png";
 import LanguageSelector from "@/components/LanguageSelector";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { supabase } from "@/integrations/supabase/client";
 
 type TabType = "services" | "analyses" | "consultations";
 
@@ -18,6 +20,13 @@ const Header = ({ activeTab, onTabChange }: HeaderProps) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useLanguage();
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    if (!user) { setIsAdmin(false); return; }
+    supabase.from("user_roles").select("role").eq("user_id", user.id).eq("role", "admin").maybeSingle()
+      .then(({ data }) => setIsAdmin(!!data));
+  }, [user]);
 
   const handleSignOut = async () => {
     await signOut();
@@ -79,6 +88,12 @@ const Header = ({ activeTab, onTabChange }: HeaderProps) => {
           <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
             <LanguageSelector />
             
+            {user && isAdmin && (
+              <Button variant="ghost" size="sm" onClick={() => navigate("/admin")} className="flex items-center gap-2">
+                <Shield className="w-4 h-4 text-primary" />
+                <span className="hidden sm:inline text-muted-foreground">Admin</span>
+              </Button>
+            )}
             {user ? (
               <Button variant="ghost" size="sm" onClick={() => navigate("/profile")} className="flex items-center gap-2">
                 <User className="w-4 h-4 text-primary" />

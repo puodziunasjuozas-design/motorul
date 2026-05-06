@@ -9,6 +9,7 @@ import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import ResetPassword from "./pages/ResetPassword";
 import Profile from "./pages/Profile";
+import Admin from "./pages/Admin";
 import Analyses from "./pages/Analyses";
 import Consultations from "./pages/Consultations";
 import Prices from "./pages/Prices";
@@ -35,6 +36,7 @@ const App = () => (
                   <Route path="/auth" element={<Auth />} />
                   <Route path="/reset-password" element={<ResetPassword />} />
                   <Route path="/profile" element={<Profile />} />
+                  <Route path="/admin" element={<Admin />} />
                   <Route path="/analyses" element={<Analyses />} />
                   <Route path="/consultations" element={<Consultations />} />
                   <Route path="/prices" element={<Prices />} />
