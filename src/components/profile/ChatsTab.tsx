@@ -179,7 +179,7 @@ const ChatsTab = ({
   if (showIntroGif) {
     return (
       <div className="fixed inset-0 z-[60] bg-black flex items-center justify-center" style={{ top: '80px' }}>
-        <img src={wheelIntroGif} alt="" className="w-[72rem] sm:w-[96rem] max-w-[95vw] h-auto" />
+        <img src={wheelIntroGif} alt="" className="w-[58rem] sm:w-[77rem] max-w-[76vw] h-auto" />
       </div>
     );
   }

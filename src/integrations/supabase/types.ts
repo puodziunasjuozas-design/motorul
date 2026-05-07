@@ -98,6 +98,60 @@ export type Database = {
         }
         Relationships: []
       }
+      auto_analyses: {
+        Row: {
+          admin_notes: string | null
+          analysis_data: Json | null
+          created_at: string
+          current_price: number | null
+          id: string
+          listing_url: string
+          review_status: Database["public"]["Enums"]["auto_analysis_status"]
+          reviewed_at: string | null
+          reviewed_by: string | null
+          scraped_data: Json | null
+          source: string
+          updated_at: string
+          vehicle_make: string | null
+          vehicle_model: string | null
+          vehicle_year: number | null
+        }
+        Insert: {
+          admin_notes?: string | null
+          analysis_data?: Json | null
+          created_at?: string
+          current_price?: number | null
+          id?: string
+          listing_url: string
+          review_status?: Database["public"]["Enums"]["auto_analysis_status"]
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          scraped_data?: Json | null
+          source: string
+          updated_at?: string
+          vehicle_make?: string | null
+          vehicle_model?: string | null
+          vehicle_year?: number | null
+        }
+        Update: {
+          admin_notes?: string | null
+          analysis_data?: Json | null
+          created_at?: string
+          current_price?: number | null
+          id?: string
+          listing_url?: string
+          review_status?: Database["public"]["Enums"]["auto_analysis_status"]
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          scraped_data?: Json | null
+          source?: string
+          updated_at?: string
+          vehicle_make?: string | null
+          vehicle_model?: string | null
+          vehicle_year?: number | null
+        }
+        Relationships: []
+      }
       chat_conversations: {
         Row: {
           created_at: string | null
@@ -373,6 +427,7 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "user"
+      auto_analysis_status: "pending" | "good" | "bad"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -501,6 +556,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "user"],
+      auto_analysis_status: ["pending", "good", "bad"],
     },
   },
 } as const
