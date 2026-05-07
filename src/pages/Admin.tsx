@@ -7,99 +7,127 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Users, DollarSign, TrendingUp, MessageSquare, BarChart3, Shield, Star } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/hooks/use-toast";
+import {
+  Users, DollarSign, TrendingUp, MessageSquare, BarChart3, Shield, Star,
+  Check, X, Trash2, Bot, ExternalLink, ShoppingBag as ShoppingBagIcon,
+} from "lucide-react";
 
 interface UserRow {
-  user_id: string;
-  email: string | null;
-  display_name: string | null;
-  created_at: string;
-  analysis_credits: number;
-  consultation_credits: number;
+  user_id: string; email: string | null; display_name: string | null;
+  created_at: string; analysis_credits: number; consultation_credits: number;
 }
-
 interface PurchaseRow {
-  id: string;
-  user_id: string;
-  product_name: string;
-  amount: number;
-  status: string;
-  created_at: string;
-  email?: string | null;
+  id: string; user_id: string; product_name: string; amount: number;
+  status: string; created_at: string; email?: string | null;
 }
-
 interface TestimonialRow {
-  id: string;
-  author_name: string;
-  rating: number;
-  text: string;
-  country: string;
-  is_approved: boolean;
-  created_at: string;
+  id: string; author_name: string; rating: number; text: string;
+  country: string; is_approved: boolean; created_at: string;
+}
+interface AutoAnalysisRow {
+  id: string; listing_url: string; source: string;
+  vehicle_make: string | null; vehicle_model: string | null;
+  vehicle_year: number | null; current_price: number | null;
+  analysis_data: any; review_status: string;
+  admin_notes: string | null; created_at: string;
 }
 
 const Admin = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const [users, setUsers] = useState<UserRow[]>([]);
   const [purchases, setPurchases] = useState<PurchaseRow[]>([]);
   const [testimonials, setTestimonials] = useState<TestimonialRow[]>([]);
   const [analysesCount, setAnalysesCount] = useState(0);
   const [chatsCount, setChatsCount] = useState(0);
+  const [autoRows, setAutoRows] = useState<AutoAnalysisRow[]>([]);
+  const [scrapeCount, setScrapeCount] = useState(20);
+  const [scraping, setScraping] = useState(false);
+  const [noteDraft, setNoteDraft] = useState<Record<string, string>>({});
 
   useEffect(() => {
     if (loading) return;
-    if (!user) {
-      navigate("/auth");
-      return;
-    }
+    if (!user) { navigate("/auth"); return; }
     checkAdminAndLoad();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, loading]);
 
   const checkAdminAndLoad = async () => {
     if (!user) return;
     const { data: roles } = await supabase
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", user.id)
-      .eq("role", "admin")
-      .maybeSingle();
-
-    if (!roles) {
-      setIsAdmin(false);
-      return;
-    }
+      .from("user_roles").select("role").eq("user_id", user.id).eq("role", "admin").maybeSingle();
+    if (!roles) { setIsAdmin(false); return; }
     setIsAdmin(true);
     await loadData();
   };
 
   const loadData = async () => {
-    const [profilesRes, creditsRes, purchasesRes, testimonialsRes, analysesRes, chatsRes] = await Promise.all([
+    const [profilesRes, creditsRes, purchasesRes, testimonialsRes, analysesRes, chatsRes, autoRes] = await Promise.all([
       supabase.from("profiles").select("user_id, email, display_name, created_at"),
       supabase.from("user_credits").select("user_id, analysis_credits, consultation_credits"),
       supabase.from("purchases").select("*").order("created_at", { ascending: false }),
       supabase.from("user_testimonials").select("*").order("created_at", { ascending: false }),
       supabase.from("analysis_history").select("id", { count: "exact", head: true }),
       supabase.from("chat_conversations").select("id", { count: "exact", head: true }),
+      supabase.from("auto_analyses").select("*").order("created_at", { ascending: false }).limit(200),
     ]);
-
     const creditsMap = new Map((creditsRes.data || []).map((c: any) => [c.user_id, c]));
     const merged: UserRow[] = (profilesRes.data || []).map((p: any) => ({
-      user_id: p.user_id,
-      email: p.email,
-      display_name: p.display_name,
-      created_at: p.created_at,
+      user_id: p.user_id, email: p.email, display_name: p.display_name, created_at: p.created_at,
       analysis_credits: creditsMap.get(p.user_id)?.analysis_credits ?? 0,
       consultation_credits: creditsMap.get(p.user_id)?.consultation_credits ?? 0,
     }));
     setUsers(merged);
-
     const emailMap = new Map(merged.map(u => [u.user_id, u.email]));
     setPurchases((purchasesRes.data || []).map((p: any) => ({ ...p, email: emailMap.get(p.user_id) })));
     setTestimonials(testimonialsRes.data || []);
     setAnalysesCount(analysesRes.count || 0);
     setChatsCount(chatsRes.count || 0);
+    setAutoRows((autoRes.data as any) || []);
+  };
+
+  const setApproval = async (id: string, value: boolean) => {
+    const { error } = await supabase.from("user_testimonials").update({ is_approved: value }).eq("id", id);
+    if (error) return toast({ title: "Klaida", description: error.message, variant: "destructive" });
+    setTestimonials((prev) => prev.map((t) => t.id === id ? { ...t, is_approved: value } : t));
+  };
+  const deleteTestimonial = async (id: string) => {
+    const { error } = await supabase.from("user_testimonials").delete().eq("id", id);
+    if (error) return toast({ title: "Klaida", description: error.message, variant: "destructive" });
+    setTestimonials((prev) => prev.filter((t) => t.id !== id));
+  };
+
+  const reviewAuto = async (id: string, status: "good" | "bad") => {
+    const notes = noteDraft[id] || null;
+    const { error } = await supabase.from("auto_analyses").update({
+      review_status: status, admin_notes: notes,
+      reviewed_by: user!.id, reviewed_at: new Date().toISOString(),
+    }).eq("id", id);
+    if (error) return toast({ title: "Klaida", description: error.message, variant: "destructive" });
+    setAutoRows((prev) => prev.map((r) => r.id === id ? { ...r, review_status: status, admin_notes: notes } : r));
+    toast({ title: status === "good" ? "Pažymėta gerai" : "Pažymėta blogai" });
+  };
+
+  const runBot = async () => {
+    setScraping(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("scrape-listings", {
+        body: { count: scrapeCount, sources: ["autoplius", "autogidas", "copart", "iaai", "mobile_de"] },
+      });
+      if (error) throw error;
+      toast({ title: "Botas baigė", description: `Surinkta ${data?.scraped || 0} skelbimų` });
+      await loadData();
+    } catch (e: any) {
+      toast({ title: "Klaida", description: e.message, variant: "destructive" });
+    } finally {
+      setScraping(false);
+    }
   };
 
   if (loading || isAdmin === null) {
@@ -124,7 +152,7 @@ const Admin = () => {
   }
 
   const totalRevenue = purchases.filter(p => p.status === "completed").reduce((s, p) => s + Number(p.amount || 0), 0);
-  const estimatedProfit = totalRevenue * 0.7; // assume ~70% margin
+  const estimatedProfit = totalRevenue * 0.7;
   const completedPurchases = purchases.filter(p => p.status === "completed").length;
 
   return (
@@ -136,7 +164,6 @@ const Admin = () => {
           <h1 className="text-2xl sm:text-4xl font-extrabold">Vadovo skydelis</h1>
         </div>
 
-        {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-6">
           <StatCard icon={Users} label="Vartotojai" value={users.length} />
           <StatCard icon={DollarSign} label="Pajamos" value={`${totalRevenue.toFixed(2)}€`} />
@@ -147,10 +174,11 @@ const Admin = () => {
         </div>
 
         <Tabs defaultValue="users" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 max-w-2xl">
+          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 max-w-3xl">
             <TabsTrigger value="users">Vartotojai</TabsTrigger>
             <TabsTrigger value="purchases">Pirkimai</TabsTrigger>
             <TabsTrigger value="testimonials">Atsiliepimai</TabsTrigger>
+            <TabsTrigger value="auto">Auto‑analizės</TabsTrigger>
           </TabsList>
 
           <TabsContent value="users">
@@ -226,9 +254,10 @@ const Admin = () => {
                       <TableHead>Data</TableHead>
                       <TableHead>Autorius</TableHead>
                       <TableHead>Šalis</TableHead>
-                      <TableHead>Įvertinimas</TableHead>
+                      <TableHead>Įvert.</TableHead>
                       <TableHead>Tekstas</TableHead>
-                      <TableHead>Patvirtintas</TableHead>
+                      <TableHead>Statusas</TableHead>
+                      <TableHead>Veiksmai</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -237,16 +266,101 @@ const Admin = () => {
                         <TableCell className="text-xs">{new Date(t.created_at).toLocaleDateString()}</TableCell>
                         <TableCell>{t.author_name}</TableCell>
                         <TableCell>{t.country}</TableCell>
-                        <TableCell className="flex items-center gap-1">{t.rating} <Star className="w-3 h-3 fill-yellow-500 text-yellow-500" /></TableCell>
-                        <TableCell className="max-w-md truncate">{t.text}</TableCell>
-                        <TableCell>{t.is_approved ? <Badge className="bg-green-600">Taip</Badge> : <Badge variant="outline">Ne</Badge>}</TableCell>
+                        <TableCell><span className="inline-flex items-center gap-1">{t.rating} <Star className="w-3 h-3 fill-yellow-500 text-yellow-500" /></span></TableCell>
+                        <TableCell className="max-w-md text-xs">{t.text}</TableCell>
+                        <TableCell>{t.is_approved ? <Badge className="bg-green-600">Patvirtinta</Badge> : <Badge variant="outline">Laukia</Badge>}</TableCell>
+                        <TableCell>
+                          <div className="flex gap-1">
+                            {!t.is_approved ? (
+                              <Button size="sm" variant="outline" onClick={() => setApproval(t.id, true)} title="Patvirtinti"><Check className="w-3 h-3" /></Button>
+                            ) : (
+                              <Button size="sm" variant="outline" onClick={() => setApproval(t.id, false)} title="Atšaukti"><X className="w-3 h-3" /></Button>
+                            )}
+                            <Button size="sm" variant="destructive" onClick={() => deleteTestimonial(t.id)} title="Trinti"><Trash2 className="w-3 h-3" /></Button>
+                          </div>
+                        </TableCell>
                       </TableRow>
                     ))}
                     {testimonials.length === 0 && (
-                      <TableRow><TableCell colSpan={6} className="text-center text-muted-foreground">Nėra atsiliepimų</TableCell></TableRow>
+                      <TableRow><TableCell colSpan={7} className="text-center text-muted-foreground">Nėra atsiliepimų</TableCell></TableRow>
                     )}
                   </TableBody>
                 </Table>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="auto">
+            <Card>
+              <CardHeader><CardTitle className="flex items-center gap-2"><Bot className="w-5 h-5" /> Automatinės analizės</CardTitle></CardHeader>
+              <CardContent>
+                <div className="flex flex-wrap items-end gap-3 mb-4 p-3 rounded-lg bg-zinc-900/50 border border-border">
+                  <div>
+                    <label className="text-xs text-muted-foreground block mb-1">Skelbimų kiekis (10‑100)</label>
+                    <Input type="number" min={10} max={100} value={scrapeCount}
+                      onChange={(e) => setScrapeCount(Math.min(100, Math.max(10, Number(e.target.value) || 10)))}
+                      className="w-32" />
+                  </div>
+                  <Button onClick={runBot} disabled={scraping}>
+                    <Bot className="w-4 h-4 mr-2" />
+                    {scraping ? "Renkama..." : "Paleisti botą"}
+                  </Button>
+                  <p className="text-xs text-muted-foreground">Šaltiniai: autoplius.lt, autogidas.lt, copart.com, iaai.com, mobile.de — orientacija į daužtus.</p>
+                </div>
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Data</TableHead>
+                        <TableHead>Šaltinis</TableHead>
+                        <TableHead>Automobilis</TableHead>
+                        <TableHead>Kaina</TableHead>
+                        <TableHead>Rekomendacija</TableHead>
+                        <TableHead>Statusas</TableHead>
+                        <TableHead>Vertinimas</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {autoRows.map(r => (
+                        <TableRow key={r.id} className="align-top">
+                          <TableCell className="text-xs whitespace-nowrap">{new Date(r.created_at).toLocaleDateString()}</TableCell>
+                          <TableCell><Badge variant="outline">{r.source}</Badge></TableCell>
+                          <TableCell className="text-sm">
+                            {r.vehicle_make || "—"} {r.vehicle_model || ""} {r.vehicle_year ? `(${r.vehicle_year})` : ""}
+                            <a href={r.listing_url} target="_blank" rel="noopener noreferrer" className="ml-2 inline-flex items-center text-primary hover:underline text-xs">
+                              <ExternalLink className="w-3 h-3" /> nuoroda
+                            </a>
+                          </TableCell>
+                          <TableCell>{r.current_price ? `${r.current_price}€` : "—"}</TableCell>
+                          <TableCell className="max-w-xs text-xs">{r.analysis_data?.recommendation || r.analysis_data?.description_summary || "—"}</TableCell>
+                          <TableCell>
+                            {r.review_status === "good" && <Badge className="bg-green-600">Gerai</Badge>}
+                            {r.review_status === "bad" && <Badge variant="destructive">Blogai</Badge>}
+                            {r.review_status === "pending" && <Badge variant="outline">Laukia</Badge>}
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex flex-col gap-1 min-w-[200px]">
+                              <Textarea
+                                placeholder="Komentaras (jei blogai)"
+                                value={noteDraft[r.id] ?? r.admin_notes ?? ""}
+                                onChange={(e) => setNoteDraft((p) => ({ ...p, [r.id]: e.target.value }))}
+                                rows={2}
+                                className="text-xs"
+                              />
+                              <div className="flex gap-1">
+                                <Button size="sm" variant="outline" onClick={() => reviewAuto(r.id, "good")}><Check className="w-3 h-3 mr-1" /> Gerai</Button>
+                                <Button size="sm" variant="outline" onClick={() => reviewAuto(r.id, "bad")}><X className="w-3 h-3 mr-1" /> Blogai</Button>
+                              </div>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                      {autoRows.length === 0 && (
+                        <TableRow><TableCell colSpan={7} className="text-center text-muted-foreground">Dar nėra auto‑analizių. Paspausk „Paleisti botą".</TableCell></TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
@@ -267,7 +381,5 @@ const StatCard = ({ icon: Icon, label, value }: { icon: any; label: string; valu
     </CardContent>
   </Card>
 );
-
-import { ShoppingBag as ShoppingBagIcon } from "lucide-react";
 
 export default Admin;
