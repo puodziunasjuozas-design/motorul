@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Star, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -48,6 +48,21 @@ const TestimonialForm = ({ userId, onSuccess }: TestimonialFormProps) => {
   const [text, setText] = useState("");
   const [authorName, setAuthorName] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [eligible, setEligible] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    const check = async () => {
+      const [purchases, analyses, chats] = await Promise.all([
+        supabase.from("purchases").select("id", { count: "exact", head: true }).eq("user_id", userId).eq("status", "completed"),
+        supabase.from("analysis_history").select("id", { count: "exact", head: true }).eq("user_id", userId),
+        supabase.from("chat_conversations").select("id", { count: "exact", head: true }).eq("user_id", userId),
+      ]);
+      const hasPurchase = (purchases.count || 0) > 0;
+      const hasActivity = (analyses.count || 0) > 0 || (chats.count || 0) > 0;
+      setEligible(hasPurchase && hasActivity);
+    };
+    check();
+  }, [userId]);
 
   const country = countryOptions[language] || countryOptions.en;
 
@@ -129,7 +144,12 @@ const TestimonialForm = ({ userId, onSuccess }: TestimonialFormProps) => {
   return (
     <Card className="p-6 bg-card border-primary/20">
       <h3 className="text-lg font-semibold mb-4">{t("leaveTestimonial")}</h3>
-      
+      {eligible === false && (
+        <p className="text-sm text-muted-foreground mb-4">
+          {t("noPurchasesForTestimonial")}
+        </p>
+      )}
+      {eligible !== false && (
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Rating */}
         <div>
@@ -204,6 +224,7 @@ const TestimonialForm = ({ userId, onSuccess }: TestimonialFormProps) => {
           )}
         </Button>
       </form>
+      )}
     </Card>
   );
 };
