@@ -26,6 +26,7 @@ serve(async (req) => {
 
     // Fetch market knowledge from previous analyses to improve accuracy
     let knowledgeContext = "";
+    let feedbackContext = "";
     try {
       const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
       const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
@@ -38,6 +39,19 @@ serve(async (req) => {
           .limit(50);
         if (knowledge && knowledge.length > 0) {
           knowledgeContext = `\n\nANKSTESNIŲ ANALIZIŲ DUOMENYS (naudok kaip referencinę bazę kainoms ir remontui):\n${knowledge.map(k => `- ${k.vehicle_make} ${k.vehicle_model} (${k.vehicle_year || "?"}), rida ${k.mileage || "?"}: prašoma ${k.asking_price || "?"}€, rinkos vidurkis ${k.market_average || "?"}€, remontas ${k.estimated_repair_cost || "?"}€, įvertinimas: ${k.price_rating || "?"}`).join("\n")}`;
+        }
+
+        // Admin feedback loop: include reviewed examples
+        const { data: good } = await supa.from("auto_analyses")
+          .select("vehicle_make, vehicle_model, vehicle_year, current_price, analysis_data")
+          .eq("review_status", "good").order("reviewed_at", { ascending: false }).limit(3);
+        const { data: bad } = await supa.from("auto_analyses")
+          .select("vehicle_make, vehicle_model, admin_notes, analysis_data")
+          .eq("review_status", "bad").order("reviewed_at", { ascending: false }).limit(2);
+        const goodTxt = (good || []).map((g: any) => `- ${g.vehicle_make} ${g.vehicle_model} (${g.vehicle_year}): rekomendacija "${g.analysis_data?.recommendation || ""}", kaina ${g.current_price}€`).join("\n");
+        const badTxt = (bad || []).map((b: any) => `- ${b.vehicle_make} ${b.vehicle_model}: KLAIDA — ${b.admin_notes || "netiksli analizė"}`).join("\n");
+        if (goodTxt || badTxt) {
+          feedbackContext = `\n\nVADOVO PATVIRTINTI GERI PAVYZDŽIAI (sek šį stilių):\n${goodTxt}\n\nKLAIDOS, KURIŲ VENK:\n${badTxt}`;
         }
       }
     } catch (e) {
@@ -53,6 +67,7 @@ GRIEŽTOS TAISYKLĖS:
 4. Visus skaičius (kainas, remonto kaštus) grįsk konkrečiais argumentais. Nesiūlyk fantastinių rekomendacijų.
 5. Jei trūksta informacijos tiksliai analizei — pažymėk tai įspėjimuose (warnings) ir konservatyviai vertink.
 ${knowledgeContext}
+${feedbackContext}
 
 Tavo užduotis - išanalizuoti transporto priemonės skelbimą ir pateikti pagrįstą pirkimo rekomendaciją.
 
