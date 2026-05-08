@@ -5,11 +5,14 @@ const FIRECRAWL = "https://api.firecrawl.dev/v2";
 const LOVABLE_AI = "https://ai.gateway.lovable.dev/v1/chat/completions";
 
 const SOURCES: Record<string, { search: string; site: string }> = {
-  autoplius: { site: "autoplius.lt", search: "site:autoplius.lt skelbimai automobiliai daužtas OR avarinis" },
-  autogidas: { site: "autogidas.lt", search: "site:autogidas.lt automobilis daužtas OR avarinis" },
+  autoplius: { site: "autoplius.lt", search: "site:autoplius.lt skelbimai automobiliai naudoti" },
+  autoplius_damaged: { site: "autoplius.lt", search: "site:autoplius.lt automobiliai daužtas OR avarinis" },
+  autogidas: { site: "autogidas.lt", search: "site:autogidas.lt automobilis naudotas" },
+  autogidas_damaged: { site: "autogidas.lt", search: "site:autogidas.lt automobilis daužtas OR avarinis" },
   copart: { site: "copart.com", search: "site:copart.com salvage damaged vehicle" },
   iaai: { site: "iaai.com", search: "site:iaai.com salvage damaged vehicle" },
-  mobile_de: { site: "mobile.de", search: "site:mobile.de unfallwagen damaged" },
+  mobile_de: { site: "mobile.de", search: "site:mobile.de gebrauchtwagen" },
+  mobile_de_damaged: { site: "mobile.de", search: "site:mobile.de unfallwagen" },
 };
 
 Deno.serve(async (req) => {
@@ -38,7 +41,11 @@ Deno.serve(async (req) => {
       return new Response(JSON.stringify({ error: "Forbidden" }), { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
-    const { count = 10, sources = ["autoplius", "autogidas", "copart"] } = await req.json().catch(() => ({}));
+    const body = await req.json().catch(() => ({} as any));
+    const count = body.count ?? 10;
+    const sources: string[] = Array.isArray(body.sources) && body.sources.length
+      ? body.sources
+      : ["autoplius", "autoplius_damaged", "autogidas", "autogidas_damaged", "mobile_de", "mobile_de_damaged", "copart"];
     const total = Math.min(100, Math.max(1, Number(count)));
 
     const FC = Deno.env.get("FIRECRAWL_API_KEY");
@@ -48,21 +55,33 @@ Deno.serve(async (req) => {
     }
 
     // 1) discover listing URLs via search across sources
-    const perSource = Math.ceil(total / sources.length);
+    const perSource = Math.max(1, Math.ceil(total / sources.length));
     const urls: { url: string; source: string }[] = [];
     for (const s of sources) {
       const cfg = SOURCES[s];
       if (!cfg) continue;
-      const sr = await fetch(`${FIRECRAWL}/search`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${FC}`, "Content-Type": "application/json" },
-        body: JSON.stringify({ query: cfg.search, limit: perSource }),
-      });
-      const sd = await sr.json().catch(() => ({}));
-      const items = sd?.data || sd?.web || [];
-      for (const it of items) {
-        const u = it.url || it.link;
-        if (u && u.includes(cfg.site)) urls.push({ url: u, source: s });
+      try {
+        const sr = await fetch(`${FIRECRAWL}/search`, {
+          method: "POST",
+          headers: { Authorization: `Bearer ${FC}`, "Content-Type": "application/json" },
+          body: JSON.stringify({ query: cfg.search, limit: perSource }),
+        });
+        const sd = await sr.json().catch(() => ({} as any));
+        // Firecrawl v2 may return: {data:[...]}, {web:[...]} or {web:{results:[...]}}, or {results:[...]}
+        let items: any[] = [];
+        if (Array.isArray(sd?.data)) items = sd.data;
+        else if (Array.isArray(sd?.results)) items = sd.results;
+        else if (Array.isArray(sd?.web)) items = sd.web;
+        else if (Array.isArray(sd?.web?.results)) items = sd.web.results;
+        else if (Array.isArray(sd?.data?.web)) items = sd.data.web;
+        else if (Array.isArray(sd?.data?.results)) items = sd.data.results;
+        if (!Array.isArray(items)) items = [];
+        for (const it of items) {
+          const u = it?.url || it?.link;
+          if (u && String(u).includes(cfg.site)) urls.push({ url: u, source: s });
+        }
+      } catch (e) {
+        console.error("search err", s, e);
       }
     }
 
