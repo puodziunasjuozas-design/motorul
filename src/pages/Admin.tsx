@@ -121,8 +121,13 @@ const Admin = () => {
         body: { count: scrapeCount, sources: ["autoplius", "autogidas", "copart", "iaai", "mobile_de"] },
       });
       if (error) throw error;
-      toast({ title: "Botas baigė", description: `Surinkta ${data?.scraped || 0} skelbimų` });
+      toast({ title: "Botas paleistas", description: data?.message || `Renkama ${scrapeCount} skelbimų` });
+      const startedAt = Date.now();
       await loadData();
+      const poll = window.setInterval(async () => {
+        await loadData();
+        if (Date.now() - startedAt > 120000) window.clearInterval(poll);
+      }, 8000);
     } catch (e: any) {
       toast({ title: "Klaida", description: e.message, variant: "destructive" });
     } finally {
@@ -305,7 +310,7 @@ const Admin = () => {
                     <Bot className="w-4 h-4 mr-2" />
                     {scraping ? "Renkama..." : "Paleisti botą"}
                   </Button>
-                  <p className="text-xs text-muted-foreground">Šaltiniai: autoplius.lt, autogidas.lt, copart.com, iaai.com, mobile.de — orientacija į daužtus.</p>
+                  <p className="text-xs text-muted-foreground">Šaltiniai: autoplius.lt, autogidas.lt, copart.com, iaai.com, mobile.de — dauguma naudoti, keli daužti / su defektais.</p>
                 </div>
                 <div className="overflow-x-auto">
                   <Table>
