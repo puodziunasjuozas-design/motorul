@@ -4,8 +4,8 @@ import { corsHeaders } from "https://esm.sh/@supabase/supabase-js@2.95.0/cors";
 const FIRECRAWL = "https://api.firecrawl.dev/v2";
 const LOVABLE_AI = "https://ai.gateway.lovable.dev/v1/chat/completions";
 const MODEL = "google/gemini-3-flash-preview";
-const MAX_SEARCH_ATTEMPTS = 28;
-const PROCESS_CONCURRENCY = 3;
+const MAX_SEARCH_ATTEMPTS = 18;
+const PROCESS_CONCURRENCY = 2;
 
 const SOURCE_CONFIG: Record<string, { site: string; kind: "used" | "damaged"; queries: string[] }> = {
   autoplius: {
@@ -290,6 +290,14 @@ async function discoverListings(fcKey: string, supabase: any, total: number, sou
 
 async function scrapeListing(fcKey: string, candidate: ListingCandidate) {
   const searchContext = cleanText([candidate.title, candidate.description]);
+  if (searchContext.length > 120 && hasVehicleSignal(searchContext) && !looksBlocked(searchContext)) {
+    return {
+      text: searchContext,
+      markdown: null,
+      summary: null,
+      usedFallback: true,
+    };
+  }
   try {
     const payload = await fetchJson(`${FIRECRAWL}/scrape`, {
       method: "POST",
@@ -360,7 +368,7 @@ Grąžink TIK JSON:
       ],
       response_format: { type: "json_object" },
       reasoning: { effort: "medium" },
-      max_tokens: 5000,
+      max_tokens: 2400,
     }),
   }, 45000);
 
@@ -409,18 +417,15 @@ function toInsert(candidate: ListingCandidate, scrape: any, analysis: any): Inse
   };
 }
 
-async function runLimited<T, R>(items: T[], limit: number, worker: (item: T) => Promise<R | null>): Promise<R[]> {
-  const results: R[] = [];
+async function runLimited<T>(items: T[], limit: number, worker: (item: T) => Promise<void>): Promise<void> {
   let index = 0;
   const workers = Array.from({ length: Math.min(limit, items.length) }, async () => {
     while (index < items.length) {
       const current = items[index++];
-      const result = await worker(current);
-      if (result) results.push(result);
+      await worker(current);
     }
   });
   await Promise.all(workers);
-  return results;
 }
 
 Deno.serve(async (req) => {
@@ -431,6 +436,7 @@ Deno.serve(async (req) => {
     if (!auth?.startsWith("Bearer ")) return jsonResponse({ error: "Unauthorized" }, 401);
 
     const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_ANON_KEY")!, { global: { headers: { Authorization: auth } } });
+    const service = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
     const token = auth.replace("Bearer ", "");
     const { data: claims } = await supabase.auth.getClaims(token);
     const userId = claims?.claims?.sub;
@@ -448,45 +454,43 @@ Deno.serve(async (req) => {
     if (!fcKey) return jsonResponse({ error: "Firecrawl ryšys nesukonfigūruotas" }, 500);
     if (!aiKey) return jsonResponse({ error: "Analizės raktas nesukonfigūruotas" }, 500);
 
-    const discovery = await discoverListings(fcKey, supabase, total, sourceNames);
-    const processingPool = discovery.picked.slice(0, Math.min(discovery.picked.length, total * 2));
-    const failures: string[] = [];
+    const backgroundJob = async () => {
+      const discovery = await discoverListings(fcKey, service, total, sourceNames);
+      const processingPool = discovery.picked.slice(0, Math.min(discovery.picked.length, total));
+      console.log("Bot discovery", { requested: total, discovered: discovery.discovered, picked: processingPool.length, errors: discovery.errors.slice(0, 5) });
 
-    const insertable = await runLimited(processingPool, PROCESS_CONCURRENCY, async (candidate) => {
-      try {
-        const scrape = await scrapeListing(fcKey, candidate);
-        if (!hasVehicleSignal(scrape.text)) {
-          failures.push(`${candidate.source}: per mažai skelbimo duomenų`);
-          return null;
+      let inserted = 0;
+      const failures: string[] = [];
+      await runLimited(processingPool, PROCESS_CONCURRENCY, async (candidate) => {
+        try {
+          const scrape = await scrapeListing(fcKey, candidate);
+          if (!hasVehicleSignal(scrape.text)) {
+            failures.push(`${candidate.source}: per mažai skelbimo duomenų`);
+            return;
+          }
+          const analysis = await analyzeListing(aiKey, candidate, scrape.text);
+          const row = toInsert(candidate, scrape, analysis);
+          if (!row) {
+            failures.push(`${candidate.source}: netinkamas arba užblokuotas puslapis`);
+            return;
+          }
+          const { error } = await service.from("auto_analyses").insert(row);
+          if (error) throw error;
+          inserted++;
+        } catch (error) {
+          failures.push(`${candidate.source}: ${error instanceof Error ? error.message : String(error)}`);
         }
-        const analysis = await analyzeListing(aiKey, candidate, scrape.text);
-        const row = toInsert(candidate, scrape, analysis);
-        if (!row) failures.push(`${candidate.source}: netinkamas arba užblokuotas puslapis`);
-        return row;
-      } catch (error) {
-        failures.push(`${candidate.source}: ${error instanceof Error ? error.message : String(error)}`);
-        return null;
-      }
-    });
+      });
+      console.log("Bot finished", { requested: total, attempted: processingPool.length, inserted, failures: failures.slice(0, 8) });
+    };
 
-    const rows = insertable.slice(0, total);
-    let inserted: any[] = [];
-    if (rows.length) {
-      const { data, error } = await supabase.from("auto_analyses").insert(rows).select();
-      if (error) throw error;
-      inserted = data || [];
-    }
+    EdgeRuntime.waitUntil(backgroundJob());
 
     return jsonResponse({
       ok: true,
-      scraped: inserted.length,
-      attempted: processingPool.length,
-      discovered: discovery.discovered,
-      damaged: inserted.filter((row: any) => String(row.source).includes("damaged") || row.source === "copart" || row.source === "iaai").length,
-      message: inserted.length
-        ? `Surinkta ir išanalizuota ${inserted.length} skelbimų.`
-        : "Nepavyko rasti pakankamai tikrų skelbimų. Reikia patikrinti Firecrawl limitus arba šaltinių blokavimą.",
-      warnings: [...discovery.errors, ...failures].slice(0, 12),
+      started: true,
+      requested: total,
+      message: `Botas pradėjo rinkti ir analizuoti ${total} skelbimų. Rezultatai lentelėje atsiras automatiškai.`,
     });
   } catch (error) {
     console.error("scrape-listings error", error);
