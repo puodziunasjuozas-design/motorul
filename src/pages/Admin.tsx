@@ -10,10 +10,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import AnalysisResult, { type AnalysisData } from "@/components/AnalysisResult";
 import { useToast } from "@/hooks/use-toast";
 import {
   Users, DollarSign, TrendingUp, MessageSquare, BarChart3, Shield, Star,
-  Check, X, Trash2, Bot, ExternalLink, ShoppingBag as ShoppingBagIcon,
+  Check, X, Trash2, Bot, ExternalLink, ShoppingBag as ShoppingBagIcon, Eye,
 } from "lucide-react";
 
 interface UserRow {
@@ -50,6 +52,7 @@ const Admin = () => {
   const [scrapeCount, setScrapeCount] = useState(20);
   const [scraping, setScraping] = useState(false);
   const [noteDraft, setNoteDraft] = useState<Record<string, string>>({});
+  const [viewing, setViewing] = useState<AutoAnalysisRow | null>(null);
 
   useEffect(() => {
     if (loading) return;
@@ -327,12 +330,12 @@ const Admin = () => {
                     </TableHeader>
                     <TableBody>
                       {autoRows.map(r => (
-                        <TableRow key={r.id} className="align-top">
+                        <TableRow key={r.id} className="align-top cursor-pointer hover:bg-zinc-900/40" onClick={() => setViewing(r)}>
                           <TableCell className="text-xs whitespace-nowrap">{new Date(r.created_at).toLocaleDateString()}</TableCell>
                           <TableCell><Badge variant="outline">{r.source}</Badge></TableCell>
                           <TableCell className="text-sm">
                             {r.vehicle_make || "—"} {r.vehicle_model || ""} {r.vehicle_year ? `(${r.vehicle_year})` : ""}
-                            <a href={r.listing_url} target="_blank" rel="noopener noreferrer" className="ml-2 inline-flex items-center text-primary hover:underline text-xs">
+                            <a href={r.listing_url} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="ml-2 inline-flex items-center text-primary hover:underline text-xs">
                               <ExternalLink className="w-3 h-3" /> nuoroda
                             </a>
                           </TableCell>
@@ -343,8 +346,11 @@ const Admin = () => {
                             {r.review_status === "bad" && <Badge variant="destructive">Blogai</Badge>}
                             {r.review_status === "pending" && <Badge variant="outline">Laukia</Badge>}
                           </TableCell>
-                          <TableCell>
+                          <TableCell onClick={(e) => e.stopPropagation()}>
                             <div className="flex flex-col gap-1 min-w-[200px]">
+                              <Button size="sm" variant="secondary" onClick={() => setViewing(r)}>
+                                <Eye className="w-3 h-3 mr-1" /> Peržiūrėti analizę
+                              </Button>
                               <Textarea
                                 placeholder="Komentaras (jei blogai)"
                                 value={noteDraft[r.id] ?? r.admin_notes ?? ""}
@@ -371,9 +377,72 @@ const Admin = () => {
           </TabsContent>
         </Tabs>
       </div>
+
+      <Dialog open={!!viewing} onOpenChange={(open) => !open && setViewing(null)}>
+        <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto bg-background">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Bot className="w-5 h-5 text-primary" />
+              Bot analizė — {viewing?.vehicle_make || "—"} {viewing?.vehicle_model || ""} {viewing?.vehicle_year ? `(${viewing.vehicle_year})` : ""}
+            </DialogTitle>
+          </DialogHeader>
+          {viewing && (
+            <div className="space-y-4">
+              <div className="flex flex-wrap gap-2 text-xs">
+                <Badge variant="outline">Šaltinis: {viewing.source}</Badge>
+                <a href={viewing.listing_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-primary hover:underline">
+                  <ExternalLink className="w-3 h-3" /> Atidaryti skelbimą
+                </a>
+              </div>
+              <AnalysisResult data={normalizeAnalysis(viewing)} />
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
+
+function normalizeAnalysis(row: AutoAnalysisRow): AnalysisData {
+  const a = row.analysis_data || {};
+  const v = a.vehicleInfo || {};
+  const m = a.marketAnalysis || {};
+  const r = a.repairEstimate || {};
+  const p = a.profitability || {};
+  return {
+    vehicleInfo: {
+      make: v.make || row.vehicle_make || "Nenurodyta",
+      model: v.model || row.vehicle_model || "Nenurodyta",
+      year: typeof v.year === "number" ? v.year : (row.vehicle_year || 0),
+      mileage: v.mileage || "Nenurodyta",
+      fuelType: v.fuelType || "Nenurodyta",
+      transmission: v.transmission || "Nenurodyta",
+    },
+    marketAnalysis: {
+      currentPrice: Number(m.currentPrice ?? row.current_price ?? 0) || 0,
+      marketAverage: Number(m.marketAverage ?? 0) || 0,
+      priceRating: (m.priceRating === "good" || m.priceRating === "overpriced") ? m.priceRating : "average",
+      estimatedResaleValue: Number(m.estimatedResaleValue ?? 0) || 0,
+      resaleTimeframe: m.resaleTimeframe || "—",
+    },
+    repairEstimate: {
+      totalCost: Number(r.totalCost ?? 0) || 0,
+      items: Array.isArray(r.items) ? r.items.map((it: any) => ({
+        name: String(it?.name || "—"),
+        cost: Number(it?.cost ?? 0) || 0,
+        urgency: (it?.urgency === "high" || it?.urgency === "low") ? it.urgency : "medium",
+      })) : [],
+    },
+    profitability: {
+      isProfitable: !!p.isProfitable,
+      potentialProfit: Number(p.potentialProfit ?? 0) || 0,
+      recommendation: p.recommendation || a.recommendation || "—",
+    },
+    videos: [],
+    warnings: Array.isArray(a.warnings) ? a.warnings.map(String) : [],
+    positives: Array.isArray(a.positives) ? a.positives.map(String) : [],
+  };
+}
 
 const StatCard = ({ icon: Icon, label, value }: { icon: any; label: string; value: string | number }) => (
   <Card className="bg-zinc-900 border-primary/20">
