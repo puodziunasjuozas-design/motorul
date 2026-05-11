@@ -6,6 +6,8 @@ const LOVABLE_AI = "https://ai.gateway.lovable.dev/v1/chat/completions";
 const MODEL = "google/gemini-3-flash-preview";
 const MAX_SEARCH_ATTEMPTS = 18;
 const PROCESS_CONCURRENCY = 2;
+const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
+const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
 const SOURCE_CONFIG: Record<string, { site: string; kind: "used" | "damaged"; queries: string[] }> = {
   autoplius: {
@@ -330,54 +332,95 @@ async function scrapeListing(fcKey: string, candidate: ListingCandidate) {
   }
 }
 
-async function analyzeListing(aiKey: string, candidate: ListingCandidate, text: string) {
-  const response = await fetchJson(LOVABLE_AI, {
-    method: "POST",
-    headers: { Authorization: `Bearer ${aiKey}`, "Content-Type": "application/json" },
-    body: JSON.stringify({
-      model: MODEL,
-      messages: [
-        {
-          role: "system",
-          content: `Esi formalus transporto konsultantas. Iš automobilio skelbimo paruošk trumpą, bet praktišką investicinę analizę lietuvių kalba.
-
-Taisyklės:
-- Analizuok tik transporto skelbimą.
-- Neišgalvok markės, modelio, metų, ridos, kuro, kainos ar defektų. Jei nėra aiškaus duomens, rašyk "Nenurodyta" arba null.
-- Jei skelbimas yra daužtas / salvage / Unfallwagen / su defektais, tai aiškiai pažymėk.
-- Remonto ir rinkos kainas vertink konservatyviai pagal Lietuvos rinką.
-- Jei informacijos mažai, rekomendacijoje parašyk, kokių duomenų trūksta, bet vis tiek pateik preliminarų vadovo peržiūrai naudingą vertinimą.
-
-Grąžink TIK JSON:
-{
-  "vehicleInfo": {"make": string, "model": string, "year": number|null, "mileage": string, "fuelType": string, "transmission": string},
-  "marketAnalysis": {"currentPrice": number|null, "marketAverage": number|null, "priceRating": "good"|"average"|"overpriced"|"unknown", "estimatedResaleValue": number|null, "resaleTimeframe": string},
-  "repairEstimate": {"totalCost": number|null, "items": [{"name": string, "cost": number, "urgency": "high"|"medium"|"low"}]},
-  "profitability": {"isProfitable": boolean, "potentialProfit": number|null, "recommendation": string},
-  "condition": {"isDamaged": boolean|null, "damageSignals": string[], "dataQuality": "good"|"limited"},
-  "warnings": string[],
-  "positives": string[],
-  "recommendation": string,
-  "description_summary": string
-}`,
-        },
-        {
-          role: "user",
-          content: `Šaltinis: ${candidate.source}\nTipas: ${candidate.kind === "damaged" ? "tikėtina daužtas / defektuotas" : "naudotas automobilis"}\nNuoroda: ${candidate.url}\n\nSkelbimo tekstas:\n${text.slice(0, 16000)}`,
-        },
-      ],
-      response_format: { type: "json_object" },
-      reasoning: { effort: "medium" },
-      max_tokens: 2400,
-    }),
-  }, 45000);
-
-  const content = response?.choices?.[0]?.message?.content;
-  if (!content) throw new Error("Tuščias analizės atsakymas");
-  return parseAiJson(content);
+async function quickExtract(aiKey: string, text: string): Promise<{ make?: string; model?: string; year?: number | null }> {
+  try {
+    const response = await fetchJson(LOVABLE_AI, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${aiKey}`, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "google/gemini-2.5-flash-lite",
+        messages: [
+          { role: "system", content: "Iš teksto ištrauk transporto markę, modelį ir metus. Grąžink TIK JSON: {\"make\": string|null, \"model\": string|null, \"year\": number|null}. Jei neaišku — null." },
+          { role: "user", content: text.slice(0, 4000) },
+        ],
+        response_format: { type: "json_object" },
+        max_tokens: 200,
+      }),
+    }, 20000);
+    const content = response?.choices?.[0]?.message?.content;
+    if (!content) return {};
+    const parsed = parseAiJson(content);
+    return { make: parsed.make || undefined, model: parsed.model || undefined, year: typeof parsed.year === "number" ? parsed.year : null };
+  } catch {
+    return {};
+  }
 }
 
-function toInsert(candidate: ListingCandidate, scrape: any, analysis: any): InsertableAnalysis | null {
+async function webResearch(fcKey: string, info: { make?: string; model?: string; year?: number | null }, kind: "used" | "damaged"): Promise<string> {
+  if (!info.make || !info.model) return "";
+  const label = `${info.make} ${info.model}${info.year ? ` ${info.year}` : ""}`;
+  const queries = [
+    `${label} kaina Lietuvoje naudoti automobiliai`,
+    `${label} dažniausios problemos patikimumas`,
+  ];
+  if (kind === "damaged") queries.push(`${label} remontas kaštai daužtas`);
+  const blocks: string[] = [];
+  for (const query of queries) {
+    try {
+      const payload = await fetchJson(`${FIRECRAWL}/search`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${fcKey}`, "Content-Type": "application/json" },
+        body: JSON.stringify({ query, limit: 4 }),
+      }, 15000);
+      const items = extractSearchItems(payload).slice(0, 4);
+      const lines = items.map((it: any) => {
+        const title = it?.title || it?.metadata?.title || "";
+        const desc = it?.description || it?.snippet || it?.markdown || "";
+        return `• ${title} — ${String(desc).slice(0, 280)}`;
+      }).filter((l: string) => l.length > 5);
+      if (lines.length) blocks.push(`Užklausa: ${query}\n${lines.join("\n")}`);
+    } catch {
+      // ignore individual research failures
+    }
+  }
+  return blocks.join("\n\n");
+}
+
+async function analyzeListing(aiKey: string, candidate: ListingCandidate, text: string, fcKey: string) {
+  const info = await quickExtract(aiKey, text);
+  const research = await webResearch(fcKey, info, candidate.kind);
+
+  const damageHint = candidate.kind === "damaged"
+    ? "DĖMESIO: skelbimas iš daužtų / salvage / Unfallwagen kategorijos — vertink kaip galimai apgadintą ir aiškiai įvardink defektus warnings sąraše."
+    : "Skelbimas iš naudotų automobilių kategorijos.";
+
+  const description = [
+    `Šaltinis: ${candidate.source}`,
+    damageHint,
+    candidate.title ? `Antraštė: ${candidate.title}` : "",
+    "",
+    "SKELBIMO TEKSTAS:",
+    text.slice(0, 14000),
+    research ? `\nPAPILDOMA RINKOS INFORMACIJA IŠ INTERNETO (naudok kaip referenciją, bet remkis pirmiausia skelbimo duomenimis):\n${research}` : "",
+  ].filter(Boolean).join("\n");
+
+  // Naudok tą pačią analyze-vehicle funkciją kaip vartotojų analizėje, kad rezultatas būtų identiškas struktūra ir kokybe.
+  const response = await fetchJson(`${SUPABASE_URL}/functions/v1/analyze-vehicle`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${SERVICE_KEY}`,
+      apikey: SERVICE_KEY,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ description, listingUrl: candidate.url }),
+  }, 90000);
+
+  if (response?.error) throw new Error(String(response.error));
+  return { result: response, info, research };
+}
+
+function toInsert(candidate: ListingCandidate, scrape: any, payload: any): InsertableAnalysis | null {
+  const analysis = payload?.result || payload;
   const text = scrape.text || "";
   if (!hasVehicleSignal(text)) return null;
   if (looksBlocked(text) && !hasVehicleSignal(cleanText([candidate.title, candidate.description]))) return null;
@@ -396,6 +439,7 @@ function toInsert(candidate: ListingCandidate, scrape: any, analysis: any): Inse
     description_summary: analysis?.description_summary || `${make || "Automobilis"} ${model || ""}`.trim(),
     source_kind: candidate.kind,
     listing_url: candidate.url,
+    web_research: payload?.research || null,
   };
 
   return {
@@ -468,7 +512,7 @@ Deno.serve(async (req) => {
             failures.push(`${candidate.source}: per mažai skelbimo duomenų`);
             return;
           }
-          const analysis = await analyzeListing(aiKey, candidate, scrape.text);
+          const analysis = await analyzeListing(aiKey, candidate, scrape.text, fcKey);
           const row = toInsert(candidate, scrape, analysis);
           if (!row) {
             failures.push(`${candidate.source}: netinkamas arba užblokuotas puslapis`);
