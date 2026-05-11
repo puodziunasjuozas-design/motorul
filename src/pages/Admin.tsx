@@ -10,10 +10,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import AnalysisResult, { type AnalysisData } from "@/components/AnalysisResult";
 import { useToast } from "@/hooks/use-toast";
 import {
   Users, DollarSign, TrendingUp, MessageSquare, BarChart3, Shield, Star,
-  Check, X, Trash2, Bot, ExternalLink, ShoppingBag as ShoppingBagIcon,
+  Check, X, Trash2, Bot, ExternalLink, ShoppingBag as ShoppingBagIcon, Eye,
 } from "lucide-react";
 
 interface UserRow {
@@ -50,6 +52,7 @@ const Admin = () => {
   const [scrapeCount, setScrapeCount] = useState(20);
   const [scraping, setScraping] = useState(false);
   const [noteDraft, setNoteDraft] = useState<Record<string, string>>({});
+  const [viewing, setViewing] = useState<AutoAnalysisRow | null>(null);
 
   useEffect(() => {
     if (loading) return;
@@ -327,12 +330,12 @@ const Admin = () => {
                     </TableHeader>
                     <TableBody>
                       {autoRows.map(r => (
-                        <TableRow key={r.id} className="align-top">
+                        <TableRow key={r.id} className="align-top cursor-pointer hover:bg-zinc-900/40" onClick={() => setViewing(r)}>
                           <TableCell className="text-xs whitespace-nowrap">{new Date(r.created_at).toLocaleDateString()}</TableCell>
                           <TableCell><Badge variant="outline">{r.source}</Badge></TableCell>
                           <TableCell className="text-sm">
                             {r.vehicle_make || "—"} {r.vehicle_model || ""} {r.vehicle_year ? `(${r.vehicle_year})` : ""}
-                            <a href={r.listing_url} target="_blank" rel="noopener noreferrer" className="ml-2 inline-flex items-center text-primary hover:underline text-xs">
+                            <a href={r.listing_url} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="ml-2 inline-flex items-center text-primary hover:underline text-xs">
                               <ExternalLink className="w-3 h-3" /> nuoroda
                             </a>
                           </TableCell>
@@ -343,8 +346,11 @@ const Admin = () => {
                             {r.review_status === "bad" && <Badge variant="destructive">Blogai</Badge>}
                             {r.review_status === "pending" && <Badge variant="outline">Laukia</Badge>}
                           </TableCell>
-                          <TableCell>
+                          <TableCell onClick={(e) => e.stopPropagation()}>
                             <div className="flex flex-col gap-1 min-w-[200px]">
+                              <Button size="sm" variant="secondary" onClick={() => setViewing(r)}>
+                                <Eye className="w-3 h-3 mr-1" /> Peržiūrėti analizę
+                              </Button>
                               <Textarea
                                 placeholder="Komentaras (jei blogai)"
                                 value={noteDraft[r.id] ?? r.admin_notes ?? ""}
