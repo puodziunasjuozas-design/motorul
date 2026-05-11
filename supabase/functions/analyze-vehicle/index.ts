@@ -157,7 +157,7 @@ youtubeSearchQueries lauke pateik 3-5 angliškus paieškos terminus, kurie padė
           { role: "user", content: userContent }
         ],
         response_format: { type: "json_object" },
-        reasoning: { effort: "medium" }
+        reasoning: { effort: "high" }
       }),
     });
 
